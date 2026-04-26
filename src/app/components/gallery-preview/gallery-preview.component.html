@@ -1,0 +1,18 @@
+<section class="gallery" id="gallery">
+  <div class="gallery-header">
+    <div>
+      <p class="eyebrow">Food gallery preview</p>
+      <h2>Fresh food photography made for slow browsing.</h2>
+    </div>
+    <p>Curated kitchen moments and warm, plated food for Drake’s portfolio.</p>
+  </div>
+  <div class="gallery-grid">
+    <article *ngFor="let item of galleryItems" class="gallery-card">
+      <img [src]="item.imageUrl" [alt]="item.altText" />
+      <div class="gallery-copy">
+        <h3>{{ item.title }}</h3>
+        <p>{{ item.description }}</p>
+      </div>
+    </article>
+  </div>
+</section>

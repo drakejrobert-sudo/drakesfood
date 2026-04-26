@@ -1,0 +1,52 @@
+.hero {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+.hero-content {
+  max-width: 640px;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.78rem;
+  margin-bottom: 0.75rem;
+  color: #7b5f4c;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.05rem;
+}
+
+.hero p {
+  margin: 1.25rem 0 0;
+  max-width: 40rem;
+  line-height: 1.85;
+  color: #4d3b30;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+.hero-image img {
+  width: 100%;
+  border-radius: 1.5rem;
+  box-shadow: 0 24px 60px rgba(61, 45, 33, 0.12);
+}
+
+@media (min-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr minmax(320px, 420px);
+    padding: 4rem clamp(2rem, 8vw, 6rem);
+  }
+}

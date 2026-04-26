@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+.page-shell {
+  background: #f7efe7;
+  color: #32221b;
+}
+
+section {
+  width: min(1200px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button-primary {
+  background: #8c5a40;
+  color: #fff;
+  padding: 0.95rem 1.6rem;
+}
+
+.button-secondary {
+  background: rgba(140, 90, 64, 0.1);
+  color: #8c5a40;
+  padding: 0.95rem 1.6rem;
+}
+
+@media (min-width: 900px) {
+  section {
+    width: min(1120px, calc(100% - 4rem));
+  }
+}

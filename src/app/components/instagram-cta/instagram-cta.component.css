@@ -1,0 +1,30 @@
+.instagram-cta {
+  padding: 2rem 1rem;
+}
+
+.instagram-card {
+  display: grid;
+  gap: 1.5rem;
+  background: #ffffff;
+  border-radius: 1.75rem;
+  padding: 2rem;
+  box-shadow: 0 20px 56px rgba(61, 45, 33, 0.09);
+}
+
+.instagram-card h2 {
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.instagram-card p {
+  margin: 0;
+  color: #5e4b3f;
+  line-height: 1.8;
+}
+
+@media (min-width: 900px) {
+  .instagram-card {
+    grid-template-columns: 1.4fr auto;
+    align-items: center;
+  }
+}

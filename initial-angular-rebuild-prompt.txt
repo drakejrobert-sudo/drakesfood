@@ -1,0 +1,76 @@
+Create the initial modern Angular rebuild structure for drakesfood.com.
+
+Use the project guidance from AGENTS.md and .github/copilot-instructions.md.
+
+Goal:
+Build the first version of a clean, mobile-first food portfolio website for Drake's Food. The site should showcase food photography, link clearly to Instagram @drakesfood, include a short personal/about section, include a simple RecipeSensei teaser section, and include a recipe/blog area marked as "coming soon."
+
+Important decisions:
+- Use modern Angular, not legacy AngularJS / Angular 1.x.
+- Use TypeScript.
+- Use Angular CLI conventions.
+- Prefer standalone components if creating a new Angular app.
+- Keep the app mostly static.
+- Do not add authentication, databases, CMS tools, comments, payments, or backend services.
+- Do not build Instagram scraping or dynamic Instagram ingestion.
+- Store initial gallery images as curated local assets/placeholders in the repo unless the existing project already uses another simple pattern.
+- Keep future AWS deployment in mind: static build output should be suitable for S3 + CloudFront.
+- Do not add paid third-party services.
+- Do not commit secrets or placeholder secrets.
+
+Please do the following:
+
+1. Inspect the existing repository structure before making changes.
+2. If no Angular app exists, create a modern Angular app structure appropriate for this project.
+3. Add or preserve these files:
+   - AGENTS.md
+   - .github/copilot-instructions.md
+4. Create a clean homepage layout with these sections:
+   - Hero section for Drake's Food
+   - Food gallery preview
+   - Instagram call-to-action linking to https://instagram.com/drakesfood
+   - About / intro section
+   - RecipeSensei teaser section marked as coming soon or in development
+   - Recipe/blog section marked as coming soon
+5. Use warm, minimal, photo-forward styling.
+6. Make the site responsive and mobile-first.
+7. Use semantic HTML and accessible alt text.
+8. Avoid unnecessary dependencies.
+9. Add simple placeholder gallery data in a clear location so real food photos can be swapped in later.
+10. Make sure the app builds successfully.
+
+Suggested structure, if creating from scratch:
+
+/
+  src/
+    app/
+      components/
+      data/
+      app.component.*
+    assets/
+      images/
+  public/
+  infra/
+  .github/
+    copilot-instructions.md
+    workflows/
+  AGENTS.md
+  README.md
+
+Validation:
+Run the relevant available checks, such as:
+
+npm run lint
+npm run typecheck
+npm run build
+npm run test
+
+If any scripts do not exist, explain which ones were unavailable and recommend adding them.
+
+Do not claim checks passed unless they were actually run.
+
+After completing the changes, summarize:
+- files created or changed
+- commands run
+- any assumptions made
+- recommended next steps
