@@ -1,0 +1,19 @@
+.about {
+  padding: 2rem 1rem;
+}
+
+.section-intro {
+  max-width: 720px;
+}
+
+.section-intro h2 {
+  margin-top: 0.45rem;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+}
+
+.about p {
+  margin-top: 1.25rem;
+  max-width: 46rem;
+  color: #5e4b3f;
+  line-height: 1.9;
+}

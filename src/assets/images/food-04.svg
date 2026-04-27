@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title4 desc4">
+  <title id="title4">Citrus tart</title>
+  <desc id="desc4">A bright citrus tart on a light surface with orange slices.</desc>
+  <rect width="1200" height="900" fill="#fff1e6" />
+  <circle cx="600" cy="470" r="240" fill="#f4c37a" />
+  <circle cx="600" cy="470" r="160" fill="#f9e2c5" />
+  <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="64" fill="#a86b46">Citrus Tart</text>
+</svg>

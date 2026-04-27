@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title5 desc5">
+  <title id="title5">Herb salad</title>
+  <desc id="desc5">A fresh herb salad in a bowl with green leaves and lemon wedges.</desc>
+  <rect width="1200" height="900" fill="#eaf2e6" />
+  <circle cx="620" cy="470" r="260" fill="#a7d3a0" />
+  <circle cx="560" cy="420" r="100" fill="#cee6ca" />
+  <text x="50%" y="61%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="64" fill="#48603f">Herb Salad</text>
+</svg>

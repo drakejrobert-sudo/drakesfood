@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title1 desc1">
+  <title id="title1">Sourdough loaf</title>
+  <desc id="desc1">A sliced sourdough loaf with herbs on a wooden board.</desc>
+  <rect width="1200" height="900" fill="#e9d3bc" />
+  <rect x="80" y="180" width="1040" height="540" rx="48" ry="48" fill="#d8b39d" />
+  <text x="50%" y="52%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="72" fill="#5c3b2a">Sourdough</text>
+</svg>

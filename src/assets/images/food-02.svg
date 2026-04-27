@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title2 desc2">
+  <title id="title2">Roasted vegetables</title>
+  <desc id="desc2">A plate of roasted market vegetables with warm autumn colors.</desc>
+  <rect width="1200" height="900" fill="#f4e1d2" />
+  <circle cx="320" cy="420" r="220" fill="#c57f53" />
+  <circle cx="760" cy="380" r="180" fill="#b36f4c" />
+  <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle" font-family="Inter, sans-serif" font-size="64" fill="#5a3928">Roasted Veg</text>
+</svg>

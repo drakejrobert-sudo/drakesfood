@@ -1,0 +1,10 @@
+.recipe-blog {
+  padding: 2rem 1rem 4rem;
+}
+
+.recipe-blog p {
+  max-width: 54rem;
+  margin-top: 1rem;
+  color: #5e4b3f;
+  line-height: 1.8;
+}
