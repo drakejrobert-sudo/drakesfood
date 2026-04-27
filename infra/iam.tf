@@ -1,5 +1,9 @@
 resource "aws_iam_user" "github_actions_deploy" {
   name = var.github_actions_deploy_user_name
+
+  lifecycle {
+    ignore_changes = [tags]
+  }
 }
 
 data "aws_iam_policy_document" "github_actions_deploy" {
