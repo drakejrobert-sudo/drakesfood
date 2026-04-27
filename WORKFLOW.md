@@ -4,6 +4,8 @@ This document defines how AI assistants should collaborate on this repository.
 
 ## Default Workflow
 
+- Before making code or documentation changes, check the current branch with `git branch --show-current`.
+- If the current branch is `main`, create or switch to a feature branch before editing.
 - Work on feature branches, not directly on `main`.
 - Keep changes small, reviewable, and aligned with `AGENTS.md`.
 - Update `TODO_STATUS.md` when task status changes.

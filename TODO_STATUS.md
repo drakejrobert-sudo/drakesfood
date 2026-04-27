@@ -28,12 +28,13 @@
 - [x] Upgrade GitHub Actions workflows to Node 24-native action versions
 - [x] Accessibility audit and core accessibility fixes
 - [x] Image file optimization/compression
+- [x] SEO metadata and structured data
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
 ## 🔄 In Progress
 
-- [ ] SEO metadata and structured data
+- [ ] Add build/lint/test validation in CI
 
 ## 📋 Remaining Tasks
 
@@ -78,6 +79,7 @@
 - Latest deployment succeeded, including S3 sync and CloudFront invalidation for distribution `ETNCPE8F2TB5D`
 - GitHub Actions workflows now use Node 24-native action versions without the temporary Node 24 override
 - Accessibility pass added a main landmark, skip link, visible focus states, reduced-motion handling, section labels, clearer external link labels, and improved RecipeSensei badge contrast
+- Static SEO pass added canonical URL, robots metadata, Open Graph and Twitter card tags, and WebSite JSON-LD
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
 
