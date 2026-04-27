@@ -5,6 +5,6 @@
 .recipe-blog p {
   max-width: 54rem;
   margin-top: 1rem;
-  color: #5e4b3f;
+  color: var(--color-text-muted);
   line-height: 1.8;
 }
