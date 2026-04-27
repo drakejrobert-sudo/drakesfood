@@ -27,12 +27,12 @@
 - [x] First S3 deployment from GitHub Actions verified
 - [x] Upgrade GitHub Actions workflows to Node 24-native action versions
 - [x] Accessibility audit and core accessibility fixes
+- [x] Image file optimization/compression
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
 ## 🔄 In Progress
 
-- [ ] Image file optimization/compression
 - [ ] SEO metadata and structured data
 
 ## 📋 Remaining Tasks
@@ -68,6 +68,7 @@
 - Gallery expansion is intentionally deferred until the current photo set has been reviewed in the live layout
 - Gallery images now lazy-load and use fixed aspect ratios for steadier responsive rendering
 - Hero image is prioritized for initial page load
+- Raster food photos are optimized to 1280px wide with high-quality JPEG compression
 - GitHub Actions deploys `dist/drakesfood-app/browser` to existing S3 bucket `drakesfood.com` in `us-east-2`
 - GitHub repository has AWS deployment credentials configured
 - HTTPS now serves through CloudFront for `https://drakesfood.com` and `https://www.drakesfood.com`
