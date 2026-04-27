@@ -6,7 +6,7 @@ A modern Angular portfolio website for Drake's Food. This first version is a war
 
 Requirements:
 
-- Node.js 22.x LTS
+- Node.js 22.13.0 or newer within Node 22 LTS
 - npm
 
 Use the pinned local Node version:
