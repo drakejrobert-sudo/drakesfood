@@ -21,3 +21,9 @@ variable "s3_bucket_name" {
   type        = string
   default     = "drakesfood.com"
 }
+
+variable "github_actions_deploy_user_name" {
+  description = "IAM user used by GitHub Actions to deploy the static site. Access keys are managed outside OpenTofu."
+  type        = string
+  default     = "github-actions-drakesfood-deploy"
+}
