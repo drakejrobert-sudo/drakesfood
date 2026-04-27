@@ -31,6 +31,7 @@
 - [x] SEO metadata and structured data
 - [x] ESLint lint configuration
 - [x] Build/lint/typecheck validation in CI
+- [x] Purple visual theme accents and ninja chef mascot
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
@@ -44,6 +45,7 @@
 
 - [ ] Finalize copy for all sections
 - [ ] Add more gallery images or full gallery page (deferred for now)
+- [ ] Replace temporary ninja chef SVG with a stronger ChatGPT-generated mascot asset
 - [ ] Add RecipeSensei launch details once available
 - [ ] Refine About section content
 - [ ] Add optional recipe/blog details page later
@@ -87,6 +89,8 @@
 - Angular test runner setup remains deferred and tracked separately
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
+- Purple theme accents now use shared CSS variables, with a ninja chef mascot in the hero and SVG favicon support
+- Current ninja chef mascot is a temporary placeholder; use SVG if the next mascot is simple/logo-like, or transparent PNG if it is more detailed/illustrative
 
 ## Last Updated
 

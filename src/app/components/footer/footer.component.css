@@ -1,13 +1,13 @@
 .site-footer {
   padding: 2rem 1rem 3rem;
   text-align: center;
-  color: #6f5848;
+  color: var(--color-text-soft);
 }
 
 .site-footer .footer-link {
   display: inline-block;
   margin-top: 0.75rem;
-  color: #3b1f0f;
+  color: var(--color-purple-dark);
   font-weight: 700;
 }
 
