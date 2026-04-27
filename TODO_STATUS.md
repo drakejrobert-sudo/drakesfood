@@ -19,14 +19,15 @@
 - [x] Responsive image loading and sizing applied
 - [x] Node LTS version pinned with `.nvmrc`
 - [x] GitHub Actions deployment workflow added for existing S3 bucket
+- [x] HTTPS enabled with CloudFront, ACM, and Route 53
+- [x] Existing S3 bucket imported into OpenTofu state
+- [x] CloudFront distribution ID configured for GitHub Actions invalidations
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
 ## 🔄 In Progress
 
 - [ ] Image file optimization/compression
-- [ ] AWS deployment infrastructure
-- [ ] OpenTofu infrastructure config
 - [ ] Configure GitHub Actions AWS credentials
 - [ ] Verify first S3 deployment from GitHub Actions
 - [ ] Accessibility audit
@@ -35,6 +36,7 @@
 ## 📋 Remaining Tasks
 
 ### Content & Visuals
+
 - [ ] Finalize copy for all sections
 - [ ] Add more gallery images or full gallery page (deferred for now)
 - [ ] Add RecipeSensei launch details once available
@@ -42,12 +44,14 @@
 - [ ] Add optional recipe/blog details page later
 
 ### Deployment & Infrastructure
-- [ ] Set up AWS S3 + CloudFront hosting
-- [ ] Configure Route 53 and ACM
+
+- [x] Set up AWS S3 + CloudFront hosting
+- [x] Configure Route 53 and ACM
 - [x] Create deployment pipeline in GitHub Actions
 - [ ] Add build/lint/test validation in CI
 
 ### Quality & Testing
+
 - [ ] Add lint configuration (ESLint)
 - [ ] Add Angular testing support
 - [ ] Perform responsive testing on mobile/tablet/desktop
@@ -64,8 +68,13 @@
 - Hero image is prioritized for initial page load
 - GitHub Actions deploys `dist/drakesfood-app/browser` to existing S3 bucket `drakesfood.com` in `us-east-2`
 - GitHub repository still needs AWS deployment secrets before the first live deployment can run
+- HTTPS now serves through CloudFront for `https://drakesfood.com` and `https://www.drakesfood.com`
+- HTTP now redirects to HTTPS through CloudFront
+- CloudFront distribution ID is `ETNCPE8F2TB5D`
+- OpenTofu local state currently manages the imported S3 bucket plus CloudFront, ACM, Route 53, bucket policy, and bucket public access block
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
 
 ## Last Updated
-April 26, 2026
+
+April 27, 2026
