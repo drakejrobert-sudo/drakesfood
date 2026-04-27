@@ -25,14 +25,14 @@
 - [x] GitHub Actions AWS credentials configured
 - [x] OpenTofu-managed GitHub Actions deploy IAM policy applied
 - [x] First S3 deployment from GitHub Actions verified
+- [x] Upgrade GitHub Actions workflows to Node 24-native action versions
+- [x] Accessibility audit and core accessibility fixes
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
 ## 🔄 In Progress
 
 - [ ] Image file optimization/compression
-- [ ] Upgrade GitHub Actions workflows to Node 24-native action versions
-- [ ] Accessibility audit
 - [ ] SEO metadata and structured data
 
 ## 📋 Remaining Tasks
@@ -75,7 +75,8 @@
 - CloudFront distribution ID is `ETNCPE8F2TB5D`
 - OpenTofu local state currently manages the imported S3 bucket plus CloudFront, ACM, Route 53, bucket policy, and bucket public access block
 - Latest deployment succeeded, including S3 sync and CloudFront invalidation for distribution `ETNCPE8F2TB5D`
-- GitHub Actions workflows are being updated from temporary Node 24 forcing to Node 24-native action versions
+- GitHub Actions workflows now use Node 24-native action versions without the temporary Node 24 override
+- Accessibility pass added a main landmark, skip link, visible focus states, reduced-motion handling, section labels, clearer external link labels, and improved RecipeSensei badge contrast
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
 
