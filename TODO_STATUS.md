@@ -22,13 +22,14 @@
 - [x] HTTPS enabled with CloudFront, ACM, and Route 53
 - [x] Existing S3 bucket imported into OpenTofu state
 - [x] CloudFront distribution ID configured for GitHub Actions invalidations
+- [x] GitHub Actions AWS credentials configured
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
 ## 🔄 In Progress
 
 - [ ] Image file optimization/compression
-- [ ] Configure GitHub Actions AWS credentials
+- [ ] Apply OpenTofu-managed GitHub Actions deploy IAM policy
 - [ ] Verify first S3 deployment from GitHub Actions
 - [ ] Accessibility audit
 - [ ] SEO metadata and structured data
@@ -67,11 +68,12 @@
 - Gallery images now lazy-load and use fixed aspect ratios for steadier responsive rendering
 - Hero image is prioritized for initial page load
 - GitHub Actions deploys `dist/drakesfood-app/browser` to existing S3 bucket `drakesfood.com` in `us-east-2`
-- GitHub repository still needs AWS deployment secrets before the first live deployment can run
+- GitHub repository has AWS deployment credentials configured
 - HTTPS now serves through CloudFront for `https://drakesfood.com` and `https://www.drakesfood.com`
 - HTTP now redirects to HTTPS through CloudFront
 - CloudFront distribution ID is `ETNCPE8F2TB5D`
 - OpenTofu local state currently manages the imported S3 bucket plus CloudFront, ACM, Route 53, bucket policy, and bucket public access block
+- Latest deployment reached S3 sync but failed CloudFront invalidation because the GitHub Actions IAM user needs `cloudfront:CreateInvalidation`
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
 

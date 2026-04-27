@@ -9,12 +9,13 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - ACM certificate for `drakesfood.com` and `www.drakesfood.com`
 - CloudFront distribution with HTTP-to-HTTPS redirects
 - Route 53 alias records for apex and `www`
+- IAM user policy for GitHub Actions deployment
 
 CloudFront requires ACM certificates to be in `us-east-1`, so this config uses a secondary AWS provider for the certificate while keeping the existing S3 bucket in `us-east-2`.
 
 ## One-Time Setup
 
-Install OpenTofu, then initialize from this directory:
+Install OpenTofu, then initialize from this directory with AWS credentials configured for the account that hosts `drakesfood.com`:
 
 ```bash
 tofu init
@@ -26,6 +27,20 @@ The `drakesfood.com` S3 bucket already exists. Before applying, import it and th
 tofu import aws_s3_bucket.site drakesfood.com
 tofu import aws_s3_bucket_public_access_block.site drakesfood.com
 tofu import aws_s3_bucket_policy.site drakesfood.com
+```
+
+The GitHub Actions deploy IAM user already exists. Import it before applying so OpenTofu manages the user and deploy policy without recreating the user:
+
+```bash
+tofu import aws_iam_user.github_actions_deploy github-actions-drakesfood-deploy
+```
+
+OpenTofu manages the IAM user and its deploy policy only. Do not manage deploy access keys with OpenTofu because secret access key material would be stored in state. Keep the access key ID and secret access key in GitHub repository secrets.
+
+The credentials used for import and apply need permission to read IAM users and create or update IAM user policies. If an inline policy with the same generated name already exists, import it with:
+
+```bash
+tofu import aws_iam_user_policy.github_actions_deploy github-actions-drakesfood-deploy:github-actions-drakesfood-deploy-policy
 ```
 
 Then preview and apply:
@@ -55,6 +70,14 @@ It also needs this GitHub repository variable:
 - `CLOUDFRONT_DISTRIBUTION_ID`
 
 The AWS credentials must be allowed to sync files to the S3 bucket and create CloudFront invalidations. Until `CLOUDFRONT_DISTRIBUTION_ID` is configured, the deploy workflow will still sync to S3 but will skip CloudFront invalidation.
+
+The OpenTofu-managed deploy policy grants the GitHub Actions IAM user these permissions:
+
+- `s3:ListBucket` on the site bucket
+- `s3:GetObject`, `s3:PutObject`, and `s3:DeleteObject` on site bucket objects
+- `cloudfront:CreateInvalidation` on the site CloudFront distribution
+
+If older manually attached deploy policies exist on the IAM user, review and remove them after `tofu apply` confirms the OpenTofu-managed policy is active.
 
 ## Expected Result
 
