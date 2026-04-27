@@ -6,6 +6,8 @@ The site is being fully redesigned as a clean, mobile-first food portfolio and l
 
 ## Priorities
 
+- Follow `WORKFLOW.md` for branch, pull request, merge, and task-tracking expectations.
+- Do not merge pull requests. Drake manually reviews and merges PRs.
 - Keep the site simple, fast, accessible, and easy to maintain.
 - Use modern Angular, not legacy AngularJS / Angular 1.x.
 - Favor static or mostly-static architecture.

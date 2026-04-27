@@ -343,6 +343,8 @@ For large redesign work, prefer phases:
 
 When working in this repository:
 
+- Follow `WORKFLOW.md` for branch, pull request, merge, and task-tracking expectations.
+- Do not merge pull requests. Drake manually reviews and merges PRs.
 - Read this file first.
 - Check existing conventions before introducing new ones.
 - Do not assume the current framework beyond the project decision to use modern Angular.
