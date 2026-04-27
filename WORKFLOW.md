@@ -36,10 +36,23 @@ Every PR should include:
 
 - a concise summary of changes
 - validation commands that were run
+- local visual review notes for UI-facing changes
 - any known limitations or follow-up tasks
 - notes about deployment or credential requirements when relevant
 
 If validation cannot be run, state why in the PR description.
+
+## Visual Review
+
+For changes that affect the public site UI, layout, copy, images, accessibility, or styling:
+
+- Run the app locally with `npm start`.
+- Open the local Angular dev server in a browser.
+- Review the affected pages or sections on desktop and mobile viewport sizes.
+- Confirm there are no obvious visual regressions before opening a PR.
+- Note the local visual review in the PR description.
+
+If local visual review cannot be completed, state why in the PR description.
 
 ## Manual Merge Policy
 
