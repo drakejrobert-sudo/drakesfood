@@ -6,8 +6,14 @@ A modern Angular portfolio website for Drake's Food. This first version is a war
 
 Requirements:
 
-- Node.js 20.x LTS
+- Node.js 22.x LTS
 - npm
+
+Use the pinned local Node version:
+
+```bash
+nvm use
+```
 
 Install dependencies:
 
@@ -31,6 +37,12 @@ Type check:
 
 ```bash
 npm run typecheck
+```
+
+Lint:
+
+```bash
+npm run lint
 ```
 
 ## Project structure
