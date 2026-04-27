@@ -6,12 +6,16 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "lint": "echo \"No lint configuration is installed. Use npm run typecheck for type checking.\"",
+    "lint": "ng lint",
     "test": "echo \"No test runner configured yet. Add Angular test support later.\"",
     "typecheck": "tsc -p tsconfig.app.json --noEmit"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
+  "engines": {
+    "node": ">=22.13.0 <23",
+    "npm": "11.x"
+  },
   "dependencies": {
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
@@ -26,7 +30,11 @@
     "@angular/build": "^21.2.8",
     "@angular/cli": "^21.2.8",
     "@angular/compiler-cli": "^21.2.0",
+    "@eslint/js": "^10.0.1",
+    "angular-eslint": "^21.3.1",
+    "eslint": "^10.2.1",
     "prettier": "^3.8.1",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.59.1"
   }
 }

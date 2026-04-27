@@ -29,12 +29,14 @@
 - [x] Accessibility audit and core accessibility fixes
 - [x] Image file optimization/compression
 - [x] SEO metadata and structured data
+- [x] ESLint lint configuration
+- [x] Build/lint/typecheck validation in CI
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
 ## 🔄 In Progress
 
-- [ ] Add build/lint/test validation in CI
+- [ ] None currently
 
 ## 📋 Remaining Tasks
 
@@ -51,11 +53,11 @@
 - [x] Set up AWS S3 + CloudFront hosting
 - [x] Configure Route 53 and ACM
 - [x] Create deployment pipeline in GitHub Actions
-- [ ] Add build/lint/test validation in CI
+- [x] Add build/lint/typecheck validation in CI
 
 ### Quality & Testing
 
-- [ ] Add lint configuration (ESLint)
+- [x] Add lint configuration (ESLint)
 - [ ] Add Angular testing support
 - [ ] Perform responsive testing on mobile/tablet/desktop
 - [ ] Conduct performance and accessibility review
@@ -80,6 +82,9 @@
 - GitHub Actions workflows now use Node 24-native action versions without the temporary Node 24 override
 - Accessibility pass added a main landmark, skip link, visible focus states, reduced-motion handling, section labels, clearer external link labels, and improved RecipeSensei badge contrast
 - Static SEO pass added canonical URL, robots metadata, Open Graph and Twitter card tags, and WebSite JSON-LD
+- SEO follow-up added `Drakes Food`, `drakesfood`, and `@drakesfood` brand aliases plus `robots.txt` and `sitemap.xml`
+- CI now runs ESLint linting before type checking and production builds
+- Angular test runner setup remains deferred and tracked separately
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
 
