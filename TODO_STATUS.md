@@ -23,14 +23,15 @@
 - [x] Existing S3 bucket imported into OpenTofu state
 - [x] CloudFront distribution ID configured for GitHub Actions invalidations
 - [x] GitHub Actions AWS credentials configured
+- [x] OpenTofu-managed GitHub Actions deploy IAM policy applied
+- [x] First S3 deployment from GitHub Actions verified
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
 ## 🔄 In Progress
 
 - [ ] Image file optimization/compression
-- [ ] Apply OpenTofu-managed GitHub Actions deploy IAM policy
-- [ ] Verify first S3 deployment from GitHub Actions
+- [ ] Upgrade GitHub Actions workflows to Node 24-native action versions
 - [ ] Accessibility audit
 - [ ] SEO metadata and structured data
 
@@ -73,7 +74,8 @@
 - HTTP now redirects to HTTPS through CloudFront
 - CloudFront distribution ID is `ETNCPE8F2TB5D`
 - OpenTofu local state currently manages the imported S3 bucket plus CloudFront, ACM, Route 53, bucket policy, and bucket public access block
-- Latest deployment reached S3 sync but failed CloudFront invalidation because the GitHub Actions IAM user needs `cloudfront:CreateInvalidation`
+- Latest deployment succeeded, including S3 sync and CloudFront invalidation for distribution `ETNCPE8F2TB5D`
+- GitHub Actions workflows are being updated from temporary Node 24 forcing to Node 24-native action versions
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
 
