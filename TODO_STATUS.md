@@ -92,6 +92,7 @@
 - Purple theme accents now use shared CSS variables, with a ninja chef mascot in the hero and SVG favicon support
 - Ninja chef mascot now uses a transparent PNG generated with ChatGPT, resized to 128px for the hero and 192px for the favicon
 - Full-size source mascot image is stored at `design/source-images/chef-ninja-avatar-original.png` for future edits and is not deployed by the Angular build
+- Favicon links now use named mascot files to avoid stale browser caches of the old Angular icon
 
 ## Last Updated
 
