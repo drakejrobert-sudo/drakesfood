@@ -90,7 +90,7 @@
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
 - Purple theme accents now use shared CSS variables, with a ninja chef mascot in the hero and SVG favicon support
-- Ninja chef mascot now uses a transparent PNG generated with ChatGPT, resized to 512px for the hero and 192px for the favicon
+- Ninja chef mascot now uses a transparent PNG generated with ChatGPT, resized to 128px for the hero and 192px for the favicon
 
 ## Last Updated
 
