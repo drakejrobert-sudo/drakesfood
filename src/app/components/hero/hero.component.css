@@ -22,8 +22,9 @@
 }
 
 .brand-kicker img {
-  width: 3.2rem;
-  height: 3.2rem;
+  width: 3.8rem;
+  height: 3.8rem;
+  object-fit: contain;
 }
 
 .eyebrow {
