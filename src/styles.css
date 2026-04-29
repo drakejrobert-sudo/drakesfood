@@ -52,6 +52,44 @@ button:focus-visible,
   outline-offset: 4px;
 }
 
+section {
+  width: min(1200px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+button,
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 999px;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 700;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button-primary {
+  background: linear-gradient(135deg, var(--color-purple), var(--color-clay));
+  color: #fff;
+  padding: 0.95rem 1.6rem;
+  box-shadow: 0 14px 28px rgba(61, 37, 111, 0.18);
+}
+
+.button-secondary {
+  background: var(--color-purple-wash);
+  color: var(--color-purple-dark);
+  padding: 0.95rem 1.6rem;
+}
+
 p {
   margin: 0;
 }
@@ -62,6 +100,12 @@ p {
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
+}
+
+@media (min-width: 900px) {
+  section {
+    width: min(1120px, calc(100% - 4rem));
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
