@@ -9,7 +9,7 @@
   <div class="gallery-grid">
     @for (item of galleryItems; track item.imageUrl) {
       <article class="gallery-card">
-        <img [src]="item.imageUrl" [alt]="item.altText" loading="lazy" />
+        <img [src]="item.imageUrl" [alt]="item.altText" width="1280" height="960" loading="lazy" decoding="async" />
         <div class="gallery-copy">
           <h3>{{ item.title }}</h3>
           <p>{{ item.description }}</p>

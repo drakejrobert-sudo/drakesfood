@@ -39,17 +39,19 @@
 
 ## 🔄 In Progress
 
-- [ ] None currently
+- [ ] Conduct performance and accessibility review — #17
 
 ## 📋 Remaining Tasks
 
+Active work is now tracked in GitHub Issues. Pull the next task from the highest-priority open issue and use an issue-scoped feature branch.
+
 ### Content & Visuals
 
-- [ ] Finalize copy for all sections
-- [ ] Add more gallery images or full gallery page (deferred for now)
-- [ ] Add RecipeSensei launch details once available
-- [ ] Refine About section content
-- [ ] Add optional recipe/blog details page later
+- [ ] Finalize copy for all sections — #15
+- [ ] Add more gallery images or full gallery page (deferred for now) — #19
+- [ ] Add RecipeSensei launch details once available — #21
+- [ ] Refine About section content — #16
+- [ ] Add optional recipe/blog details page later — #22
 
 ### Deployment & Infrastructure
 
@@ -61,10 +63,10 @@
 ### Quality & Testing
 
 - [x] Add lint configuration (ESLint)
-- [ ] Add Angular testing support
+- [ ] Add Angular testing support — #18
 - [x] Perform responsive testing on mobile/tablet/desktop
-- [ ] Conduct performance and accessibility review
-- [ ] Add analytics and monitoring if desired
+- [ ] Conduct performance and accessibility review — #17
+- [ ] Add analytics and monitoring if desired — #20
 
 ## Notes
 
@@ -97,7 +99,9 @@
 - Responsive screenshot review covered `375px`, `430px`, `768px`, `820px`, `1024px`, and `1280px` viewports
 - Shared section width and CTA button styles now live in global styles so they apply inside Angular child components
 - Tablet hero image height is capped to avoid an oversized single-column hero before the desktop breakpoint
+- GitHub Issues are now the source of truth for active task tracking; `TODO_STATUS.md` is a high-level snapshot
+- Performance review removed the external Google Fonts request and added explicit sizing/decoding hints to key images
 
 ## Last Updated
 
-April 28, 2026
+April 29, 2026
