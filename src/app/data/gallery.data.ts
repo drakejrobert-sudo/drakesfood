@@ -3,10 +3,10 @@ import { GalleryItem } from './gallery.model';
 export const galleryItems: GalleryItem[] = [
   {
     id: 1,
-    title: 'Margherita Ooni pizza',
-    description: 'Classic pizza with fresh basil and melted mozzarella.',
-    imageUrl: 'assets/images/markaritaOoniPizza.jpeg',
-    altText: 'Margherita pizza fresh from the Ooni oven with melted mozzarella and basil',
+    title: 'Sausage Ooni pizza',
+    description: 'Wood-fired pizza with sausage, prosciutto, spinach, and melted mozzarella.',
+    imageUrl: 'assets/images/ssgOoniPizza.jpeg',
+    altText: 'Ooni pizza topped with sausage, prosciutto, spinach, and melted mozzarella',
   },
   {
     id: 2,
