@@ -5,19 +5,20 @@ This document defines how AI assistants should collaborate on this repository.
 ## Default Workflow
 
 - Before making code or documentation changes, check the current branch with `git branch --show-current`.
-- If the current branch is `main`, create or switch to a feature branch before editing.
-- Work on feature branches, not directly on `main`.
+- Pick the next highest-priority open GitHub issue before starting implementation work.
+- If the current branch is `main`, create or switch to a feature branch for the selected issue before editing.
+- Work on issue-scoped feature branches, not directly on `main`.
 - Keep changes small, reviewable, and aligned with `AGENTS.md`.
-- Update `TODO_STATUS.md` when task status changes.
+- Update the linked GitHub issue and `TODO_STATUS.md` when project status changes.
 - Run relevant validation before opening a PR.
-- Open a pull request when work is ready for review.
+- Open a pull request linked to the issue when work is ready for review.
 - Do not merge pull requests. Drake manually reviews and merges PRs.
 
 ## Git Rules For AI Assistants
 
 AI assistants may, when asked to implement work:
 
-- create or use a feature branch
+- create or use an issue-scoped feature branch
 - make code/documentation changes
 - commit relevant changes
 - push the feature branch
@@ -37,12 +38,33 @@ AI assistants must not:
 Every PR should include:
 
 - a concise summary of changes
+- a linked issue using a GitHub closing keyword, such as `Closes #12`
 - validation commands that were run
 - local visual review notes for UI-facing changes
 - any known limitations or follow-up tasks
 - notes about deployment or credential requirements when relevant
 
 If validation cannot be run, state why in the PR description.
+
+Use GitHub closing keywords in PR descriptions so merging the PR automatically closes the completed issue. Prefer `Closes #<issue-number>` unless the PR only partially addresses the issue.
+
+## Issue Workflow
+
+GitHub Issues are the source of truth for active work.
+
+When starting new work:
+
+- Review open issues and select the next highest-priority issue.
+- Confirm the issue is still valid and not blocked.
+- Create a feature branch for that issue before editing.
+- Use a branch name that includes the issue number and a short description, such as `issue-12-refine-about-copy`.
+- Keep the branch focused on the selected issue.
+
+When opening a PR:
+
+- Link the issue with `Closes #<issue-number>` when the PR fully completes the issue.
+- Use `Refs #<issue-number>` when the PR is related but does not close the issue.
+- Mention any follow-up work that should become a separate issue.
 
 ## Visual Review
 
@@ -69,7 +91,9 @@ Even if CI passes and the PR is mergeable, AI assistants should stop after openi
 
 ## Task Tracking
 
-Use `TODO_STATUS.md` for project status.
+Use GitHub Issues for active task tracking and priority order.
+
+Use `TODO_STATUS.md` as a high-level project status snapshot, not the primary backlog.
 
 When completing, deferring, or discovering work, update the relevant section:
 
@@ -80,6 +104,8 @@ When completing, deferring, or discovering work, update the relevant section:
 - Last Updated
 
 Do not mark work complete unless it has actually been done and validated where applicable.
+
+When discovering new actionable work, prefer creating or updating a GitHub issue instead of adding it only to `TODO_STATUS.md`.
 
 ## Validation
 
