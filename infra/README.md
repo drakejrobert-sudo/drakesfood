@@ -10,8 +10,40 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - CloudFront distribution with HTTP-to-HTTPS redirects
 - Route 53 alias records for apex and `www`
 - IAM user policy for GitHub Actions deployment
+- API Gateway HTTP API for recipe submissions
+- Lambda function, execution role, and CloudWatch logs for recipe submissions
+- DynamoDB table for recipe submission storage
+- SES send permissions for recipe submission notifications
 
 CloudFront requires ACM certificates to be in `us-east-1`, so this config uses a secondary AWS provider for the certificate while keeping the existing S3 bucket in `us-east-2`.
+
+## Recipe Submissions
+
+The recipe submission backend is defined as low-cost serverless infrastructure:
+
+- API Gateway HTTP API exposes `POST /recipe-submissions`.
+- CORS is restricted to `drakesfood.com`, `www.drakesfood.com`, and local Angular development by default.
+- Lambda receives the table name, source site, allowed origins, and SES sender/recipient values through environment variables.
+- DynamoDB stores accepted submissions by `submissionId`.
+- CloudWatch log groups use the configured retention period.
+
+Issue #26 only defines the infrastructure. The Lambda source at `lambda/recipe-submissions/index.mjs` is a placeholder so OpenTofu can package and validate the function before issue #27 adds real submission handling.
+
+Before applying recipe submission infrastructure for production, set these values with a local `.tfvars` file or `-var` arguments. The SES identity ARN can be omitted if the verified identity is the site domain in the active AWS account.
+
+```hcl
+recipe_submissions_ses_identity_arn    = "arn:aws:ses:us-east-2:<account-id>:identity/drakesfood.com"
+recipe_submissions_ses_sender_email    = "<verified-sender-email>"
+recipe_submissions_ses_recipient_email = "<recipient-email>"
+```
+
+Do not commit real email addresses or account-specific values unless they are intentionally public. The SES sender identity must be verified before email notifications can work.
+
+After apply, get the API endpoint for frontend configuration:
+
+```bash
+AWS_PROFILE=drakesfood tofu output -raw recipe_submissions_api_endpoint
+```
 
 ## One-Time Setup
 
