@@ -39,10 +39,11 @@
 - [x] Recipe submission API contract documented
 - [x] Recipe submission AWS infrastructure defined
 - [x] Recipe submission Lambda handler implemented
+- [x] Recipe submission email notifications added
 
 ## 🔄 In Progress
 
-- [ ] Add recipe submission email notifications — #28
+- [ ] Wire recipe submission form to live API — #29
 - [ ] Conduct performance and accessibility review — #17
 
 ## 📋 Remaining Tasks
@@ -56,7 +57,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - [ ] Add RecipeSensei launch details once available — #21
 - [ ] Refine About section content — #16
 - [ ] Add optional recipe/blog details page later — #22
-- [ ] Add recipe submission API wiring, security, and docs — #29-#31
+- [ ] Add recipe submission security hardening and docs — #30-#31
 
 ### Deployment & Infrastructure
 
@@ -97,11 +98,12 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Angular test runner setup remains deferred and tracked separately
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
-- Recipe submissions are starting with a frontend-only form section; live API wiring remains a follow-up.
+- Recipe submissions started with a frontend-only form section; live API wiring is now in progress.
 - Recipe submission API contract is documented before backend and infrastructure implementation.
 - Recipe submission infrastructure is defined with OpenTofu using API Gateway, Lambda, DynamoDB, SES permissions, and CloudWatch logs.
 - Recipe submission Lambda handler validates server-side input, handles honeypot submissions, and writes accepted ideas to DynamoDB.
-- Recipe submission email notifications are being added through SES after accepted submissions are stored.
+- Recipe submission email notifications are sent through SES after accepted submissions are stored.
+- Recipe submission frontend wiring uses runtime app config so the API endpoint can be set after OpenTofu apply.
 - Generic `/favicon.ico` and `/favicon.png` fallbacks should match the named chef-ninja favicon files for browsers that request default favicon paths directly.
 - Purple theme accents now use shared CSS variables, with a ninja chef mascot in the hero and SVG favicon support
 - Ninja chef mascot now uses a transparent PNG generated with ChatGPT, resized to 128px for the hero and 192px for the favicon

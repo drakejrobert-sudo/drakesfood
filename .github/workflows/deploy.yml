@@ -15,6 +15,7 @@ env:
   AWS_REGION: us-east-2
   S3_BUCKET: drakesfood.com
   CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
+  RECIPE_SUBMISSIONS_API_BASE_URL: ${{ vars.RECIPE_SUBMISSIONS_API_BASE_URL }}
 
 jobs:
   deploy:
@@ -39,6 +40,10 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Write runtime app config
+        run: |
+          node -e 'const fs = require("node:fs"); const config = { recipeSubmissionsApiBaseUrl: process.env.RECIPE_SUBMISSIONS_API_BASE_URL || "" }; fs.writeFileSync("dist/drakesfood-app/browser/app-config.json", JSON.stringify(config, null, 2) + "\n");'
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6

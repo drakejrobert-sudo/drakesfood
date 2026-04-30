@@ -86,12 +86,12 @@
     <div class="form-actions">
       <button class="button button-primary" type="submit" [disabled]="isSubmitting()">
         @if (isSubmitting()) {
-          Checking idea...
+          Sending idea...
         } @else {
           Submit recipe idea
         }
       </button>
-      <p class="form-note">Live sending will be wired to <code>POST /recipe-submissions</code> in a follow-up.</p>
+      <p class="form-note">Submissions are text/link only and reviewed manually before anything is shared.</p>
     </div>
 
     @if (statusMessage()) {
