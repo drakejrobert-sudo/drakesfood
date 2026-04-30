@@ -30,6 +30,8 @@ The recipe submission backend is defined as low-cost serverless infrastructure:
 
 The Lambda source lives at `lambda/recipe-submissions/index.mjs`. It validates submissions, stores accepted ideas in DynamoDB, and sends SES notifications when sender and recipient values are configured.
 
+See `../docs/recipe-submission-system.md` for the end-to-end recipe submission system documentation, including frontend wiring, API behavior, deployment, testing, and CloudWatch log locations.
+
 Before applying recipe submission infrastructure for production, set these values with a local `.tfvars` file or `-var` arguments. The SES identity ARN can be omitted if the verified identity is the site domain in the active AWS account.
 
 ```hcl

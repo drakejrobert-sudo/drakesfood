@@ -2,6 +2,8 @@
 
 This contract defines the V1 recipe submission API for `drakesfood.com`. V1 accepts text and links only. Submissions are stored for Drake to review manually and must never auto-publish to the website.
 
+See `recipe-submission-system.md` for the end-to-end system documentation, including frontend wiring, infrastructure, deployment, testing, and logs.
+
 ## Endpoint
 
 ```http
