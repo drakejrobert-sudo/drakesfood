@@ -45,6 +45,15 @@ export class RecipeSubmissionComponent {
       clearTimeout(this.simulatedRequest);
     }
 
+    const payload = this.buildPayload();
+
+    // Keep honeypot handling generic so automated submissions do not get useful feedback.
+    if (payload.website) {
+      this.status.set('success');
+      this.statusMessage.set('Thanks! Your idea was sent to Drake.');
+      return;
+    }
+
     if (this.submissionForm.invalid) {
       this.submissionForm.markAllAsTouched();
       this.status.set('error');
@@ -52,7 +61,6 @@ export class RecipeSubmissionComponent {
       return;
     }
 
-    const payload = this.buildPayload();
     this.status.set('submitting');
     this.statusMessage.set('Checking the recipe idea...');
 
