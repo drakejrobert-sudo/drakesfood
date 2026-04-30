@@ -27,8 +27,11 @@ The recipe submission backend is defined as low-cost serverless infrastructure:
 - DynamoDB stores accepted submissions by `submissionId`.
 - SES sends Drake a plain-text notification after valid submissions are stored.
 - CloudWatch log groups use the configured retention period.
+- API Gateway throttling defaults to 10 burst requests and 5 sustained requests per second.
 
-The Lambda source lives at `lambda/recipe-submissions/index.mjs`. It validates submissions, stores accepted ideas in DynamoDB, and sends SES notifications when sender and recipient values are configured.
+The Lambda source lives at `lambda/recipe-submissions/index.mjs`. It validates submissions, stores accepted ideas in DynamoDB, and sends SES notifications when sender and recipient values are configured. It also enforces the configured origin allowlist for browser requests, requires JSON request bodies, rejects oversized request bodies, and handles honeypot submissions without revealing spam detection to bots.
+
+The Lambda request body limit defaults to `16384` bytes and can be adjusted with `recipe_submissions_max_body_bytes` if the text-only V1 form needs more room later. V1 intentionally does not include CAPTCHA; add it only if real abuse requires the extra friction.
 
 See `../docs/recipe-submission-system.md` for the end-to-end recipe submission system documentation, including frontend wiring, API behavior, deployment, testing, and CloudWatch log locations.
 

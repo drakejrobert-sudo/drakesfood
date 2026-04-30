@@ -13,6 +13,7 @@ const FIELD_LIMITS = {
 };
 
 const STRING_FIELDS = ['title', 'description', 'name', 'email', 'recipeUrl', 'socialUrl', 'website'];
+const DEFAULT_MAX_BODY_BYTES = 16 * 1024;
 
 let dynamoClient;
 let putItemCommand;
@@ -32,11 +33,32 @@ export const createHandler = ({
     });
   }
 
+  if (!isAllowedOrigin(event)) {
+    return jsonResponse(403, {
+      success: false,
+      message: 'Recipe submissions are not available from this origin.',
+    });
+  }
+
+  if (!isJsonContentType(event)) {
+    return jsonResponse(415, {
+      success: false,
+      message: 'Please send recipe submissions as JSON.',
+    });
+  }
+
   let body;
 
   try {
-    body = parseBody(event);
-  } catch {
+    body = parseBody(event, getMaxBodyBytes());
+  } catch (error) {
+    if (error instanceof RequestBodyTooLargeError) {
+      return jsonResponse(413, {
+        success: false,
+        message: 'Please shorten your recipe idea and try again.',
+      });
+    }
+
     return jsonResponse(400, {
       success: false,
       message: 'Please send a valid JSON recipe submission.',
@@ -107,11 +129,15 @@ function getMethod(event) {
   return event.requestContext?.http?.method ?? event.httpMethod ?? '';
 }
 
-function parseBody(event) {
+function parseBody(event, maxBodyBytes) {
   const rawBody = event.isBase64Encoded ? Buffer.from(event.body ?? '', 'base64').toString('utf8') : event.body;
 
   if (!rawBody) {
     throw new Error('Missing body');
+  }
+
+  if (Buffer.byteLength(rawBody, 'utf8') > maxBodyBytes) {
+    throw new RequestBodyTooLargeError();
   }
 
   const parsed = JSON.parse(rawBody);
@@ -121,6 +147,40 @@ function parseBody(event) {
   }
 
   return parsed;
+}
+
+function isAllowedOrigin(event) {
+  const origin = getHeader(event, 'origin');
+
+  if (!origin) {
+    return true;
+  }
+
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  return allowedOrigins.length === 0 || allowedOrigins.includes(origin);
+}
+
+function isJsonContentType(event) {
+  const contentType = getHeader(event, 'content-type');
+
+  return !contentType || contentType.toLowerCase().includes('application/json');
+}
+
+function getHeader(event, headerName) {
+  const headers = event.headers || {};
+  const matchingKey = Object.keys(headers).find((key) => key.toLowerCase() === headerName);
+
+  return matchingKey ? headers[matchingKey] : '';
+}
+
+function getMaxBodyBytes() {
+  const configuredLimit = Number.parseInt(process.env.RECIPE_SUBMISSIONS_MAX_BODY_BYTES || '', 10);
+
+  return Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : DEFAULT_MAX_BODY_BYTES;
 }
 
 function normalizeBody(body) {
@@ -334,3 +394,5 @@ function jsonResponse(statusCode, body) {
     body: JSON.stringify(body),
   };
 }
+
+class RequestBodyTooLargeError extends Error {}

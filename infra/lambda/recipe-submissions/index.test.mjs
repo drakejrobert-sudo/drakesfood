@@ -11,6 +11,9 @@ function createEvent(body, method = 'POST') {
         method,
       },
     },
+    headers: {
+      'content-type': 'application/json',
+    },
     body: JSON.stringify(body),
   };
 }
@@ -114,6 +117,7 @@ test('rejects malformed JSON cleanly', async () => {
 
   const response = await handler({
     requestContext: { http: { method: 'POST' } },
+    headers: { 'content-type': 'application/json' },
     body: '{nope',
   });
 
@@ -134,6 +138,62 @@ test('rejects non-POST requests cleanly', async () => {
     success: false,
     message: 'Recipe submissions only accept POST requests.',
   });
+});
+
+test('rejects disallowed browser origins', async () => {
+  process.env.ALLOWED_ORIGINS = 'https://drakesfood.com,http://localhost:4200';
+  const handler = createHandler({ saveSubmission: async () => undefined });
+
+  const response = await handler({
+    ...createEvent({ title: 'Pizza', description: 'Try this.' }),
+    headers: {
+      'content-type': 'application/json',
+      origin: 'https://spam.example',
+    },
+  });
+
+  assert.equal(response.statusCode, 403);
+  assert.deepEqual(parseResponse(response), {
+    success: false,
+    message: 'Recipe submissions are not available from this origin.',
+  });
+  delete process.env.ALLOWED_ORIGINS;
+});
+
+test('rejects unsupported content types', async () => {
+  const handler = createHandler({ saveSubmission: async () => undefined });
+
+  const response = await handler({
+    ...createEvent({ title: 'Pizza', description: 'Try this.' }),
+    headers: {
+      'content-type': 'text/plain',
+    },
+  });
+
+  assert.equal(response.statusCode, 415);
+  assert.deepEqual(parseResponse(response), {
+    success: false,
+    message: 'Please send recipe submissions as JSON.',
+  });
+});
+
+test('rejects oversized request bodies before parsing', async () => {
+  process.env.RECIPE_SUBMISSIONS_MAX_BODY_BYTES = '32';
+  const handler = createHandler({ saveSubmission: async () => undefined });
+
+  const response = await handler(
+    createEvent({
+      title: 'Pizza',
+      description: 'This body is intentionally too long for the configured test limit.',
+    }),
+  );
+
+  assert.equal(response.statusCode, 413);
+  assert.deepEqual(parseResponse(response), {
+    success: false,
+    message: 'Please shorten your recipe idea and try again.',
+  });
+  delete process.env.RECIPE_SUBMISSIONS_MAX_BODY_BYTES;
 });
 
 test('rejects invalid optional email and URL values', async () => {
@@ -176,6 +236,7 @@ test('parses base64-encoded request bodies', async () => {
 
   const response = await handler({
     requestContext: { http: { method: 'POST' } },
+    headers: { 'content-type': 'application/json' },
     isBase64Encoded: true,
     body: encodedBody,
   });

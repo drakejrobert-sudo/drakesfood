@@ -108,11 +108,12 @@ resource "aws_lambda_function" "recipe_submissions" {
 
   environment {
     variables = {
-      ALLOWED_ORIGINS                = join(",", var.recipe_submissions_allowed_origins)
-      RECIPE_SUBMISSIONS_TABLE_NAME  = aws_dynamodb_table.recipe_submissions.name
-      RECIPE_SUBMISSIONS_SOURCE_SITE = var.recipe_submissions_source_site
-      SES_RECIPIENT_EMAIL            = var.recipe_submissions_ses_recipient_email
-      SES_SENDER_EMAIL               = var.recipe_submissions_ses_sender_email
+      ALLOWED_ORIGINS                   = join(",", var.recipe_submissions_allowed_origins)
+      RECIPE_SUBMISSIONS_MAX_BODY_BYTES = tostring(var.recipe_submissions_max_body_bytes)
+      RECIPE_SUBMISSIONS_TABLE_NAME     = aws_dynamodb_table.recipe_submissions.name
+      RECIPE_SUBMISSIONS_SOURCE_SITE    = var.recipe_submissions_source_site
+      SES_RECIPIENT_EMAIL               = var.recipe_submissions_ses_recipient_email
+      SES_SENDER_EMAIL                  = var.recipe_submissions_ses_sender_email
     }
   }
 
