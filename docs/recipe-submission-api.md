@@ -82,6 +82,17 @@ Use this response for missing required fields, empty required fields after trimm
 | `415 Unsupported Media Type` | Request does not use `application/json`, if content-type enforcement is implemented. |
 | `500 Internal Server Error` | Unexpected server failure. Return a generic message with no stack trace or AWS details. |
 
+## Security Behavior
+
+The API uses defense in depth for the public form:
+
+- API Gateway CORS is restricted to approved production and local development origins.
+- Lambda also checks the `Origin` header when present and rejects origins outside the configured allowlist.
+- Request bodies must use `application/json` when a `Content-Type` header is present.
+- Request bodies larger than the configured Lambda limit are rejected before JSON parsing.
+- API Gateway throttling is configured for a small V1 public form.
+- CAPTCHA is intentionally omitted for V1 unless real abuse requires it later.
+
 ## Honeypot Behavior
 
 `website` is a hidden spam-trap field. If `website` contains a non-empty value after trimming, the backend should:
