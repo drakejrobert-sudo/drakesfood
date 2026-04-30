@@ -50,6 +50,7 @@ npm run lint
 - `src/app/` - Angular components and app entrypoint
 - `src/app/data/` - placeholder gallery data
 - `src/assets/images/` - local placeholder food assets
+- `docs/` - feature contracts and implementation notes
 - `infra/` - OpenTofu infrastructure for S3, CloudFront, ACM, and Route 53
 - `.github/copilot-instructions.md` - project guidance for Copilot
 - `public/` - static assets for app build
