@@ -55,6 +55,10 @@ npm run lint
 - `.github/copilot-instructions.md` - project guidance for Copilot
 - `public/` - static assets for app build
 
+## Recipe submissions
+
+The V1 recipe submission system is documented in `docs/recipe-submission-system.md`. The detailed API contract is documented in `docs/recipe-submission-api.md`.
+
 ## Deployment
 
 The site deploys built Angular assets to the existing `drakesfood.com` S3 bucket through GitHub Actions. HTTPS is handled by CloudFront with an ACM certificate and Route 53 records managed by OpenTofu in `infra/`.

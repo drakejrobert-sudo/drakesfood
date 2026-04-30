@@ -33,6 +33,8 @@ The Lambda source lives at `lambda/recipe-submissions/index.mjs`. It validates s
 
 The Lambda request body limit defaults to `16384` bytes and can be adjusted with `recipe_submissions_max_body_bytes` if the text-only V1 form needs more room later. V1 intentionally does not include CAPTCHA; add it only if real abuse requires the extra friction.
 
+See `../docs/recipe-submission-system.md` for the end-to-end recipe submission system documentation, including frontend wiring, API behavior, deployment, testing, and CloudWatch log locations.
+
 Before applying recipe submission infrastructure for production, set these values with a local `.tfvars` file or `-var` arguments. The SES identity ARN can be omitted if the verified identity is the site domain in the active AWS account.
 
 ```hcl
