@@ -40,10 +40,11 @@
 - [x] Recipe submission AWS infrastructure defined
 - [x] Recipe submission Lambda handler implemented
 - [x] Recipe submission email notifications added
+- [x] Recipe submission frontend wired to runtime-configured API
 
 ## 🔄 In Progress
 
-- [ ] Wire recipe submission form to live API — #29
+- [ ] Add recipe submission security and spam hardening — #30
 - [ ] Conduct performance and accessibility review — #17
 
 ## 📋 Remaining Tasks
@@ -57,7 +58,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - [ ] Add RecipeSensei launch details once available — #21
 - [ ] Refine About section content — #16
 - [ ] Add optional recipe/blog details page later — #22
-- [ ] Add recipe submission security hardening and docs — #30-#31
+- [ ] Add recipe submission system documentation — #31
 
 ### Deployment & Infrastructure
 
@@ -104,6 +105,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Recipe submission Lambda handler validates server-side input, handles honeypot submissions, and writes accepted ideas to DynamoDB.
 - Recipe submission email notifications are sent through SES after accepted submissions are stored.
 - Recipe submission frontend wiring uses runtime app config so the API endpoint can be set after OpenTofu apply.
+- Recipe submission security hardening is being added with Lambda origin checks, JSON content-type enforcement, request body size limits, CORS allowlists, throttling, and honeypot handling.
 - Generic `/favicon.ico` and `/favicon.png` fallbacks should match the named chef-ninja favicon files for browsers that request default favicon paths directly.
 - Purple theme accents now use shared CSS variables, with a ninja chef mascot in the hero and SVG favicon support
 - Ninja chef mascot now uses a transparent PNG generated with ChatGPT, resized to 128px for the hero and 192px for the favicon

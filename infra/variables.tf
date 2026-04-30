@@ -56,6 +56,12 @@ variable "recipe_submissions_log_retention_days" {
   default     = 30
 }
 
+variable "recipe_submissions_max_body_bytes" {
+  description = "Maximum request body size accepted by the recipe submission Lambda."
+  type        = number
+  default     = 16384
+}
+
 variable "recipe_submissions_ses_identity_arn" {
   description = "Optional SES identity ARN allowed to send recipe submission emails. Defaults to the domain identity for the active AWS account."
   type        = string
