@@ -21,10 +21,12 @@ function parseResponse(response) {
 
 test('saves a valid recipe submission', async () => {
   const savedItems = [];
+  const notifications = [];
   const handler = createHandler({
     now: () => fixedDate,
     uuid: () => 'submission-123',
     saveSubmission: async (item) => savedItems.push(item),
+    sendNotification: async (item) => notifications.push(item),
   });
 
   const response = await handler(
@@ -60,11 +62,16 @@ test('saves a valid recipe submission', async () => {
       source: 'drakesfood.com',
     },
   ]);
+  assert.deepEqual(notifications, savedItems);
 });
 
 test('returns validation error without saving when required fields are missing', async () => {
   const savedItems = [];
-  const handler = createHandler({ saveSubmission: async (item) => savedItems.push(item) });
+  const notifications = [];
+  const handler = createHandler({
+    saveSubmission: async (item) => savedItems.push(item),
+    sendNotification: async (item) => notifications.push(item),
+  });
 
   const response = await handler(createEvent({ title: '', description: '' }));
 
@@ -74,11 +81,16 @@ test('returns validation error without saving when required fields are missing',
     message: 'Please include a recipe title and description.',
   });
   assert.deepEqual(savedItems, []);
+  assert.deepEqual(notifications, []);
 });
 
 test('handles populated honeypot as generic success without saving', async () => {
   const savedItems = [];
-  const handler = createHandler({ saveSubmission: async (item) => savedItems.push(item) });
+  const notifications = [];
+  const handler = createHandler({
+    saveSubmission: async (item) => savedItems.push(item),
+    sendNotification: async (item) => notifications.push(item),
+  });
 
   const response = await handler(
     createEvent({
@@ -94,6 +106,7 @@ test('handles populated honeypot as generic success without saving', async () =>
     message: 'Thanks! Your idea was sent to Drake.',
   });
   assert.deepEqual(savedItems, []);
+  assert.deepEqual(notifications, []);
 });
 
 test('rejects malformed JSON cleanly', async () => {
@@ -169,4 +182,30 @@ test('parses base64-encoded request bodies', async () => {
 
   assert.equal(response.statusCode, 200);
   assert.equal(savedItems[0].submissionId, 'submission-456');
+});
+
+test('returns success when notification fails after saving', async () => {
+  const savedItems = [];
+  const handler = createHandler({
+    now: () => fixedDate,
+    uuid: () => 'submission-789',
+    saveSubmission: async (item) => savedItems.push(item),
+    sendNotification: async () => {
+      throw new Error('SES unavailable');
+    },
+  });
+
+  const response = await handler(
+    createEvent({
+      title: 'Ratatouille',
+      description: 'Try a smoky version.',
+    }),
+  );
+
+  assert.equal(response.statusCode, 200);
+  assert.deepEqual(parseResponse(response), {
+    success: true,
+    message: 'Thanks! Your idea was sent to Drake.',
+  });
+  assert.equal(savedItems.length, 1);
 });

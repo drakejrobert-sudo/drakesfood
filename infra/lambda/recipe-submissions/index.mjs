@@ -16,10 +16,13 @@ const STRING_FIELDS = ['title', 'description', 'name', 'email', 'recipeUrl', 'so
 
 let dynamoClient;
 let putItemCommand;
+let sesClient;
+let sendEmailCommand;
 
 export const createHandler = ({
   now = () => new Date(),
   saveSubmission = saveSubmissionToDynamoDb,
+  sendNotification = sendNotificationEmail,
   uuid = randomUUID,
 } = {}) => async (event = {}) => {
   if (getMethod(event) !== 'POST') {
@@ -80,6 +83,15 @@ export const createHandler = ({
     return jsonResponse(500, {
       success: false,
       message: 'Something went wrong sending your recipe idea. Please try again later.',
+    });
+  }
+
+  try {
+    await sendNotification(item);
+  } catch (error) {
+    console.error('Failed to send recipe submission notification.', {
+      errorName: error?.name,
+      submissionId: item.submissionId,
     });
   }
 
@@ -210,6 +222,43 @@ async function saveSubmissionToDynamoDb(item) {
   );
 }
 
+async function sendNotificationEmail(item) {
+  const senderEmail = process.env.SES_SENDER_EMAIL;
+  const recipientEmail = process.env.SES_RECIPIENT_EMAIL;
+
+  if (!senderEmail || !recipientEmail) {
+    console.warn('Recipe submission notification skipped because SES sender or recipient is not configured.', {
+      submissionId: item.submissionId,
+    });
+    return;
+  }
+
+  const { SESClient, SendEmailCommand } = await loadSesClient();
+  const client = sesClient ?? new SESClient({});
+  sesClient = client;
+
+  await client.send(
+    new SendEmailCommand({
+      Source: senderEmail,
+      Destination: {
+        ToAddresses: [recipientEmail],
+      },
+      Message: {
+        Subject: {
+          Charset: 'UTF-8',
+          Data: `New recipe idea: ${item.title}`,
+        },
+        Body: {
+          Text: {
+            Charset: 'UTF-8',
+            Data: formatNotificationEmail(item),
+          },
+        },
+      },
+    }),
+  );
+}
+
 async function loadDynamoDbClient() {
   if (putItemCommand) {
     return putItemCommand;
@@ -218,6 +267,34 @@ async function loadDynamoDbClient() {
   putItemCommand = await import('@aws-sdk/client-dynamodb');
 
   return putItemCommand;
+}
+
+async function loadSesClient() {
+  if (sendEmailCommand) {
+    return sendEmailCommand;
+  }
+
+  sendEmailCommand = await import('@aws-sdk/client-ses');
+
+  return sendEmailCommand;
+}
+
+function formatNotificationEmail(item) {
+  return [
+    'A new recipe idea was submitted on drakesfood.com.',
+    '',
+    `Title: ${item.title}`,
+    `Description / notes: ${item.description}`,
+    `Name or handle: ${item.name || 'Not provided'}`,
+    `Email: ${item.email || 'Not provided'}`,
+    `Recipe URL: ${item.recipeUrl || 'Not provided'}`,
+    `Social URL: ${item.socialUrl || 'Not provided'}`,
+    `Permission to credit: ${item.permissionToCredit ? 'Yes' : 'No'}`,
+    '',
+    `Submission ID: ${item.submissionId}`,
+    `Submitted at: ${item.submittedAt}`,
+    `Source: ${item.source}`,
+  ].join('\n');
 }
 
 function toDynamoDbItem(item) {

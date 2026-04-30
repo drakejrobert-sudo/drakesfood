@@ -25,9 +25,10 @@ The recipe submission backend is defined as low-cost serverless infrastructure:
 - CORS is restricted to `drakesfood.com`, `www.drakesfood.com`, and local Angular development by default.
 - Lambda receives the table name, source site, allowed origins, and SES sender/recipient values through environment variables.
 - DynamoDB stores accepted submissions by `submissionId`.
+- SES sends Drake a plain-text notification after valid submissions are stored.
 - CloudWatch log groups use the configured retention period.
 
-Issue #26 only defines the infrastructure. The Lambda source at `lambda/recipe-submissions/index.mjs` is a placeholder so OpenTofu can package and validate the function before issue #27 adds real submission handling.
+The Lambda source lives at `lambda/recipe-submissions/index.mjs`. It validates submissions, stores accepted ideas in DynamoDB, and sends SES notifications when sender and recipient values are configured.
 
 Before applying recipe submission infrastructure for production, set these values with a local `.tfvars` file or `-var` arguments. The SES identity ARN can be omitted if the verified identity is the site domain in the active AWS account.
 
@@ -37,7 +38,7 @@ recipe_submissions_ses_sender_email    = "<verified-sender-email>"
 recipe_submissions_ses_recipient_email = "<recipient-email>"
 ```
 
-Do not commit real email addresses or account-specific values unless they are intentionally public. The SES sender identity must be verified before email notifications can work.
+Do not commit real email addresses or account-specific values unless they are intentionally public. The SES sender identity must be verified before email notifications can work. If the SES sender or recipient is missing, accepted submissions are still stored but email notification is skipped and logged. If SES fails after storage, the Lambda logs the failure and still returns success to avoid encouraging duplicate submissions.
 
 After apply, get the API endpoint for frontend configuration:
 
