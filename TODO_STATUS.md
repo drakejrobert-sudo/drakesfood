@@ -38,7 +38,7 @@
 
 ## 🔄 In Progress
 
-- [ ] None currently
+- [ ] Add Submit a Recipe Idea section — #24
 
 ## 📋 Remaining Tasks
 
@@ -49,6 +49,7 @@
 - [ ] Add RecipeSensei launch details once available
 - [ ] Refine About section content
 - [ ] Add optional recipe/blog details page later
+- [ ] Add recipe submission API contract and backend flow — #25-#31
 
 ### Deployment & Infrastructure
 
@@ -89,6 +90,7 @@
 - Angular test runner setup remains deferred and tracked separately
 - RecipeSensei remains marked as "coming soon" until launch
 - Instagram link remains `https://instagram.com/drakesfood`
+- Recipe submissions are starting with a frontend-only form section; live API wiring remains a follow-up.
 - Purple theme accents now use shared CSS variables, with a ninja chef mascot in the hero and SVG favicon support
 - Ninja chef mascot now uses a transparent PNG generated with ChatGPT, resized to 128px for the hero and 192px for the favicon
 - Full-size source mascot image is stored at `design/source-images/chef-ninja-avatar-original.png` for future edits and is not deployed by the Angular build
@@ -96,4 +98,4 @@
 
 ## Last Updated
 
-April 28, 2026
+April 30, 2026
