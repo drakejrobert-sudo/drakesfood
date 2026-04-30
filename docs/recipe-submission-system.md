@@ -125,9 +125,6 @@ Default function name: `drakesfood-recipe-submissions`
 The handler:
 
 - Accepts only `POST` requests.
-- Checks the request `Origin` header against the configured allowlist when present.
-- Requires JSON request bodies when a `Content-Type` header is present.
-- Rejects oversized request bodies before JSON parsing.
 - Normalizes and validates submitted fields server-side.
 - Treats populated `website` honeypot submissions as successful spam-filtered responses without storing or emailing them.
 - Stores accepted submissions in DynamoDB.
@@ -138,8 +135,7 @@ Key Lambda environment variables:
 
 | Variable | Purpose | Production source | Local/testing value |
 | --- | --- | --- | --- |
-| `ALLOWED_ORIGINS` | Comma-separated browser origins allowed by Lambda origin checks. | `recipe_submissions_allowed_origins` OpenTofu variable. | Include `http://localhost:4200` when testing from Angular dev server. |
-| `RECIPE_SUBMISSIONS_MAX_BODY_BYTES` | Maximum raw request body size before JSON parsing. | `recipe_submissions_max_body_bytes`, default `16384`. | Use default unless testing body-limit behavior. |
+| `ALLOWED_ORIGINS` | Comma-separated browser origins configured on API Gateway CORS and passed to Lambda for future hardening. | `recipe_submissions_allowed_origins` OpenTofu variable. | Include `http://localhost:4200` when testing from Angular dev server. |
 | `RECIPE_SUBMISSIONS_TABLE_NAME` | DynamoDB table name for accepted submissions. | Created table name from OpenTofu. | Test table name or mocked dependency in Lambda tests. |
 | `RECIPE_SUBMISSIONS_SOURCE_SITE` | Source value stored on DynamoDB items. | `recipe_submissions_source_site`, default `drakesfood.com`. | `local` or `drakesfood.com`. |
 | `SES_RECIPIENT_EMAIL` | Email address that receives notifications. | `recipe_submissions_ses_recipient_email`. | Blank to skip email, or verified sandbox recipient. |
@@ -170,7 +166,6 @@ Useful variables for this feature are defined in `infra/variables.tf`:
 - `recipe_submissions_allowed_origins`
 - `recipe_submissions_lambda_function_name`
 - `recipe_submissions_log_retention_days`
-- `recipe_submissions_max_body_bytes`
 - `recipe_submissions_ses_identity_arn`
 - `recipe_submissions_ses_recipient_email`
 - `recipe_submissions_ses_sender_email`
