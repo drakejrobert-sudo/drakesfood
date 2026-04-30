@@ -97,10 +97,11 @@ AWS_PROFILE=drakesfood tofu plan
 AWS_PROFILE=drakesfood tofu apply
 ```
 
-After apply finishes, get the CloudFront distribution ID:
+After apply finishes, get the CloudFront distribution ID and recipe submission API endpoint:
 
 ```bash
 AWS_PROFILE=drakesfood tofu output -raw cloudfront_distribution_id
+AWS_PROFILE=drakesfood tofu output -raw recipe_submissions_api_endpoint
 ```
 
 Add that value as a GitHub repository variable named `CLOUDFRONT_DISTRIBUTION_ID`.
@@ -112,9 +113,12 @@ The deploy workflow needs these GitHub repository secrets:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 
-It also needs this GitHub repository variable:
+It also needs these GitHub repository variables:
 
 - `CLOUDFRONT_DISTRIBUTION_ID`
+- `RECIPE_SUBMISSIONS_API_BASE_URL`
+
+Set `RECIPE_SUBMISSIONS_API_BASE_URL` to the `recipe_submissions_api_endpoint` OpenTofu output after the recipe submission infrastructure is applied. The deploy workflow writes this value into `app-config.json` at deploy time. Until it is configured, the public form keeps its not-connected-yet fallback.
 
 The AWS credentials must be allowed to sync files to the S3 bucket and create CloudFront invalidations. Until `CLOUDFRONT_DISTRIBUTION_ID` is configured, the deploy workflow will still sync to S3 but will skip CloudFront invalidation.
 

@@ -1,18 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RecipeSubmissionApiService, type RecipeSubmissionPayload } from '../../services/recipe-submission-api.service';
 
 type SubmissionStatus = 'idle' | 'submitting' | 'success' | 'error';
-
-interface RecipeSubmissionPayload {
-  title: string;
-  description: string;
-  name: string;
-  email: string;
-  recipeUrl: string;
-  socialUrl: string;
-  permissionToCredit: boolean;
-  website: string;
-}
 
 @Component({
   selector: 'app-recipe-submission',
@@ -23,7 +13,7 @@ interface RecipeSubmissionPayload {
 })
 export class RecipeSubmissionComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);
-  private simulatedRequest: ReturnType<typeof setTimeout> | undefined;
+  private readonly recipeSubmissionApi = inject(RecipeSubmissionApiService);
 
   readonly status = signal<SubmissionStatus>('idle');
   readonly statusMessage = signal('');
@@ -40,11 +30,7 @@ export class RecipeSubmissionComponent {
     website: [''],
   });
 
-  onSubmit(): void {
-    if (this.simulatedRequest) {
-      clearTimeout(this.simulatedRequest);
-    }
-
+  async onSubmit(): Promise<void> {
     const payload = this.buildPayload();
 
     // Keep honeypot handling generic so automated submissions do not get useful feedback.
@@ -62,15 +48,34 @@ export class RecipeSubmissionComponent {
     }
 
     this.status.set('submitting');
-    this.statusMessage.set('Checking the recipe idea...');
+    this.statusMessage.set('Sending your recipe idea...');
 
-    this.simulatedRequest = setTimeout(() => {
+    if (!(await this.recipeSubmissionApi.isConfigured())) {
       this.status.set('error');
       this.statusMessage.set(
         `This form is ready, but online recipe submissions are not connected yet. Your idea for "${payload.title}" has not been sent.`,
       );
-      this.simulatedRequest = undefined;
-    }, 400);
+      return;
+    }
+
+    try {
+      const message = await this.recipeSubmissionApi.submitRecipeIdea(payload);
+      this.submissionForm.reset({
+        title: '',
+        description: '',
+        name: '',
+        email: '',
+        recipeUrl: '',
+        socialUrl: '',
+        permissionToCredit: false,
+        website: '',
+      });
+      this.status.set('success');
+      this.statusMessage.set(message);
+    } catch (error) {
+      this.status.set('error');
+      this.statusMessage.set(error instanceof Error ? error.message : 'Recipe submissions are temporarily unavailable. Please try again later.');
+    }
   }
 
   hasFieldError(fieldName: keyof RecipeSubmissionPayload, errorName: string): boolean {
