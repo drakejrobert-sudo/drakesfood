@@ -25,6 +25,10 @@
   line-height: 1.8;
 }
 
+.instagram-card .button {
+  justify-self: start;
+}
+
 @media (min-width: 900px) {
   .instagram-card {
     grid-template-columns: 1.4fr auto;

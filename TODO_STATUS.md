@@ -33,22 +33,26 @@
 - [x] Build/lint/typecheck validation in CI
 - [x] Purple visual theme accents and ninja chef mascot
 - [x] Replaced temporary ninja chef SVG with transparent PNG avatar
+- [x] Responsive testing on mobile/tablet/desktop
 - [x] App builds successfully
 - [x] TypeScript type checking passes
 
 ## 🔄 In Progress
 
 - [ ] Add Submit a Recipe Idea section — #24
+- [ ] Conduct performance and accessibility review — #17
 
 ## 📋 Remaining Tasks
 
+Active work is now tracked in GitHub Issues. Pull the next task from the highest-priority open issue and use an issue-scoped feature branch.
+
 ### Content & Visuals
 
-- [ ] Finalize copy for all sections
-- [ ] Add more gallery images or full gallery page (deferred for now)
-- [ ] Add RecipeSensei launch details once available
-- [ ] Refine About section content
-- [ ] Add optional recipe/blog details page later
+- [ ] Finalize copy for all sections — #15
+- [ ] Add more gallery images or full gallery page (deferred for now) — #19
+- [ ] Add RecipeSensei launch details once available — #21
+- [ ] Refine About section content — #16
+- [ ] Add optional recipe/blog details page later — #22
 - [ ] Add recipe submission API contract and backend flow — #25-#31
 
 ### Deployment & Infrastructure
@@ -61,10 +65,10 @@
 ### Quality & Testing
 
 - [x] Add lint configuration (ESLint)
-- [ ] Add Angular testing support
-- [ ] Perform responsive testing on mobile/tablet/desktop
-- [ ] Conduct performance and accessibility review
-- [ ] Add analytics and monitoring if desired
+- [ ] Add Angular testing support — #18
+- [x] Perform responsive testing on mobile/tablet/desktop
+- [ ] Conduct performance and accessibility review — #17
+- [ ] Add analytics and monitoring if desired — #20
 
 ## Notes
 
@@ -95,6 +99,11 @@
 - Ninja chef mascot now uses a transparent PNG generated with ChatGPT, resized to 128px for the hero and 192px for the favicon
 - Full-size source mascot image is stored at `design/source-images/chef-ninja-avatar-original.png` for future edits and is not deployed by the Angular build
 - Favicon links now use named mascot files to avoid stale browser caches of the old Angular icon
+- Responsive screenshot review covered `375px`, `430px`, `768px`, `820px`, `1024px`, and `1280px` viewports
+- Shared section width and CTA button styles now live in global styles so they apply inside Angular child components
+- Tablet hero image height is capped to avoid an oversized single-column hero before the desktop breakpoint
+- GitHub Issues are now the source of truth for active task tracking; `TODO_STATUS.md` is a high-level snapshot
+- Performance review removed the external Google Fonts request and added explicit sizing/decoding hints to key images
 
 ## Last Updated
 
