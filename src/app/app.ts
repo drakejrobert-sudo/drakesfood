@@ -1,26 +1,11 @@
 import { Component } from '@angular/core';
-import { AboutComponent } from './components/about/about.component';
+import { RouterOutlet } from '@angular/router';
 import { FooterComponent } from './components/footer/footer.component';
-import { GalleryPreviewComponent } from './components/gallery-preview/gallery-preview.component';
-import { HeroComponent } from './components/hero/hero.component';
-import { InstagramCtaComponent } from './components/instagram-cta/instagram-cta.component';
-import { RecipeBlogComponent } from './components/recipe-blog/recipe-blog.component';
-import { RecipeSubmissionComponent } from './components/recipe-submission/recipe-submission.component';
-import { RecipeSenseiComponent } from './components/recipe-sensei/recipe-sensei.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [
-    HeroComponent,
-    GalleryPreviewComponent,
-    InstagramCtaComponent,
-    AboutComponent,
-    RecipeSenseiComponent,
-    RecipeSubmissionComponent,
-    RecipeBlogComponent,
-    FooterComponent,
-  ],
+  imports: [RouterOutlet, FooterComponent],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })

@@ -4,9 +4,16 @@
   color: var(--color-text-soft);
 }
 
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
 .site-footer .footer-link {
   display: inline-block;
-  margin-top: 0.75rem;
   color: var(--color-purple-dark);
   font-weight: 700;
 }
