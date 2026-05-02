@@ -7,4 +7,5 @@ export const routes: Routes = [
   { path: '', component: HomePageComponent },
   { path: 'recipesensei/support', component: RecipeSenseiSupportPageComponent },
   { path: 'recipesensei/privacy', component: RecipeSenseiPrivacyPageComponent },
+  { path: '**', redirectTo: '' },
 ];
