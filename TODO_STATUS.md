@@ -42,6 +42,7 @@
 - [x] Recipe submission email notifications added
 - [x] Recipe submission frontend wired to runtime-configured API
 - [x] Recipe submission system documentation added
+- [x] RecipeSensei App Store link added
 
 ## 🔄 In Progress
 
@@ -56,7 +57,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 
 - [ ] Finalize copy for all sections — #15
 - [ ] Add more gallery images or full gallery page (deferred for now) — #19
-- [ ] Add RecipeSensei launch details once available — #21
+- [x] Add RecipeSensei launch details once available — #21
 - [ ] Refine About section content — #16
 - [ ] Add optional recipe/blog details page later — #22
 - [ ] Add recipe submission security hardening — #30
@@ -98,7 +99,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - SEO follow-up added `Drakes Food`, `drakesfood`, and `@drakesfood` brand aliases plus `robots.txt` and `sitemap.xml`
 - CI now runs ESLint linting before type checking and production builds
 - Angular test runner setup remains deferred and tracked separately
-- RecipeSensei remains marked as "coming soon" until launch
+- RecipeSensei is live on the App Store: `https://apps.apple.com/us/app/recipesensei/id6759845210`
 - Instagram link remains `https://instagram.com/drakesfood`
 - Recipe submissions started with a frontend-only form section; live API wiring is now in progress.
 - Recipe submission API contract is documented before backend and infrastructure implementation.
@@ -121,4 +122,4 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 
 ## Last Updated
 
-April 30, 2026
+May 4, 2026
