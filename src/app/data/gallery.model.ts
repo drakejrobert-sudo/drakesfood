@@ -5,6 +5,7 @@ export interface GalleryItem {
   description: string;
   category: string;
   imageUrl: string;
+  cardImageUrl: string;
   altText: string;
   caption?: string;
   cookedDate?: string;
