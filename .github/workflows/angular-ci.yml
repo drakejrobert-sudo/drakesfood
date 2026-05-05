@@ -24,3 +24,9 @@ jobs:
         run: npm run typecheck
       - name: Build
         run: npm run build
+      - name: Serve production build for audit
+        run: |
+          python3 -m http.server 8080 --directory dist/drakesfood-app &
+          sleep 4
+      - name: Accessibility audit
+        run: npm run audit:accessibility
