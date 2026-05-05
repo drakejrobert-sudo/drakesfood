@@ -73,6 +73,19 @@ The site uses Angular routes for the primary content areas while staying static-
 
 Gallery photos are managed in the repo as static assets. Add optimized food photos under `src/assets/images/`, then add entries in `src/app/data/gallery.data.ts` with a stable `slug`, clear `category`, concise description, and specific `altText`. The homepage preview uses the first few gallery entries, while `/gallery` renders the full collection.
 
+## Image Guidelines
+
+Keep source gallery photos around `1280px` on the long edge unless a larger display use is needed. Add card-sized variants under `src/assets/images/gallery-cards/` at roughly `540x720` for gallery grids and homepage preview cards, then set `cardImageUrl` on the matching gallery item. Use the full `imageUrl` only for larger placements such as the hero or future detail pages.
+
+For new food photos:
+
+- Use descriptive filenames that match the gallery item slug or source filename.
+- Strip private metadata before committing new originals when possible.
+- Keep gallery card variants small enough for grid usage; avoid loading full-resolution phone images in card layouts.
+- Keep `altText` specific to the visible food, not generic text like `food photo`.
+- Preserve explicit image dimensions in templates to reduce layout shift.
+- Lazy-load non-hero gallery images and reserve `fetchpriority="high"` for the primary hero image only.
+
 ## Recipe submissions
 
 The V1 recipe submission system is documented in `docs/recipe-submission-system.md`. The detailed API contract is documented in `docs/recipe-submission-api.md`.

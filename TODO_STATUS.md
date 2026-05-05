@@ -46,10 +46,11 @@
 - [x] Multi-page Angular site structure added — #54
 - [x] Add recipe submission security and spam hardening — #30
 - [x] Verify canonical domain, HTTPS, and Angular route refresh behavior — #53
+- [x] Build a full gallery page with reusable food cards — #56
 
 ## 🔄 In Progress
 
-- [ ] Build a full gallery page with reusable food cards — #56
+- [ ] Add image optimization and responsive image guidelines — #57
 
 ## 📋 Remaining Tasks
 
@@ -58,7 +59,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 ### Content & Visuals
 
 - [ ] Finalize copy for all sections — #15
-- [ ] Add more gallery images or full gallery page — #19 / #56
+- [x] Add more gallery images or full gallery page — #19 / #56
 - [x] Add RecipeSensei launch details once available — #21
 - [ ] Refine About section content — #16
 - [ ] Add optional recipe/blog details page later — #22
@@ -81,11 +82,12 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 ## Notes
 
 - Gallery now uses real food photography from `src/assets/images/`
-- `/gallery` is being expanded into a dedicated full food photo collection using reusable card styling and richer static metadata.
+- `/gallery` is a dedicated full food photo collection using reusable card styling and richer static metadata.
 - Hero now uses `markaritaOoniPizza.jpeg`
 - Remaining image assets are available for future gallery expansion
 - Gallery expansion is intentionally deferred until the current photo set has been reviewed in the live layout
 - Gallery images now lazy-load and use fixed aspect ratios for steadier responsive rendering
+- Gallery card layouts now use smaller generated card images instead of full-size source photos.
 - Hero image is prioritized for initial page load
 - Raster food photos are optimized to 1280px wide with high-quality JPEG compression
 - GitHub Actions deploys `dist/drakesfood-app/browser` to existing S3 bucket `drakesfood.com` in `us-east-2`
@@ -124,6 +126,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Tablet hero image height is capped to avoid an oversized single-column hero before the desktop breakpoint
 - GitHub Issues are now the source of truth for active task tracking; `TODO_STATUS.md` is a high-level snapshot
 - Performance review removed the external Google Fonts request and added explicit sizing/decoding hints to key images
+- Issue #19 was closed as stale because the full gallery page work landed through #56; image follow-up continues in #57.
 
 ## Last Updated
 
