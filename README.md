@@ -1,6 +1,6 @@
 # Drake's Food
 
-A modern Angular portfolio website for Drake's Food. This first version is a warm, minimal, photo-forward homepage with food gallery preview, Instagram CTA, about section, RecipeSensei teaser, and a recipe/blog coming soon area.
+A modern Angular portfolio website for Drake's Food. This first version is a warm, minimal, photo-forward multi-page site with a food gallery preview, Instagram CTA, about section, RecipeSensei links, recipe idea submission, and a recipe/blog coming soon area.
 
 ## Getting started
 
@@ -48,12 +48,26 @@ npm run lint
 ## Project structure
 
 - `src/app/` - Angular components and app entrypoint
+- `src/app/pages/` - routed page components for the small static site
 - `src/app/data/` - placeholder gallery data
 - `src/assets/images/` - local placeholder food assets
 - `docs/` - feature contracts and implementation notes
 - `infra/` - OpenTofu infrastructure for S3, CloudFront, ACM, and Route 53
 - `.github/copilot-instructions.md` - project guidance for Copilot
 - `public/` - static assets for app build
+
+## Page structure
+
+The site uses Angular routes for the primary content areas while staying static-first:
+
+- `/` - homepage gateway with hero, gallery preview, Instagram CTA, About, RecipeSensei, submission, and recipes preview sections
+- `/gallery` - food gallery page
+- `/recipes` - recipes and stories coming soon page
+- `/submit` - recipe idea submission page
+- `/recipesensei` - RecipeSensei app teaser and links
+- `/about` - Drake's Food intro page
+- `/recipesensei/support` - RecipeSensei support page
+- `/recipesensei/privacy` - RecipeSensei privacy policy page
 
 ## Recipe submissions
 

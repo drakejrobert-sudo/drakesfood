@@ -1,0 +1,37 @@
+.submit-idea-cta {
+  padding: 2rem 1rem;
+}
+
+.submit-idea-card {
+  display: grid;
+  gap: 1.5rem;
+  border: 1px solid rgba(109, 74, 163, 0.12);
+  border-radius: 1.75rem;
+  background:
+    linear-gradient(135deg, rgba(140, 90, 64, 0.12), transparent 42%),
+    var(--color-surface);
+  padding: 2rem;
+  box-shadow: var(--shadow-card);
+}
+
+.submit-idea-card h2 {
+  margin: 0;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+}
+
+.submit-idea-card p {
+  margin: 0;
+  color: var(--color-text-muted);
+  line-height: 1.8;
+}
+
+.submit-idea-card .button {
+  justify-self: start;
+}
+
+@media (min-width: 900px) {
+  .submit-idea-card {
+    grid-template-columns: 1.4fr auto;
+    align-items: center;
+  }
+}
