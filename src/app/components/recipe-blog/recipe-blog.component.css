@@ -8,3 +8,20 @@
   color: var(--color-text-muted);
   line-height: 1.8;
 }
+
+.recipe-blog .button {
+  margin-top: 1.5rem;
+}
+
+.recipe-blog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+}
+
+@media (max-width: 560px) {
+  .recipe-blog .button,
+  .recipe-blog-actions {
+    width: 100%;
+  }
+}

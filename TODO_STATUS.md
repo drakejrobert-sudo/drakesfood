@@ -47,10 +47,12 @@
 - [x] Add recipe submission security and spam hardening — #30
 - [x] Verify canonical domain, HTTPS, and Angular route refresh behavior — #53
 - [x] Build a full gallery page with reusable food cards — #56
+- [x] Add image optimization and responsive image guidelines — #57
+- [x] Redesign homepage hero and primary calls-to-action — #55
 
 ## 🔄 In Progress
 
-- [ ] Add image optimization and responsive image guidelines — #57
+- [ ] No active issue-scoped work after #55 validation
 
 ## 📋 Remaining Tasks
 
@@ -126,7 +128,8 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Tablet hero image height is capped to avoid an oversized single-column hero before the desktop breakpoint
 - GitHub Issues are now the source of truth for active task tracking; `TODO_STATUS.md` is a high-level snapshot
 - Performance review removed the external Google Fonts request and added explicit sizing/decoding hints to key images
-- Issue #19 was closed as stale because the full gallery page work landed through #56; image follow-up continues in #57.
+- Issue #19 was closed as stale because the full gallery page work landed through #56; image follow-up landed through #57.
+- Homepage hero now leads with a clearer Drake's Food introduction, stronger gallery/Instagram/RecipeSensei CTAs, and a lighter submit-idea prompt.
 
 ## Last Updated
 
