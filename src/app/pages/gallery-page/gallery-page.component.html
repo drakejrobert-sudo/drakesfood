@@ -1,1 +1,38 @@
-<app-gallery-preview></app-gallery-preview>
+<section class="gallery-page" aria-labelledby="gallery-page-title">
+  <div class="gallery-hero">
+    <div class="gallery-hero-copy">
+      <p class="eyebrow">Food gallery</p>
+      <h1 id="gallery-page-title">A running collection of what is coming out of my kitchen.</h1>
+      <p>
+        Smoked meats, backyard pizza, family meals, vegetable experiments, and the occasional comfort-food detour.
+        This is the photo-first home base for Drake's Food.
+      </p>
+    </div>
+    <div class="gallery-hero-panel" aria-label="Current gallery sections">
+      <span>{{ galleryItems.length }} cooks</span>
+      <div class="category-list">
+        @for (category of categories; track category) {
+          <span>{{ category }}</span>
+        }
+      </div>
+    </div>
+  </div>
+
+  <div class="gallery-grid" aria-label="Food photos">
+    @for (item of galleryItems; track item.slug) {
+      <article class="food-card">
+        <div class="food-card-image">
+          <img [src]="item.imageUrl" [alt]="item.altText" width="1280" height="960" loading="lazy" decoding="async" />
+          <span class="food-card-category">{{ item.category }}</span>
+        </div>
+        <div class="food-card-copy">
+          <h2>{{ item.title }}</h2>
+          <p>{{ item.description }}</p>
+          @if (item.caption) {
+            <p class="food-card-caption">{{ item.caption }}</p>
+          }
+        </div>
+      </article>
+    }
+  </div>
+</section>

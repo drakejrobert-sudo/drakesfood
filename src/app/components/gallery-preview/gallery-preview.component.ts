@@ -8,5 +8,5 @@ import { galleryItems } from '../../data/gallery.data';
   styleUrls: ['./gallery-preview.component.css'],
 })
 export class GalleryPreviewComponent {
-  galleryItems = galleryItems;
+  galleryItems = galleryItems.slice(0, 6);
 }

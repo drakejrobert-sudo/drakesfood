@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
-import { GalleryPreviewComponent } from '../../components/gallery-preview/gallery-preview.component';
+import { galleryItems } from '../../data/gallery.data';
 
 @Component({
   selector: 'app-gallery-page',
   standalone: true,
-  imports: [GalleryPreviewComponent],
   templateUrl: './gallery-page.component.html',
+  styleUrls: ['./gallery-page.component.css'],
 })
-export class GalleryPageComponent {}
+export class GalleryPageComponent {
+  galleryItems = galleryItems;
+  categories = Array.from(new Set(galleryItems.map((item) => item.category)));
+}
