@@ -1,7 +1,23 @@
 <section class="recipe-blog" aria-labelledby="recipes-title">
   <div class="section-intro">
     <p class="eyebrow">Recipes & stories</p>
-    <h2 id="recipes-title">A recipe blog is on the way.</h2>
+    <h2 id="recipes-title">
+      @if (variant === 'page') {
+        Recipes are coming soon.
+      } @else {
+        A recipe blog is on the way.
+      }
+    </h2>
   </div>
-  <p>The collection of recipes and food writing will expand here once the kitchen notes are ready to share. Have something Drake should cook? Send a recipe idea above.</p>
+  @if (variant === 'page') {
+    <p>The collection of recipes and food writing will grow here once the kitchen notes are ready to share. Expect home-cooking notes, experiments, family favorites, and the occasional smoked meat deep dive.</p>
+    <p>Have something Drake should cook? Send a recipe idea from the submit page.</p>
+    <a class="button button-primary" routerLink="/submit">Submit a recipe idea</a>
+  } @else {
+    <p>Recipes and cooking notes are coming soon. Head to the recipe page for updates as posts start landing, or send an idea for what Drake should cook next.</p>
+    <div class="recipe-blog-actions">
+      <a class="button button-primary" routerLink="/recipes">Visit recipes</a>
+      <a class="button button-secondary" routerLink="/submit">Submit a recipe idea</a>
+    </div>
+  }
 </section>
