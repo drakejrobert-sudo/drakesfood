@@ -36,6 +36,13 @@
 - [x] Responsive testing on mobile/tablet/desktop
 - [x] App builds successfully
 - [x] TypeScript type checking passes
+- [x] Recipe submission API contract documented
+- [x] Recipe submission AWS infrastructure defined
+- [x] Recipe submission Lambda handler implemented
+- [x] Recipe submission email notifications added
+- [x] Recipe submission frontend wired to runtime-configured API
+- [x] Recipe submission system documentation added
+- [x] RecipeSensei App Store link added
 
 ## 🔄 In Progress
 
@@ -49,9 +56,10 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 
 - [ ] Finalize copy for all sections — #15
 - [ ] Add more gallery images or full gallery page (deferred for now) — #19
-- [ ] Add RecipeSensei launch details once available — #21
+- [x] Add RecipeSensei launch details once available — #21
 - [ ] Refine About section content — #16
 - [ ] Add optional recipe/blog details page later — #22
+- [ ] Add recipe submission security hardening — #30
 
 ### Deployment & Infrastructure
 
@@ -90,8 +98,17 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - SEO follow-up added `Drakes Food`, `drakesfood`, and `@drakesfood` brand aliases plus `robots.txt` and `sitemap.xml`
 - CI now runs ESLint linting before type checking and production builds
 - Angular test runner setup remains deferred and tracked separately
-- RecipeSensei remains marked as "coming soon" until launch
+- RecipeSensei is live on the App Store: `https://apps.apple.com/us/app/recipesensei/id6759845210`
 - Instagram link remains `https://instagram.com/drakesfood`
+- Recipe submissions started with a frontend-only form section; live API wiring is now in progress.
+- Recipe submission API contract is documented before backend and infrastructure implementation.
+- Recipe submission infrastructure is defined with OpenTofu using API Gateway, Lambda, DynamoDB, SES permissions, and CloudWatch logs.
+- Recipe submission Lambda handler validates server-side input, handles honeypot submissions, and writes accepted ideas to DynamoDB.
+- Recipe submission email notifications are sent through SES after accepted submissions are stored.
+- Recipe submission frontend wiring uses runtime app config so the API endpoint can be set after OpenTofu apply.
+- Recipe submission security hardening is being added with Lambda origin checks, JSON content-type enforcement, request body size limits, CORS allowlists, throttling, and honeypot handling.
+- Recipe submission system documentation now covers frontend wiring, API behavior, infrastructure, deployment, testing, and CloudWatch logs.
+- Generic `/favicon.ico` and `/favicon.png` fallbacks should match the named chef-ninja favicon files for browsers that request default favicon paths directly.
 - Purple theme accents now use shared CSS variables, with a ninja chef mascot in the hero and SVG favicon support
 - Ninja chef mascot now uses a transparent PNG generated with ChatGPT, resized to 128px for the hero and 192px for the favicon
 - Full-size source mascot image is stored at `design/source-images/chef-ninja-avatar-original.png` for future edits and is not deployed by the Angular build
@@ -104,4 +121,4 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 
 ## Last Updated
 
-April 29, 2026
+May 5, 2026

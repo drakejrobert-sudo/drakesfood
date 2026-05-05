@@ -26,7 +26,7 @@ jobs:
         run: npm run build
       - name: Serve production build for audit
         run: |
-          python3 -m http.server 8080 --directory dist/drakesfood-app &
+          python3 -m http.server 8080 --directory dist/drakesfood-app/browser &
           sleep 4
       - name: Accessibility audit
         run: npm run audit:accessibility

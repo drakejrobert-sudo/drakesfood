@@ -1,0 +1,398 @@
+import { randomUUID } from 'node:crypto';
+
+const SUCCESS_MESSAGE = 'Thanks! Your idea was sent to Drake.';
+const VALIDATION_MESSAGE = 'Please include a recipe title and description.';
+
+const FIELD_LIMITS = {
+  title: 120,
+  description: 3000,
+  name: 100,
+  email: 254,
+  recipeUrl: 500,
+  socialUrl: 500,
+};
+
+const STRING_FIELDS = ['title', 'description', 'name', 'email', 'recipeUrl', 'socialUrl', 'website'];
+const DEFAULT_MAX_BODY_BYTES = 16 * 1024;
+
+let dynamoClient;
+let putItemCommand;
+let sesClient;
+let sendEmailCommand;
+
+export const createHandler = ({
+  now = () => new Date(),
+  saveSubmission = saveSubmissionToDynamoDb,
+  sendNotification = sendNotificationEmail,
+  uuid = randomUUID,
+} = {}) => async (event = {}) => {
+  if (getMethod(event) !== 'POST') {
+    return jsonResponse(405, {
+      success: false,
+      message: 'Recipe submissions only accept POST requests.',
+    });
+  }
+
+  if (!isAllowedOrigin(event)) {
+    return jsonResponse(403, {
+      success: false,
+      message: 'Recipe submissions are not available from this origin.',
+    });
+  }
+
+  if (!isJsonContentType(event)) {
+    return jsonResponse(415, {
+      success: false,
+      message: 'Please send recipe submissions as JSON.',
+    });
+  }
+
+  let body;
+
+  try {
+    body = parseBody(event, getMaxBodyBytes());
+  } catch (error) {
+    if (error instanceof RequestBodyTooLargeError) {
+      return jsonResponse(413, {
+        success: false,
+        message: 'Please shorten your recipe idea and try again.',
+      });
+    }
+
+    return jsonResponse(400, {
+      success: false,
+      message: 'Please send a valid JSON recipe submission.',
+    });
+  }
+
+  const normalized = normalizeBody(body);
+
+  if (!normalized.valid) {
+    return jsonResponse(400, {
+      success: false,
+      message: VALIDATION_MESSAGE,
+    });
+  }
+
+  if (normalized.values.website) {
+    console.info('Recipe submission ignored by spam filter.');
+
+    return jsonResponse(200, {
+      success: true,
+      message: SUCCESS_MESSAGE,
+    });
+  }
+
+  const validationError = validateSubmission(normalized.values);
+
+  if (validationError) {
+    return jsonResponse(400, {
+      success: false,
+      message: validationError,
+    });
+  }
+
+  const item = buildSubmissionItem(normalized.values, now().toISOString(), uuid());
+
+  try {
+    await saveSubmission(item);
+  } catch (error) {
+    console.error('Failed to save recipe submission.', {
+      errorName: error?.name,
+      submissionId: item.submissionId,
+    });
+
+    return jsonResponse(500, {
+      success: false,
+      message: 'Something went wrong sending your recipe idea. Please try again later.',
+    });
+  }
+
+  try {
+    await sendNotification(item);
+  } catch (error) {
+    console.error('Failed to send recipe submission notification.', {
+      errorName: error?.name,
+      submissionId: item.submissionId,
+    });
+  }
+
+  return jsonResponse(200, {
+    success: true,
+    message: SUCCESS_MESSAGE,
+  });
+};
+
+export const handler = createHandler();
+
+function getMethod(event) {
+  return event.requestContext?.http?.method ?? event.httpMethod ?? '';
+}
+
+function parseBody(event, maxBodyBytes) {
+  const rawBody = event.isBase64Encoded ? Buffer.from(event.body ?? '', 'base64').toString('utf8') : event.body;
+
+  if (!rawBody) {
+    throw new Error('Missing body');
+  }
+
+  if (Buffer.byteLength(rawBody, 'utf8') > maxBodyBytes) {
+    throw new RequestBodyTooLargeError();
+  }
+
+  const parsed = JSON.parse(rawBody);
+
+  if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') {
+    throw new Error('Invalid body');
+  }
+
+  return parsed;
+}
+
+function isAllowedOrigin(event) {
+  const origin = getHeader(event, 'origin');
+
+  if (!origin) {
+    return true;
+  }
+
+  const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean);
+
+  return allowedOrigins.length === 0 || allowedOrigins.includes(origin);
+}
+
+function isJsonContentType(event) {
+  const contentType = getHeader(event, 'content-type');
+
+  return !contentType || contentType.toLowerCase().includes('application/json');
+}
+
+function getHeader(event, headerName) {
+  const headers = event.headers || {};
+  const matchingKey = Object.keys(headers).find((key) => key.toLowerCase() === headerName);
+
+  return matchingKey ? headers[matchingKey] : '';
+}
+
+function getMaxBodyBytes() {
+  const configuredLimit = Number.parseInt(process.env.RECIPE_SUBMISSIONS_MAX_BODY_BYTES || '', 10);
+
+  return Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : DEFAULT_MAX_BODY_BYTES;
+}
+
+function normalizeBody(body) {
+  const values = {
+    title: '',
+    description: '',
+    name: '',
+    email: '',
+    recipeUrl: '',
+    socialUrl: '',
+    permissionToCredit: false,
+    website: '',
+  };
+
+  for (const field of STRING_FIELDS) {
+    if (body[field] === undefined || body[field] === null) {
+      continue;
+    }
+
+    if (typeof body[field] !== 'string') {
+      return { valid: false, values };
+    }
+
+    values[field] = body[field].trim();
+  }
+
+  if (body.permissionToCredit !== undefined && typeof body.permissionToCredit !== 'boolean') {
+    return { valid: false, values };
+  }
+
+  values.permissionToCredit = body.permissionToCredit === true;
+
+  return { valid: true, values };
+}
+
+function validateSubmission(values) {
+  if (!values.title || !values.description) {
+    return VALIDATION_MESSAGE;
+  }
+
+  for (const [field, limit] of Object.entries(FIELD_LIMITS)) {
+    if (values[field].length > limit) {
+      return `Please keep ${field} under ${limit} characters.`;
+    }
+  }
+
+  if (values.email && !isValidEmail(values.email)) {
+    return 'Please enter a valid email address or leave it blank.';
+  }
+
+  if (values.recipeUrl && !isValidHttpUrl(values.recipeUrl)) {
+    return 'Please enter a valid recipe URL or leave it blank.';
+  }
+
+  if (values.socialUrl && !isValidHttpUrl(values.socialUrl)) {
+    return 'Please enter a valid social URL or leave it blank.';
+  }
+
+  return '';
+}
+
+function buildSubmissionItem(values, submittedAt, submissionId) {
+  const item = {
+    submissionId,
+    submittedAt,
+    status: 'new',
+    title: values.title,
+    description: values.description,
+    permissionToCredit: values.permissionToCredit,
+    source: process.env.RECIPE_SUBMISSIONS_SOURCE_SITE || 'drakesfood.com',
+  };
+
+  for (const field of ['name', 'email', 'recipeUrl', 'socialUrl']) {
+    if (values[field]) {
+      item[field] = values[field];
+    }
+  }
+
+  return item;
+}
+
+async function saveSubmissionToDynamoDb(item) {
+  const tableName = process.env.RECIPE_SUBMISSIONS_TABLE_NAME;
+
+  if (!tableName) {
+    throw new Error('Missing RECIPE_SUBMISSIONS_TABLE_NAME');
+  }
+
+  const { DynamoDBClient, PutItemCommand } = await loadDynamoDbClient();
+  const client = dynamoClient ?? new DynamoDBClient({});
+  dynamoClient = client;
+
+  await client.send(
+    new PutItemCommand({
+      TableName: tableName,
+      Item: toDynamoDbItem(item),
+      ConditionExpression: 'attribute_not_exists(submissionId)',
+    }),
+  );
+}
+
+async function sendNotificationEmail(item) {
+  const senderEmail = process.env.SES_SENDER_EMAIL;
+  const recipientEmail = process.env.SES_RECIPIENT_EMAIL;
+
+  if (!senderEmail || !recipientEmail) {
+    console.warn('Recipe submission notification skipped because SES sender or recipient is not configured.', {
+      submissionId: item.submissionId,
+    });
+    return;
+  }
+
+  const { SESClient, SendEmailCommand } = await loadSesClient();
+  const client = sesClient ?? new SESClient({});
+  sesClient = client;
+
+  await client.send(
+    new SendEmailCommand({
+      Source: senderEmail,
+      Destination: {
+        ToAddresses: [recipientEmail],
+      },
+      Message: {
+        Subject: {
+          Charset: 'UTF-8',
+          Data: `New recipe idea: ${item.title}`,
+        },
+        Body: {
+          Text: {
+            Charset: 'UTF-8',
+            Data: formatNotificationEmail(item),
+          },
+        },
+      },
+    }),
+  );
+}
+
+async function loadDynamoDbClient() {
+  if (putItemCommand) {
+    return putItemCommand;
+  }
+
+  putItemCommand = await import('@aws-sdk/client-dynamodb');
+
+  return putItemCommand;
+}
+
+async function loadSesClient() {
+  if (sendEmailCommand) {
+    return sendEmailCommand;
+  }
+
+  sendEmailCommand = await import('@aws-sdk/client-ses');
+
+  return sendEmailCommand;
+}
+
+function formatNotificationEmail(item) {
+  return [
+    'A new recipe idea was submitted on drakesfood.com.',
+    '',
+    `Title: ${item.title}`,
+    `Description / notes: ${item.description}`,
+    `Name or handle: ${item.name || 'Not provided'}`,
+    `Email: ${item.email || 'Not provided'}`,
+    `Recipe URL: ${item.recipeUrl || 'Not provided'}`,
+    `Social URL: ${item.socialUrl || 'Not provided'}`,
+    `Permission to credit: ${item.permissionToCredit ? 'Yes' : 'No'}`,
+    '',
+    `Submission ID: ${item.submissionId}`,
+    `Submitted at: ${item.submittedAt}`,
+    `Source: ${item.source}`,
+  ].join('\n');
+}
+
+function toDynamoDbItem(item) {
+  const dynamoItem = {};
+
+  for (const [key, value] of Object.entries(item)) {
+    if (typeof value === 'boolean') {
+      dynamoItem[key] = { BOOL: value };
+    } else {
+      dynamoItem[key] = { S: value };
+    }
+  }
+
+  return dynamoItem;
+}
+
+function isValidEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function isValidHttpUrl(value) {
+  try {
+    const url = new URL(value);
+
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function jsonResponse(statusCode, body) {
+  return {
+    statusCode,
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  };
+}
+
+class RequestBodyTooLargeError extends Error {}

@@ -10,8 +10,46 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - CloudFront distribution with HTTP-to-HTTPS redirects
 - Route 53 alias records for apex and `www`
 - IAM user policy for GitHub Actions deployment
+- API Gateway HTTP API for recipe submissions
+- Lambda function, execution role, and CloudWatch logs for recipe submissions
+- DynamoDB table for recipe submission storage
+- SES send permissions for recipe submission notifications
 
 CloudFront requires ACM certificates to be in `us-east-1`, so this config uses a secondary AWS provider for the certificate while keeping the existing S3 bucket in `us-east-2`.
+
+## Recipe Submissions
+
+The recipe submission backend is defined as low-cost serverless infrastructure:
+
+- API Gateway HTTP API exposes `POST /recipe-submissions`.
+- CORS is restricted to `drakesfood.com`, `www.drakesfood.com`, and local Angular development by default.
+- Lambda receives the table name, source site, allowed origins, and SES sender/recipient values through environment variables.
+- DynamoDB stores accepted submissions by `submissionId`.
+- SES sends Drake a plain-text notification after valid submissions are stored.
+- CloudWatch log groups use the configured retention period.
+- API Gateway throttling defaults to 10 burst requests and 5 sustained requests per second.
+
+The Lambda source lives at `lambda/recipe-submissions/index.mjs`. It validates submissions, stores accepted ideas in DynamoDB, and sends SES notifications when sender and recipient values are configured. It also enforces the configured origin allowlist for browser requests, requires JSON request bodies, rejects oversized request bodies, and handles honeypot submissions without revealing spam detection to bots.
+
+The Lambda request body limit defaults to `16384` bytes and can be adjusted with `recipe_submissions_max_body_bytes` if the text-only V1 form needs more room later. V1 intentionally does not include CAPTCHA; add it only if real abuse requires the extra friction.
+
+See `../docs/recipe-submission-system.md` for the end-to-end recipe submission system documentation, including frontend wiring, API behavior, deployment, testing, and CloudWatch log locations.
+
+Before applying recipe submission infrastructure for production, set these values with a local `.tfvars` file or `-var` arguments. The SES identity ARN can be omitted if the verified identity is the site domain in the active AWS account.
+
+```hcl
+recipe_submissions_ses_identity_arn    = "arn:aws:ses:us-east-2:<account-id>:identity/drakesfood.com"
+recipe_submissions_ses_sender_email    = "<verified-sender-email>"
+recipe_submissions_ses_recipient_email = "<recipient-email>"
+```
+
+Do not commit real email addresses or account-specific values unless they are intentionally public. The SES sender identity must be verified before email notifications can work. If the SES sender or recipient is missing, accepted submissions are still stored but email notification is skipped and logged. If SES fails after storage, the Lambda logs the failure and still returns success to avoid encouraging duplicate submissions.
+
+After apply, get the API endpoint for frontend configuration:
+
+```bash
+AWS_PROFILE=drakesfood tofu output -raw recipe_submissions_api_endpoint
+```
 
 ## One-Time Setup
 
@@ -64,10 +102,11 @@ AWS_PROFILE=drakesfood tofu plan
 AWS_PROFILE=drakesfood tofu apply
 ```
 
-After apply finishes, get the CloudFront distribution ID:
+After apply finishes, get the CloudFront distribution ID and recipe submission API endpoint:
 
 ```bash
 AWS_PROFILE=drakesfood tofu output -raw cloudfront_distribution_id
+AWS_PROFILE=drakesfood tofu output -raw recipe_submissions_api_endpoint
 ```
 
 Add that value as a GitHub repository variable named `CLOUDFRONT_DISTRIBUTION_ID`.
@@ -79,9 +118,12 @@ The deploy workflow needs these GitHub repository secrets:
 - `AWS_ACCESS_KEY_ID`
 - `AWS_SECRET_ACCESS_KEY`
 
-It also needs this GitHub repository variable:
+It also needs these GitHub repository variables:
 
 - `CLOUDFRONT_DISTRIBUTION_ID`
+- `RECIPE_SUBMISSIONS_API_BASE_URL`
+
+Set `RECIPE_SUBMISSIONS_API_BASE_URL` to the `recipe_submissions_api_endpoint` OpenTofu output after the recipe submission infrastructure is applied. The deploy workflow writes this value into `app-config.json` at deploy time. Until it is configured, the public form keeps its not-connected-yet fallback.
 
 The AWS credentials must be allowed to sync files to the S3 bucket and create CloudFront invalidations. Until `CLOUDFRONT_DISTRIBUTION_ID` is configured, the deploy workflow will still sync to S3 but will skip CloudFront invalidation.
 

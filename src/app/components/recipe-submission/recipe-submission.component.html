@@ -1,0 +1,103 @@
+<section id="submit-recipe" class="recipe-submission" aria-labelledby="submission-title">
+  <div class="submission-intro">
+    <p class="eyebrow">Cook this next</p>
+    <h2 id="submission-title">Submit a recipe idea.</h2>
+    <p>
+      Share a family recipe, cooking challenge, link, or loose idea you would like Drake to try. V1 is text and links only, and submitted ideas never auto-publish to the site.
+    </p>
+    <p>
+      Fair warning: you can send a recipe with exact steps, but I am not much of a recipe-rule-follower, per se. I reserve the right to improvise, alter, or make my own interpretation of the dish, then share the notes and results back of course.
+    </p>
+  </div>
+
+  <form class="submission-form" [formGroup]="submissionForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-grid">
+      <div class="field field-wide">
+        <label for="recipe-title">Recipe or idea title <span aria-hidden="true">*</span></label>
+        <input id="recipe-title" type="text" formControlName="title" autocomplete="off" maxlength="120" aria-describedby="recipe-title-help recipe-title-error" />
+        <p id="recipe-title-help" class="field-help">A short name like “Smoked birria tacos” or “Grandma’s zucchini fritters”.</p>
+        @if (hasFieldError('title', 'required')) {
+          <p id="recipe-title-error" class="field-error">Please include a recipe title.</p>
+        } @else if (hasFieldError('title', 'maxlength')) {
+          <p id="recipe-title-error" class="field-error">Keep the title under 120 characters.</p>
+        }
+      </div>
+
+      <div class="field field-wide">
+        <label for="recipe-description">Description / notes <span aria-hidden="true">*</span></label>
+        <textarea id="recipe-description" formControlName="description" rows="6" maxlength="3000" aria-describedby="recipe-description-help recipe-description-error"></textarea>
+        <p id="recipe-description-help" class="field-help">Tell Drake what makes it good, where it came from, or how you would cook it.</p>
+        @if (hasFieldError('description', 'required')) {
+          <p id="recipe-description-error" class="field-error">Please add a few notes about the idea.</p>
+        } @else if (hasFieldError('description', 'maxlength')) {
+          <p id="recipe-description-error" class="field-error">Keep the notes under 3,000 characters.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="submitter-name">Name or handle</label>
+        <input id="submitter-name" type="text" formControlName="name" autocomplete="name" maxlength="100" aria-describedby="submitter-name-help submitter-name-error" />
+        <p id="submitter-name-help" class="field-help">Optional, if you want Drake to know who sent it.</p>
+        @if (hasFieldError('name', 'maxlength')) {
+          <p id="submitter-name-error" class="field-error">Keep the name or handle under 100 characters.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="submitter-email">Email</label>
+        <input id="submitter-email" type="email" formControlName="email" autocomplete="email" maxlength="254" aria-describedby="submitter-email-help submitter-email-error" />
+        <p id="submitter-email-help" class="field-help">Optional, only for follow-up questions.</p>
+        @if (hasFieldError('email', 'email')) {
+          <p id="submitter-email-error" class="field-error">Enter a valid email address or leave this blank.</p>
+        } @else if (hasFieldError('email', 'maxlength')) {
+          <p id="submitter-email-error" class="field-error">Keep the email under 254 characters.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="recipe-url">Recipe URL</label>
+        <input id="recipe-url" type="url" formControlName="recipeUrl" inputmode="url" autocomplete="url" maxlength="500" placeholder="https://" aria-describedby="recipe-url-help recipe-url-error" />
+        <p id="recipe-url-help" class="field-help">Optional link to a recipe, video, or notes.</p>
+        @if (hasFieldError('recipeUrl', 'maxlength')) {
+          <p id="recipe-url-error" class="field-error">Keep the recipe link under 500 characters.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="social-url">Social URL</label>
+        <input id="social-url" type="url" formControlName="socialUrl" inputmode="url" autocomplete="url" maxlength="500" placeholder="https://instagram.com/..." aria-describedby="social-url-help social-url-error" />
+        <p id="social-url-help" class="field-help">Optional link to a post or creator who inspired it.</p>
+        @if (hasFieldError('socialUrl', 'maxlength')) {
+          <p id="social-url-error" class="field-error">Keep the social link under 500 characters.</p>
+        }
+      </div>
+    </div>
+
+    <label class="checkbox-field" for="permission-to-credit">
+      <input id="permission-to-credit" type="checkbox" formControlName="permissionToCredit" />
+      <span>Drake can credit me if he cooks this idea.</span>
+    </label>
+
+    <div class="honeypot" aria-hidden="true">
+      <label for="submission-website">Website</label>
+      <input id="submission-website" type="text" formControlName="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="form-actions">
+      <button class="button button-primary" type="submit" [disabled]="isSubmitting()">
+        @if (isSubmitting()) {
+          Sending idea...
+        } @else {
+          Submit recipe idea
+        }
+      </button>
+      <p class="form-note">Submissions are text/link only and reviewed manually before anything is shared.</p>
+    </div>
+
+    @if (statusMessage()) {
+      <p class="status-message" [class.status-success]="status() === 'success'" [class.status-error]="status() === 'error'" aria-live="polite">
+        {{ statusMessage() }}
+      </p>
+    }
+  </form>
+</section>
