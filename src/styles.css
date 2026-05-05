@@ -4,8 +4,8 @@
   --color-background: #f7efe7;
   --color-surface: #fffaf5;
   --color-text: #32221b;
-  --color-text-muted: #5e4b3f;
-  --color-text-soft: #6f5848;
+  --color-text-muted: #3d3128;
+  --color-text-soft: #2a2119;
   --color-clay: #8c5a40;
   --color-clay-dark: #7d4c35;
   --color-purple: #6d4aa3;
@@ -97,14 +97,14 @@ button,
 .button-primary {
   background: linear-gradient(135deg, var(--color-purple), var(--color-clay));
   color: #fff;
-  padding: 0.95rem 1.6rem;
+  padding: 1.5rem 2.5rem;
   box-shadow: 0 14px 28px rgba(61, 37, 111, 0.18);
 }
 
 .button-secondary {
   background: var(--color-purple-dark);
   color: #fff;
-  padding: 0.95rem 1.6rem;
+  padding: 1.5rem 2.5rem;
 }
 
 p {
