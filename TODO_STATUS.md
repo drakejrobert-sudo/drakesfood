@@ -26,7 +26,7 @@
 - [x] OpenTofu-managed GitHub Actions deploy IAM policy applied
 - [x] First S3 deployment from GitHub Actions verified
 - [x] Upgrade GitHub Actions workflows to Node 24-native action versions
-- [x] Accessibility audit and core accessibility fixes
+- [x] Conduct performance and accessibility review — #17
 - [x] Image file optimization/compression
 - [x] SEO metadata and structured data
 - [x] ESLint lint configuration
@@ -39,7 +39,7 @@
 
 ## 🔄 In Progress
 
-- [ ] Conduct performance and accessibility review — #17
+- [ ] Add recipe submission security and spam hardening — #30
 
 ## 📋 Remaining Tasks
 
@@ -65,7 +65,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - [x] Add lint configuration (ESLint)
 - [ ] Add Angular testing support — #18
 - [x] Perform responsive testing on mobile/tablet/desktop
-- [ ] Conduct performance and accessibility review — #17
+- [x] Conduct performance and accessibility review — #17
 - [ ] Add analytics and monitoring if desired — #20
 
 ## Notes
