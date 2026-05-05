@@ -4,8 +4,8 @@ import { GalleryPreviewComponent } from '../../components/gallery-preview/galler
 import { HeroComponent } from '../../components/hero/hero.component';
 import { InstagramCtaComponent } from '../../components/instagram-cta/instagram-cta.component';
 import { RecipeBlogComponent } from '../../components/recipe-blog/recipe-blog.component';
-import { RecipeSubmissionComponent } from '../../components/recipe-submission/recipe-submission.component';
 import { RecipeSenseiComponent } from '../../components/recipe-sensei/recipe-sensei.component';
+import { SubmitIdeaCtaComponent } from '../../components/submit-idea-cta/submit-idea-cta.component';
 
 @Component({
   selector: 'app-home-page',
@@ -16,7 +16,7 @@ import { RecipeSenseiComponent } from '../../components/recipe-sensei/recipe-sen
     InstagramCtaComponent,
     AboutComponent,
     RecipeSenseiComponent,
-    RecipeSubmissionComponent,
+    SubmitIdeaCtaComponent,
     RecipeBlogComponent,
   ],
   templateUrl: './home-page.component.html',

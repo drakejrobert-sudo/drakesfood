@@ -43,6 +43,7 @@
 - [x] Recipe submission frontend wired to runtime-configured API
 - [x] Recipe submission system documentation added
 - [x] RecipeSensei App Store link added
+- [x] Multi-page Angular site structure added — #54
 
 ## 🔄 In Progress
 
@@ -100,6 +101,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Angular test runner setup remains deferred and tracked separately
 - RecipeSensei is live on the App Store: `https://apps.apple.com/us/app/recipesensei/id6759845210`
 - Instagram link remains `https://instagram.com/drakesfood`
+- Primary site routes now include `/`, `/gallery`, `/recipes`, `/submit`, `/recipesensei`, and `/about`, with RecipeSensei support and privacy pages preserved.
 - Recipe submissions started with a frontend-only form section; live API wiring is now in progress.
 - Recipe submission API contract is documented before backend and infrastructure implementation.
 - Recipe submission infrastructure is defined with OpenTofu using API Gateway, Lambda, DynamoDB, SES permissions, and CloudWatch logs.
