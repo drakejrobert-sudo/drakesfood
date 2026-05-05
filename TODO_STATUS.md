@@ -45,10 +45,11 @@
 - [x] RecipeSensei App Store link added
 - [x] Multi-page Angular site structure added — #54
 - [x] Add recipe submission security and spam hardening — #30
+- [x] Verify canonical domain, HTTPS, and Angular route refresh behavior — #53
 
 ## 🔄 In Progress
 
-- [ ] Verify canonical domain, HTTPS, and Angular route refresh behavior — #53
+- [ ] Build a full gallery page with reusable food cards — #56
 
 ## 📋 Remaining Tasks
 
@@ -57,7 +58,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 ### Content & Visuals
 
 - [ ] Finalize copy for all sections — #15
-- [ ] Add more gallery images or full gallery page (deferred for now) — #19
+- [ ] Add more gallery images or full gallery page — #19 / #56
 - [x] Add RecipeSensei launch details once available — #21
 - [ ] Refine About section content — #16
 - [ ] Add optional recipe/blog details page later — #22
@@ -80,6 +81,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 ## Notes
 
 - Gallery now uses real food photography from `src/assets/images/`
+- `/gallery` is being expanded into a dedicated full food photo collection using reusable card styling and richer static metadata.
 - Hero now uses `markaritaOoniPizza.jpeg`
 - Remaining image assets are available for future gallery expansion
 - Gallery expansion is intentionally deferred until the current photo set has been reviewed in the live layout

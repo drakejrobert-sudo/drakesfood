@@ -49,8 +49,8 @@ npm run lint
 
 - `src/app/` - Angular components and app entrypoint
 - `src/app/pages/` - routed page components for the small static site
-- `src/app/data/` - placeholder gallery data
-- `src/assets/images/` - local placeholder food assets
+- `src/app/data/` - static gallery data and content models
+- `src/assets/images/` - local optimized food photography and site image assets
 - `docs/` - feature contracts and implementation notes
 - `infra/` - OpenTofu infrastructure for S3, CloudFront, ACM, and Route 53
 - `.github/copilot-instructions.md` - project guidance for Copilot
@@ -68,6 +68,10 @@ The site uses Angular routes for the primary content areas while staying static-
 - `/about` - Drake's Food intro page
 - `/recipesensei/support` - RecipeSensei support page
 - `/recipesensei/privacy` - RecipeSensei privacy policy page
+
+## Gallery content
+
+Gallery photos are managed in the repo as static assets. Add optimized food photos under `src/assets/images/`, then add entries in `src/app/data/gallery.data.ts` with a stable `slug`, clear `category`, concise description, and specific `altText`. The homepage preview uses the first few gallery entries, while `/gallery` renders the full collection.
 
 ## Recipe submissions
 
