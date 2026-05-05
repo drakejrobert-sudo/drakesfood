@@ -44,10 +44,11 @@
 - [x] Recipe submission system documentation added
 - [x] RecipeSensei App Store link added
 - [x] Multi-page Angular site structure added — #54
+- [x] Add recipe submission security and spam hardening — #30
 
 ## 🔄 In Progress
 
-- [ ] Add recipe submission security and spam hardening — #30
+- [ ] Verify canonical domain, HTTPS, and Angular route refresh behavior — #53
 
 ## 📋 Remaining Tasks
 
@@ -60,7 +61,6 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - [x] Add RecipeSensei launch details once available — #21
 - [ ] Refine About section content — #16
 - [ ] Add optional recipe/blog details page later — #22
-- [ ] Add recipe submission security hardening — #30
 
 ### Deployment & Infrastructure
 
@@ -102,6 +102,8 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - RecipeSensei is live on the App Store: `https://apps.apple.com/us/app/recipesensei/id6759845210`
 - Instagram link remains `https://instagram.com/drakesfood`
 - Primary site routes now include `/`, `/gallery`, `/recipes`, `/submit`, `/recipesensei`, and `/about`, with RecipeSensei support and privacy pages preserved.
+- Canonical production URL is `https://drakesfood.com/`; `www.drakesfood.com` serves the same CloudFront-backed site for compatibility while canonical metadata and sitemap entries use the apex domain.
+- Production route refresh checks confirmed that `/gallery`, `/recipes`, `/submit`, `/recipesensei`, and `/about` return the Angular app with `200` responses through the CloudFront SPA fallback.
 - Recipe submissions started with a frontend-only form section; live API wiring is now in progress.
 - Recipe submission API contract is documented before backend and infrastructure implementation.
 - Recipe submission infrastructure is defined with OpenTofu using API Gateway, Lambda, DynamoDB, SES permissions, and CloudWatch logs.

@@ -79,6 +79,12 @@ The site deploys built Angular assets to the existing `drakesfood.com` S3 bucket
 
 See `infra/README.md` for the one-time OpenTofu setup and required GitHub repository secrets/variables.
 
+## Production Routing
+
+The canonical public URL is `https://drakesfood.com/`. The `www.drakesfood.com` hostname is also served by the same CloudFront distribution for compatibility, but page metadata, sitemap entries, and structured data should point to the apex domain.
+
+CloudFront redirects plain HTTP requests to HTTPS and maps S3 `403`/`404` responses back to `/index.html` so direct refreshes of Angular routes such as `/gallery`, `/recipes`, `/submit`, `/recipesensei`, and `/about` load the static app instead of an S3 error page.
+
 ## Notes
 
 The site is intentionally mostly static. It is designed for AWS S3 + CloudFront and does not include authentication, backend services, or CMS tools.
