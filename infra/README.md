@@ -142,4 +142,6 @@ After DNS propagation, these URLs should work:
 - `https://drakesfood.com`
 - `https://www.drakesfood.com`
 
-Plain HTTP requests should redirect to HTTPS.
+The canonical URL is `https://drakesfood.com/`. The `www` hostname intentionally serves the same site through the same CloudFront distribution for compatibility; canonical metadata and sitemap URLs should continue to use the apex domain.
+
+Plain HTTP requests should redirect to HTTPS. Direct refreshes for Angular routes should return the app with a `200` response because CloudFront maps S3 `403` and `404` responses to `/index.html`.
