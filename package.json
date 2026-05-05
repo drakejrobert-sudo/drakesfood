@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "lint": "ng lint",
     "test": "echo \"No test runner configured yet. Add Angular test support later.\"",
-    "typecheck": "tsc -p tsconfig.app.json --noEmit"
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
+    "audit:accessibility": "lighthouse http://127.0.0.1:8080 --only-categories=accessibility --chrome-flags=\"--headless --no-sandbox --disable-gpu\" --output=json --output-path=./lighthouse-report.json --quiet"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
@@ -33,6 +34,7 @@
     "@eslint/js": "^10.0.1",
     "angular-eslint": "^21.3.1",
     "eslint": "^10.2.1",
+    "lighthouse": "^11.0.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
     "typescript-eslint": "^8.59.1"
