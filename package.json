@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "test": "echo \"No test runner configured yet. Add Angular test support later.\"",
     "typecheck": "tsc -p tsconfig.app.json --noEmit",
-    "audit:accessibility": "lighthouse http://127.0.0.1:8080 --only-categories=accessibility --output=json --output-path=./lighthouse-report.json --quiet"
+    "audit:accessibility": "lighthouse http://127.0.0.1:8080 --only-categories=accessibility --chrome-flags=\"--headless --no-sandbox --disable-gpu\" --output=json --output-path=./lighthouse-report.json --quiet"
   },
   "private": true,
   "packageManager": "npm@11.12.1",
