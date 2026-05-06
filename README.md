@@ -60,7 +60,7 @@ npm run lint
 
 The site uses Angular routes for the primary content areas while staying static-first:
 
-- `/` - homepage gateway with hero, gallery preview, Instagram CTA, About, RecipeSensei, submission, and recipes preview sections
+- `/` - homepage gateway with hero, gallery preview, Instagram CTA, RecipeSensei, submission, and recipes preview sections
 - `/gallery` - food gallery page
 - `/recipes` - recipes and stories coming soon page
 - `/submit` - recipe idea submission page

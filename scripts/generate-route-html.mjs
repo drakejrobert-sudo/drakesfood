@@ -3,8 +3,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const siteUrl = 'https://drakesfood.com';
-const defaultImageUrl = `${siteUrl}/assets/images/markaritaOoniPizza.jpeg`;
-const defaultImageAlt = 'Margarita pizza fresh from the Ooni oven with melted mozzarella and basil';
+const defaultImageUrl = `${siteUrl}/assets/images/margaritaOoniPizza.jpeg`;
+const defaultImageAlt = 'Margherita pizza fresh from the Ooni oven with melted mozzarella and basil';
 const outputRoot = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist', 'drakesfood-app', 'browser');
 
 const pageMetadata = {
@@ -35,7 +35,7 @@ const pageMetadata = {
   },
   '/about': {
     title: "About | Drake's Food",
-    description: "Learn about Drake's Food, a personal, photo-forward home for cooking, food photography, Instagram updates, and RecipeSensei.",
+    description: "Learn about Drake's Food, a personal, photo-forward home for cooking, food photography, Instagram updates, and recipe ideas.",
     canonicalPath: '/about',
   },
   '/recipesensei/support': {

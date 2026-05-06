@@ -86,7 +86,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 
 - Gallery now uses real food photography from `src/assets/images/`
 - `/gallery` is a dedicated full food photo collection using reusable card styling and richer static metadata.
-- Hero now uses `markaritaOoniPizza.jpeg`
+- Hero now uses `margaritaOoniPizza.jpeg`
 - Remaining image assets are available for future gallery expansion
 - Gallery expansion is intentionally deferred until the current photo set has been reviewed in the live layout
 - Gallery images now lazy-load and use fixed aspect ratios for steadier responsive rendering
