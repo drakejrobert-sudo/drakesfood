@@ -128,7 +128,7 @@ export const galleryItems: GalleryItem[] = [
     title: 'Octopus weenie stir-fry',
     description: 'A playful stir-fry with sliced hot dogs, vegetables, and saucy noodles.',
     category: 'Experiments',
-    imageUrl: 'assets/images/octopusWeenieStirFry.jpeg',
+    imageUrl: 'assets/images/squidWeenieStirFry.jpeg',
     cardImageUrl: 'assets/images/gallery-cards/octopusWeenieStirFry.jpg',
     altText: 'Stir-fry with octopus-cut hot dogs, vegetables, and noodles',
     caption: 'A very unserious dinner experiment that the kiddos (and adults) love.',
