@@ -88,9 +88,9 @@ For new food photos:
 
 ## SEO and metadata
 
-The Angular app updates page titles, meta descriptions, canonical URLs, Open Graph tags, and Twitter/X card tags when primary routes change. Keep canonical metadata pointed at the apex domain, `https://drakesfood.com`, and use the default food photo preview image unless a future route has a stronger route-specific image.
+The Angular app updates page titles, meta descriptions, canonical URLs, Open Graph tags, and Twitter/X card tags when primary routes change. The production build also runs `scripts/generate-route-html.mjs`, which writes static route-specific `index.html` files so crawlers that do not execute JavaScript still receive the correct metadata for known routes. Keep canonical metadata pointed at the apex domain, `https://drakesfood.com`, and use the default food photo preview image unless a future route has a stronger route-specific image.
 
-When adding public pages, add route metadata in `src/app/app.ts` and include the canonical page in `public/sitemap.xml` if it should be indexed. Redirect aliases, such as `/submit-idea`, should point canonical metadata at the main route to avoid duplicate indexed pages.
+When adding public pages, add route metadata in `src/app/app.ts` and `scripts/generate-route-html.mjs`, then include the canonical page in `public/sitemap.xml` if it should be indexed. Redirect aliases, such as `/submit-idea`, should point canonical metadata at the main route to avoid duplicate indexed pages.
 
 ## Recipe submissions
 
