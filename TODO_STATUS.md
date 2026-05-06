@@ -49,10 +49,11 @@
 - [x] Build a full gallery page with reusable food cards — #56
 - [x] Add image optimization and responsive image guidelines — #57
 - [x] Redesign homepage hero and primary calls-to-action — #55
+- [x] Add dedicated RecipeSensei teaser page — #59
 
 ## 🔄 In Progress
 
-- [ ] No active issue-scoped work after #55 validation
+- [ ] Expand SEO, social sharing, sitemap, and robots metadata — #58
 
 ## 📋 Remaining Tasks
 
@@ -60,10 +61,10 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 
 ### Content & Visuals
 
-- [ ] Finalize copy for all sections — #15
+- [ ] Review site copy and wording after page breakout — #73
 - [x] Add more gallery images or full gallery page — #19 / #56
 - [x] Add RecipeSensei launch details once available — #21
-- [ ] Refine About section content — #16
+- [ ] Add dedicated About page with social and contact links — #60
 - [ ] Add optional recipe/blog details page later — #22
 
 ### Deployment & Infrastructure

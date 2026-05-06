@@ -13,6 +13,7 @@ export const routes: Routes = [
   { path: 'gallery', component: GalleryPageComponent },
   { path: 'recipes', component: RecipesPageComponent },
   { path: 'submit', component: SubmitPageComponent },
+  { path: 'submit-idea', redirectTo: 'submit', pathMatch: 'full' },
   { path: 'recipesensei', component: RecipeSenseiPageComponent },
   { path: 'recipesensei/support', component: RecipeSenseiSupportPageComponent },
   { path: 'recipesensei/privacy', component: RecipeSenseiPrivacyPageComponent },

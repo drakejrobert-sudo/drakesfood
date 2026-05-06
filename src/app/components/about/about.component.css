@@ -17,3 +17,10 @@
   color: var(--color-text-muted);
   line-height: 1.9;
 }
+
+.about-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
