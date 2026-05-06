@@ -7,8 +7,8 @@ import { filter } from 'rxjs';
 import { FooterComponent } from './components/footer/footer.component';
 
 const SITE_URL = 'https://drakesfood.com';
-const DEFAULT_IMAGE_URL = `${SITE_URL}/assets/images/markaritaOoniPizza.jpeg`;
-const DEFAULT_IMAGE_ALT = 'Margarita pizza fresh from the Ooni oven with melted mozzarella and basil';
+const DEFAULT_IMAGE_URL = `${SITE_URL}/assets/images/margaritaOoniPizza.jpeg`;
+const DEFAULT_IMAGE_ALT = 'Margherita pizza fresh from the Ooni oven with melted mozzarella and basil';
 
 interface PageMetadata {
   title: string;
@@ -20,7 +20,7 @@ const PAGE_METADATA: Record<string, PageMetadata> = {
   '/': {
     title: "Drake's Food | Food Photography & Home Cooking",
     description:
-      "Drake's Food is a warm, photo-first home for food photography, home cooking, Instagram updates, and RecipeSensei inspiration.",
+      "Drake's Food is a warm, photo-first home for food photography, home cooking, Instagram updates, and RecipeSensei iOS app updates.",
     canonicalPath: '/',
   },
   '/gallery': {
@@ -45,7 +45,7 @@ const PAGE_METADATA: Record<string, PageMetadata> = {
   },
   '/about': {
     title: "About | Drake's Food",
-    description: "Learn about Drake's Food, a personal, photo-forward home for cooking, food photography, Instagram updates, and RecipeSensei.",
+    description: "Learn about Drake's Food, a personal, photo-forward home for cooking, food photography, Instagram updates, and recipe ideas.",
     canonicalPath: '/about',
   },
   '/recipesensei/support': {

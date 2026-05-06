@@ -69,13 +69,13 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: 7,
-    slug: 'margarita-ooni-pizza',
-    title: 'Margarita Ooni pizza',
-    description: 'A margarita-style pizza with melty cheese, fresh basil, and charred edges.',
+    slug: 'margherita-ooni-pizza',
+    title: 'Margherita Ooni pizza',
+    description: 'A Margherita-style pizza with melty cheese, fresh basil, and charred edges.',
     category: 'Pizza',
     imageUrl: 'assets/images/margaritaOoniPizza.jpeg',
     cardImageUrl: 'assets/images/gallery-cards/margaritaOoniPizza.jpg',
-    altText: 'Margarita-style Ooni pizza with basil and charred crust',
+    altText: 'Margherita-style Ooni pizza with basil and charred crust',
     caption: 'Simple toppings, hot oven, (home) chef\'s kiss.',
   },
   {
