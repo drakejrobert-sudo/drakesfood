@@ -102,9 +102,14 @@ button,
 }
 
 .button-secondary {
-  background: var(--color-purple-dark);
-  color: #fff;
+  border: 1px solid rgba(61, 37, 111, 0.28);
+  background: rgba(255, 250, 245, 0.74);
+  color: var(--color-purple-dark);
   padding: 1.5rem 2.5rem;
+}
+
+.button-secondary:hover {
+  background: rgba(109, 74, 163, 0.1);
 }
 
 p {

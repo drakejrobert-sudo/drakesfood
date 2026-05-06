@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build && node scripts/generate-route-html.mjs",
     "watch": "ng build --watch --configuration development",
     "lint": "ng lint",
     "test": "echo \"No test runner configured yet. Add Angular test support later.\"",

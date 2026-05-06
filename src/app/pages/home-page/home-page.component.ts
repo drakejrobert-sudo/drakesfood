@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { AboutComponent } from '../../components/about/about.component';
 import { GalleryPreviewComponent } from '../../components/gallery-preview/gallery-preview.component';
 import { HeroComponent } from '../../components/hero/hero.component';
 import { InstagramCtaComponent } from '../../components/instagram-cta/instagram-cta.component';
@@ -14,7 +13,6 @@ import { SubmitIdeaCtaComponent } from '../../components/submit-idea-cta/submit-
     HeroComponent,
     GalleryPreviewComponent,
     InstagramCtaComponent,
-    AboutComponent,
     RecipeSenseiComponent,
     SubmitIdeaCtaComponent,
     RecipeBlogComponent,
