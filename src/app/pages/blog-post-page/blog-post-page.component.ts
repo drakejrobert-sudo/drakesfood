@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { BlogPost } from '../../data/blog-post.model';
 import { blogPosts } from '../../data/blog-posts.data';
@@ -11,18 +12,23 @@ import { blogPosts } from '../../data/blog-posts.data';
   styleUrls: ['./blog-post-page.component.css'],
 })
 export class BlogPostPageComponent {
+  private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  protected readonly post: BlogPost | undefined = this.findPost();
+  protected readonly post = signal<BlogPost | undefined>(undefined);
 
-  private findPost(): BlogPost | undefined {
-    const slug = this.route.snapshot.paramMap.get('slug');
-    const post = blogPosts.find((blogPost) => blogPost.slug === slug);
+  constructor() {
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((paramMap) => {
+      const slug = paramMap.get('slug');
+      const post = blogPosts.find((blogPost) => blogPost.slug === slug);
 
-    if (!post) {
-      void this.router.navigate(['/blog'], { replaceUrl: true });
-    }
+      if (!post) {
+        this.post.set(undefined);
+        void this.router.navigate(['/blog'], { replaceUrl: true });
+        return;
+      }
 
-    return post;
+      this.post.set(post);
+    });
   }
 }
