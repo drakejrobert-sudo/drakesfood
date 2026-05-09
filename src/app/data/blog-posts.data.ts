@@ -26,7 +26,6 @@ export const blogPosts: BlogPost[] = [
       "Started with Sugar Spun Run's cheese danish recipe as the base.",
       'Added a quick blackberry jam to half of the cream cheese filling.',
       'Puff pastry was hiding in the frozen desserts section at Hy-Vee.',
-      'This is more of a story and kitchen note than a fully original recipe.',
     ],
     sourceRecipe: {
       label: 'Cheese Danish - Sugar Spun Run',
