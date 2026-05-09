@@ -88,7 +88,7 @@ The DynamoDB table is created by `aws_dynamodb_table.blog_subscribers`.
 
 Default table name: `drakesfood-blog-subscribers`
 
-The table uses pay-per-request billing and is keyed by `subscriberId`. It includes GSIs for `emailHash` and `confirmationTokenHash` lookups.
+The table uses pay-per-request billing and is keyed by `emailHash` so each normalized email can have only one subscriber record. It includes a GSI for `confirmationTokenHash` lookups.
 
 Subscriber item shape:
 
@@ -107,7 +107,7 @@ Subscriber item shape:
 }
 ```
 
-`confirmedAt` appears after confirmation. `confirmationTokenHash` is removed after successful confirmation. `unsubscribeTokenHash` is stored now so #83 can add unsubscribe support without changing the subscriber creation flow.
+`subscriberId` is a stored identifier for logging and debugging, not the table key. `confirmedAt` appears after confirmation. `confirmationTokenHash` is removed after successful confirmation. `unsubscribeTokenHash` is stored now so #83 can add unsubscribe support without changing the subscriber creation flow.
 
 ## Privacy
 

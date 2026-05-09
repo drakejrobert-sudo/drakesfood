@@ -166,7 +166,7 @@ async function confirmSubscription(event, { now, findSubscriberByConfirmationTok
   }
 
   try {
-    await activateSubscriber(subscriber.subscriberId, now().toISOString());
+    await activateSubscriber(subscriber.emailHash, now().toISOString());
   } catch (error) {
     console.error('Failed to confirm blog subscriber.', {
       errorName: error?.name,
@@ -286,23 +286,20 @@ function normalizeSignupBody(body) {
 
 async function findSubscriberByEmailHashInDynamoDb(emailHash) {
   const tableName = getTableName();
-  const { DynamoDBClient, QueryCommand } = await loadDynamoDbClient();
+  const { DynamoDBClient, GetItemCommand } = await loadDynamoDbClient();
   const client = dynamoClient ?? new DynamoDBClient({});
   dynamoClient = client;
 
   const response = await client.send(
-    new QueryCommand({
+    new GetItemCommand({
       TableName: tableName,
-      IndexName: 'emailHash-index',
-      KeyConditionExpression: 'emailHash = :emailHash',
-      ExpressionAttributeValues: {
-        ':emailHash': { S: emailHash },
+      Key: {
+        emailHash: { S: emailHash },
       },
-      Limit: 1,
     }),
   );
 
-  return response.Items?.[0] ? fromDynamoDbItem(response.Items[0]) : undefined;
+  return response.Item ? fromDynamoDbItem(response.Item) : undefined;
 }
 
 async function findSubscriberByConfirmationTokenHashInDynamoDb(confirmationTokenHash) {
@@ -340,7 +337,7 @@ async function savePendingSubscriberToDynamoDb(subscriber) {
   );
 }
 
-async function activateSubscriberInDynamoDb(subscriberId, confirmedAt) {
+async function activateSubscriberInDynamoDb(emailHash, confirmedAt) {
   const tableName = getTableName();
   const { DynamoDBClient, UpdateItemCommand } = await loadDynamoDbClient();
   const client = dynamoClient ?? new DynamoDBClient({});
@@ -350,7 +347,7 @@ async function activateSubscriberInDynamoDb(subscriberId, confirmedAt) {
     new UpdateItemCommand({
       TableName: tableName,
       Key: {
-        subscriberId: { S: subscriberId },
+        emailHash: { S: emailHash },
       },
       UpdateExpression: 'SET #status = :active, confirmedAt = :confirmedAt, updatedAt = :confirmedAt REMOVE confirmationTokenHash',
       ConditionExpression: '#status = :pending',

@@ -5,12 +5,7 @@ locals {
 resource "aws_dynamodb_table" "blog_subscribers" {
   name         = var.blog_subscriptions_table_name
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "subscriberId"
-
-  attribute {
-    name = "subscriberId"
-    type = "S"
-  }
+  hash_key     = "emailHash"
 
   attribute {
     name = "emailHash"
@@ -20,12 +15,6 @@ resource "aws_dynamodb_table" "blog_subscribers" {
   attribute {
     name = "confirmationTokenHash"
     type = "S"
-  }
-
-  global_secondary_index {
-    name            = "emailHash-index"
-    hash_key        = "emailHash"
-    projection_type = "ALL"
   }
 
   global_secondary_index {
@@ -70,6 +59,7 @@ data "aws_iam_policy_document" "blog_subscriptions_lambda" {
     sid = "WriteBlogSubscribers"
 
     actions = [
+      "dynamodb:GetItem",
       "dynamodb:PutItem",
       "dynamodb:UpdateItem",
     ]

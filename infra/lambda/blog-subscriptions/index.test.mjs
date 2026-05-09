@@ -265,22 +265,24 @@ test('duplicate pending signup refreshes confirmation token', async () => {
 
 test('valid confirmation activates a pending subscriber and redirects to success', async () => {
   const activations = [];
+  const emailHash = hash('fan@example.com');
   process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
   const handler = createHandler({
     now: () => fixedDate,
     findSubscriberByConfirmationTokenHash: async (confirmationTokenHash) => ({
       subscriberId: 'subscriber-123',
+      emailHash,
       confirmationTokenHash,
       status: 'pending',
     }),
-    activateSubscriber: async (subscriberId, confirmedAt) => activations.push({ subscriberId, confirmedAt }),
+    activateSubscriber: async (activatedEmailHash, confirmedAt) => activations.push({ emailHash: activatedEmailHash, confirmedAt }),
   });
 
   const response = await handler(createConfirmEvent('confirm-token'));
 
   assert.equal(response.statusCode, 302);
   assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=confirmed');
-  assert.deepEqual(activations, [{ subscriberId: 'subscriber-123', confirmedAt: '2026-05-09T12:00:00.000Z' }]);
+  assert.deepEqual(activations, [{ emailHash, confirmedAt: '2026-05-09T12:00:00.000Z' }]);
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
 
