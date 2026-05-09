@@ -2,6 +2,18 @@
   padding: 2rem 1rem 4rem;
 }
 
+.section-intro {
+  max-width: 42rem;
+}
+
+.section-intro h2 {
+  margin: 0.35rem 0 0;
+  color: var(--color-text);
+  font-size: clamp(2rem, 7vw, 4.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+
 .recipe-blog p {
   max-width: 54rem;
   margin-top: 1rem;
@@ -9,19 +21,117 @@
   line-height: 1.8;
 }
 
-.recipe-blog .button {
-  margin-top: 1.5rem;
+.featured-post {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  overflow: hidden;
+  border: 1px solid rgba(61, 45, 33, 0.1);
+  border-radius: 2rem;
+  background: rgba(255, 250, 245, 0.82);
+  box-shadow: var(--shadow-card);
+}
+
+.featured-image-link {
+  background: var(--color-purple-soft);
+}
+
+.featured-image-link img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center;
+}
+
+.featured-post-copy {
+  padding: 0 1.25rem 1.5rem;
+}
+
+.post-date {
+  color: var(--color-purple-dark);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.featured-post h3,
+.previous-posts h3 {
+  margin: 0.45rem 0 0;
+  color: var(--color-text);
+  font-size: clamp(1.9rem, 6vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
 }
 
 .recipe-blog-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.9rem;
+  margin-top: 1.5rem;
+}
+
+.previous-posts {
+  margin-top: 3rem;
+}
+
+.previous-post-grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.previous-post-card {
+  overflow: hidden;
+  border: 1px solid rgba(61, 45, 33, 0.1);
+  border-radius: 1.5rem;
+  background: rgba(255, 250, 245, 0.74);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.previous-post-card img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: center;
+}
+
+.previous-post-card span,
+.previous-post-card strong {
+  display: block;
+  padding: 0 1rem;
+}
+
+.previous-post-card span {
+  margin-top: 1rem;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.previous-post-card strong {
+  padding-bottom: 1rem;
+  font-size: 1.25rem;
 }
 
 @media (max-width: 560px) {
   .recipe-blog .button,
   .recipe-blog-actions {
     width: 100%;
+  }
+}
+
+@media (min-width: 860px) {
+  .featured-post {
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .featured-post-copy {
+    padding: 2rem 2rem 2rem 0;
+  }
+
+  .previous-post-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

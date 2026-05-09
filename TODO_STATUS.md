@@ -50,6 +50,7 @@
 - [x] Add image optimization and responsive image guidelines — #57
 - [x] Redesign homepage hero and primary calls-to-action — #55
 - [x] Add dedicated RecipeSensei teaser page — #59
+- [x] Add first recipe/story blog detail page
 
 ## 🔄 In Progress
 
@@ -65,7 +66,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - [x] Add more gallery images or full gallery page — #19 / #56
 - [x] Add RecipeSensei launch details once available — #21
 - [ ] Add dedicated About page with social and contact links — #60
-- [ ] Add optional recipe/blog details page later — #22
+- [x] Add optional recipe/blog details page later — #22
 
 ### Deployment & Infrastructure
 
@@ -108,9 +109,9 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Angular test runner setup remains deferred and tracked separately
 - RecipeSensei is live on the App Store: `https://apps.apple.com/us/app/recipesensei/id6759845210`
 - Instagram link remains `https://instagram.com/drakesfood`
-- Primary site routes now include `/`, `/gallery`, `/recipes`, `/submit`, `/recipesensei`, and `/about`, with RecipeSensei support and privacy pages preserved.
+- Primary site routes now include `/`, `/gallery`, `/blog`, `/submit`, `/recipesensei`, and `/about`, with RecipeSensei support and privacy pages preserved.
 - Canonical production URL is `https://drakesfood.com/`; `www.drakesfood.com` serves the same CloudFront-backed site for compatibility while canonical metadata and sitemap entries use the apex domain.
-- Production route refresh checks confirmed that `/gallery`, `/recipes`, `/submit`, `/recipesensei`, and `/about` return the Angular app with `200` responses through the CloudFront SPA fallback.
+- Production route refresh checks confirmed that `/gallery`, `/recipes`, `/submit`, `/recipesensei`, and `/about` return the Angular app with `200` responses through the CloudFront SPA fallback; `/blog` is now the canonical blog route and `/recipes` redirects there.
 - Recipe submissions started with a frontend-only form section; live API wiring is now in progress.
 - Recipe submission API contract is documented before backend and infrastructure implementation.
 - Recipe submission infrastructure is defined with OpenTofu using API Gateway, Lambda, DynamoDB, SES permissions, and CloudWatch logs.
@@ -131,7 +132,8 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Performance review removed the external Google Fonts request and added explicit sizing/decoding hints to key images
 - Issue #19 was closed as stale because the full gallery page work landed through #56; image follow-up landed through #57.
 - Homepage hero now leads with a clearer Drake's Food introduction, stronger gallery/Instagram/RecipeSensei CTAs, and a lighter submit-idea prompt.
+- Blog now includes a featured story layout and the first full post, `Mother's Day Baking`, with process photos and a RecipeSensei import link.
 
 ## Last Updated
 
-May 5, 2026
+May 9, 2026

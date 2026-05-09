@@ -1,11 +1,55 @@
-<section class="recipe-blog" aria-labelledby="recipes-title">
+<section class="recipe-blog" aria-labelledby="blog-title">
   <div class="section-intro">
-    <p class="eyebrow">Recipes & stories</p>
-    <h2 id="recipes-title">A recipe blog is on the way.</h2>
+    <p class="eyebrow">{{ currentPost.eyebrow }}</p>
+    <h2 id="blog-title">Drake's Food Blog</h2>
   </div>
-  <p>The collection of recipes and food writing will grow here once the kitchen notes are ready to share. Expect home-cooking notes, experiments, family favorites, and the occasional wacky-out-there meal.</p>
-  <p>Have something I should cook? Shoot me a suggestion. Nothing is too hard, boring, or weird.</p>
-  <div class="recipe-blog-actions">
-    <a class="button button-primary" routerLink="/submit">Submit a recipe idea</a>
-  </div>
+  <article class="featured-post">
+    <a
+      class="featured-image-link"
+      [routerLink]="['/blog', currentPost.slug]"
+      [attr.aria-label]="'Read ' + currentPost.title"
+    >
+      <img
+        [src]="currentPost.heroImage.src"
+        [alt]="currentPost.heroImage.alt"
+        width="1536"
+        height="2048"
+        loading="lazy"
+        decoding="async"
+      />
+    </a>
+    <div class="featured-post-copy">
+      <p class="post-date">{{ currentPost.date }}</p>
+      <h3>{{ currentPost.title }}</h3>
+      <p>{{ currentPost.summary }}</p>
+      <div class="recipe-blog-actions">
+        <a class="button button-primary" [routerLink]="['/blog', currentPost.slug]"
+          >Read the post</a
+        >
+        <a class="button button-secondary" routerLink="/submit">Submit a recipe idea</a>
+      </div>
+    </div>
+  </article>
+
+  @if (previousPosts.length > 0) {
+    <div class="previous-posts" aria-labelledby="previous-posts-title">
+      <h3 id="previous-posts-title">Previous stories</h3>
+      <div class="previous-post-grid">
+        @for (post of previousPosts; track post.slug) {
+          <a class="previous-post-card" [routerLink]="['/blog', post.slug]">
+            <img
+              [src]="post.heroImage.src"
+              [alt]="post.heroImage.alt"
+              width="1536"
+              height="2048"
+              loading="lazy"
+              decoding="async"
+            />
+            <span>{{ post.date }}</span>
+            <strong>{{ post.title }}</strong>
+          </a>
+        }
+      </div>
+    </div>
+  }
 </section>
