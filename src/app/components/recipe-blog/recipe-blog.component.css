@@ -33,14 +33,18 @@
 }
 
 .featured-image-link {
+  display: grid;
+  place-items: center;
   background: var(--color-purple-soft);
+  padding: 0.75rem;
 }
 
 .featured-image-link img {
   width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-  object-position: center;
+  height: auto;
+  max-height: 32rem;
+  border-radius: 1.25rem;
+  object-fit: contain;
 }
 
 .featured-post-copy {
@@ -123,8 +127,12 @@
 
 @media (min-width: 860px) {
   .featured-post {
-    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
+    grid-template-columns: minmax(16rem, 0.72fr) minmax(0, 1fr);
     align-items: center;
+  }
+
+  .featured-image-link img {
+    max-height: 24rem;
   }
 
   .featured-post-copy {
