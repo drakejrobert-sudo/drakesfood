@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AboutPageComponent } from './pages/about-page/about-page.component';
+import { BlogPostPageComponent } from './pages/blog-post-page/blog-post-page.component';
 import { GalleryPageComponent } from './pages/gallery-page/gallery-page.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { RecipeSenseiPageComponent } from './pages/recipesensei-page/recipesensei-page.component';
@@ -11,7 +12,10 @@ import { SubmitPageComponent } from './pages/submit-page/submit-page.component';
 export const routes: Routes = [
   { path: '', component: HomePageComponent },
   { path: 'gallery', component: GalleryPageComponent },
-  { path: 'recipes', component: RecipesPageComponent },
+  { path: 'blog', component: RecipesPageComponent },
+  { path: 'blog/:slug', component: BlogPostPageComponent },
+  { path: 'recipes', redirectTo: 'blog', pathMatch: 'full' },
+  { path: 'recipes/:slug', redirectTo: 'blog/:slug' },
   { path: 'submit', component: SubmitPageComponent },
   { path: 'submit-idea', redirectTo: 'submit', pathMatch: 'full' },
   { path: 'recipesensei', component: RecipeSenseiPageComponent },

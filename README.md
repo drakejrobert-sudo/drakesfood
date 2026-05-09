@@ -60,9 +60,9 @@ npm run lint
 
 The site uses Angular routes for the primary content areas while staying static-first:
 
-- `/` - homepage gateway with hero, gallery preview, Instagram CTA, RecipeSensei, submission, and recipes preview sections
+- `/` - homepage gateway with hero, gallery preview, Instagram CTA, RecipeSensei, submission, and blog preview sections
 - `/gallery` - food gallery page
-- `/recipes` - recipes and stories coming soon page
+- `/blog` - Drake's Food blog stories and recipe notes
 - `/submit` - recipe idea submission page
 - `/recipesensei` - RecipeSensei app teaser and links
 - `/about` - Drake's Food intro page
@@ -106,7 +106,7 @@ See `infra/README.md` for the one-time OpenTofu setup and required GitHub reposi
 
 The canonical public URL is `https://drakesfood.com/`. The `www.drakesfood.com` hostname is also served by the same CloudFront distribution for compatibility, but page metadata, sitemap entries, and structured data should point to the apex domain.
 
-CloudFront redirects plain HTTP requests to HTTPS and maps S3 `403`/`404` responses back to `/index.html` so direct refreshes of Angular routes such as `/gallery`, `/recipes`, `/submit`, `/recipesensei`, and `/about` load the static app instead of an S3 error page.
+CloudFront redirects plain HTTP requests to HTTPS and maps S3 `403`/`404` responses back to `/index.html` so direct refreshes of Angular routes such as `/gallery`, `/blog`, `/submit`, `/recipesensei`, and `/about` load the static app instead of an S3 error page.
 
 ## Notes
 

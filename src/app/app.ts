@@ -8,7 +8,8 @@ import { FooterComponent } from './components/footer/footer.component';
 
 const SITE_URL = 'https://drakesfood.com';
 const DEFAULT_IMAGE_URL = `${SITE_URL}/assets/images/margaritaOoniPizza.jpeg`;
-const DEFAULT_IMAGE_ALT = 'Margherita pizza fresh from the Ooni oven with melted mozzarella and basil';
+const DEFAULT_IMAGE_ALT =
+  'Margherita pizza fresh from the Ooni oven with melted mozzarella and basil';
 
 interface PageMetadata {
   title: string;
@@ -25,37 +26,49 @@ const PAGE_METADATA: Record<string, PageMetadata> = {
   },
   '/gallery': {
     title: "Food Gallery | Drake's Food",
-    description: "Browse Drake's Food photos, including smoked meats, backyard pizza, family meals, and home-cooking experiments.",
+    description:
+      "Browse Drake's Food photos, including smoked meats, backyard pizza, family meals, and home-cooking experiments.",
     canonicalPath: '/gallery',
   },
-  '/recipes': {
-    title: "Recipes & Stories | Drake's Food",
-    description: "Follow future Drake's Food recipes, kitchen notes, food experiments, family favorites, and cooking stories.",
-    canonicalPath: '/recipes',
+  '/blog': {
+    title: "Drake's Food Blog | Drake's Food",
+    description:
+      "Read Drake's Food stories, kitchen notes, food experiments, family favorites, and recipe links.",
+    canonicalPath: '/blog',
+  },
+  '/blog/mothers-day-baking': {
+    title: "The One Day a Year I Bake | Drake's Food",
+    description: 'A family tradition that continues to challenge me year after year.',
+    canonicalPath: '/blog/mothers-day-baking',
   },
   '/submit': {
     title: "Submit a Recipe Idea | Drake's Food",
-    description: "Send Drake a recipe idea, family dish, cooking challenge, or food link for possible future Drake's Food inspiration.",
+    description:
+      "Send Drake a recipe idea, family dish, cooking challenge, or food link for possible future Drake's Food inspiration.",
     canonicalPath: '/submit',
   },
   '/recipesensei': {
     title: "RecipeSensei | Drake's Food",
-    description: "RecipeSensei is Drake's recipe-saving and cooking companion app, available for iPhone and iPad on the App Store.",
+    description:
+      "RecipeSensei is Drake's recipe-saving and cooking companion app, available for iPhone and iPad on the App Store.",
     canonicalPath: '/recipesensei',
   },
   '/about': {
     title: "About | Drake's Food",
-    description: "Learn about Drake's Food, a personal, photo-forward home for cooking, food photography, Instagram updates, and recipe ideas.",
+    description:
+      "Learn about Drake's Food, a personal, photo-forward home for cooking, food photography, Instagram updates, and recipe ideas.",
     canonicalPath: '/about',
   },
   '/recipesensei/support': {
     title: "RecipeSensei Support | Drake's Food",
-    description: 'Get support information for RecipeSensei, Drake\'s recipe-saving and cooking companion app.',
+    description:
+      "Get support information for RecipeSensei, Drake's recipe-saving and cooking companion app.",
     canonicalPath: '/recipesensei/support',
   },
   '/recipesensei/privacy': {
     title: "RecipeSensei Privacy Policy | Drake's Food",
-    description: 'Review the privacy policy for RecipeSensei, Drake\'s recipe-saving and cooking companion app.',
+    description:
+      "Review the privacy policy for RecipeSensei, Drake's recipe-saving and cooking companion app.",
     canonicalPath: '/recipesensei/privacy',
   },
 };
@@ -114,8 +127,15 @@ export class App {
     return path || '/';
   }
 
-  private updateMetaTag(attributeName: 'name' | 'property', attributeValue: string, content: string): void {
-    this.meta.updateTag({ [attributeName]: attributeValue, content }, `${attributeName}='${attributeValue}'`);
+  private updateMetaTag(
+    attributeName: 'name' | 'property',
+    attributeValue: string,
+    content: string,
+  ): void {
+    this.meta.updateTag(
+      { [attributeName]: attributeValue, content },
+      `${attributeName}='${attributeValue}'`,
+    );
   }
 
   private updateCanonicalUrl(canonicalUrl: string): void {

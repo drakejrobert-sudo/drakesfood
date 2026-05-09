@@ -1,0 +1,76 @@
+@if (post(); as post) {
+  <article class="blog-post" aria-labelledby="blog-post-title">
+    <a class="back-link" routerLink="/blog">Back to the blog</a>
+
+    <header class="post-header">
+      <div class="post-heading">
+        <p class="eyebrow">{{ post.eyebrow }}</p>
+        <h1 id="blog-post-title">{{ post.title }}</h1>
+        <p class="post-summary">{{ post.summary }}</p>
+        <p class="post-date">{{ post.date }}</p>
+      </div>
+      <img
+        [src]="post.heroImage.src"
+        [alt]="post.heroImage.alt"
+        width="1536"
+        height="2048"
+        fetchpriority="high"
+        decoding="async"
+      />
+    </header>
+
+    <div class="post-layout">
+      <div class="post-body">
+        @for (paragraph of post.body; track paragraph) {
+          <p>{{ paragraph }}</p>
+        }
+      </div>
+
+      <aside class="recipe-card" aria-labelledby="recipe-notes-title">
+        <p class="eyebrow">Recipe notes</p>
+        <h2 id="recipe-notes-title">Cheese danish notes</h2>
+        <ul>
+          @for (note of post.recipeNotes; track note) {
+            <li>{{ note }}</li>
+          }
+        </ul>
+        <div class="recipe-links">
+          <a class="button button-primary" [href]="post.recipeSenseiImport.href">{{
+            post.recipeSenseiImport.label
+          }}</a>
+          <a
+            class="button button-secondary"
+            [href]="post.sourceRecipe.href"
+            target="_blank"
+            rel="noopener"
+            >{{ post.sourceRecipe.label }}</a
+          >
+        </div>
+        <p class="import-note">
+          Tap the RecipeSensei import link, then open it with RecipeSensei when prompted.
+        </p>
+      </aside>
+    </div>
+
+    <section class="post-gallery" aria-labelledby="post-gallery-title">
+      <div class="section-intro">
+        <p class="eyebrow">Process photos</p>
+        <h2 id="post-gallery-title">A few scenes from the bake.</h2>
+      </div>
+      <div class="photo-grid">
+        @for (image of post.gallery; track image.src) {
+          <figure class="photo-card">
+            <img
+              [src]="image.src"
+              [alt]="image.alt"
+              width="1536"
+              height="2048"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        }
+      </div>
+    </section>
+  </article>
+}
