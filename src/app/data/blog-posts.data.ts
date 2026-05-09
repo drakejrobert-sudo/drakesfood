@@ -8,8 +8,7 @@ export const blogPosts: BlogPost[] = [
     slug: 'mothers-day-baking',
     eyebrow: 'Food stories',
     date: 'May 2026',
-    summary:
-      "A Mother's Day tea party brunch, one reluctant baker, and a tray of cheese danishes with a blackberry jam detour.",
+    summary: 'A family tradition that continues to challenge me year after year.',
     heroImage: {
       src: `${mothersDayImagePath}/mothers_day_11.jpeg`,
       alt: "Finished cheese danishes cooling after a Mother's Day bake",

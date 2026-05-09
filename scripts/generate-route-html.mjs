@@ -29,8 +29,7 @@ const pageMetadata = {
   },
   '/blog/mothers-day-baking': {
     title: "The One Day a Year I Bake | Drake's Food",
-    description:
-      "A Mother's Day tea party brunch, one reluctant baker, and a tray of cheese danishes with a blackberry jam detour.",
+    description: 'A family tradition that continues to challenge me year after year.',
     canonicalPath: '/blog/mothers-day-baking',
   },
   '/submit': {
