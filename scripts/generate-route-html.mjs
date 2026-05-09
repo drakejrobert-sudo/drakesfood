@@ -28,7 +28,7 @@ const pageMetadata = {
     canonicalPath: '/blog',
   },
   '/blog/mothers-day-baking': {
-    title: "Mother's Day Baking | Drake's Food",
+    title: "The One Day a Year I Bake | Drake's Food",
     description:
       "A Mother's Day tea party brunch, one reluctant baker, and a tray of cheese danishes with a blackberry jam detour.",
     canonicalPath: '/blog/mothers-day-baking',

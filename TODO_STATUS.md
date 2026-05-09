@@ -132,7 +132,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Performance review removed the external Google Fonts request and added explicit sizing/decoding hints to key images
 - Issue #19 was closed as stale because the full gallery page work landed through #56; image follow-up landed through #57.
 - Homepage hero now leads with a clearer Drake's Food introduction, stronger gallery/Instagram/RecipeSensei CTAs, and a lighter submit-idea prompt.
-- Blog now includes a featured story layout and the first full post, `Mother's Day Baking`, with process photos and a RecipeSensei import link.
+- Blog now includes a featured story layout and the first full post, `The One Day a Year I Bake`, with process photos and a RecipeSensei import link.
 
 ## Last Updated
 

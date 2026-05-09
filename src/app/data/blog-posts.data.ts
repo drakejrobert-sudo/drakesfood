@@ -4,7 +4,7 @@ const mothersDayImagePath = '/assets/blog/mothers-day-baking';
 
 export const blogPosts: BlogPost[] = [
   {
-    title: "Mother's Day Baking",
+    title: 'The One Day a Year I Bake',
     slug: 'mothers-day-baking',
     eyebrow: 'Food stories',
     date: 'May 2026',
