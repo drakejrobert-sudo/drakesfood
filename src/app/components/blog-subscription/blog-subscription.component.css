@@ -1,0 +1,104 @@
+.blog-subscription {
+  display: grid;
+  gap: 1.25rem;
+  margin-top: 2rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(61, 45, 33, 0.12);
+  border-radius: 1.5rem;
+  background: linear-gradient(135deg, rgba(255, 250, 245, 0.95), rgba(255, 238, 217, 0.76));
+  box-shadow: var(--shadow-card);
+}
+
+.subscription-copy h3 {
+  margin: 0.35rem 0 0;
+  color: var(--color-text);
+  font-size: clamp(1.75rem, 6vw, 3rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.subscription-copy p:not(.eyebrow),
+.field-help,
+.status-message {
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.subscription-copy p:not(.eyebrow) {
+  margin: 0.85rem 0 0;
+}
+
+.subscription-form {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+label {
+  color: var(--color-text);
+  font-weight: 800;
+}
+
+input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(61, 45, 33, 0.18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.86);
+  color: var(--color-text);
+  font: inherit;
+  padding: 0.9rem 1rem;
+}
+
+input:focus-visible {
+  outline: 3px solid rgba(132, 84, 52, 0.34);
+  outline-offset: 2px;
+}
+
+.field-help,
+.field-error,
+.status-message {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.field-error,
+.status-error {
+  color: #8f1d14;
+  font-weight: 700;
+}
+
+.status-success {
+  color: #315f2f;
+  font-weight: 800;
+}
+
+.honeypot {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+button {
+  justify-self: start;
+}
+
+@media (max-width: 560px) {
+  button {
+    width: 100%;
+  }
+}
+
+@media (min-width: 760px) {
+  .blog-subscription {
+    grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 1fr);
+    align-items: center;
+    padding: 1.5rem;
+  }
+}

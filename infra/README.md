@@ -14,6 +14,10 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - Lambda function, execution role, and CloudWatch logs for recipe submissions
 - DynamoDB table for recipe submission storage
 - SES send permissions for recipe submission notifications
+- API Gateway HTTP API for blog email subscription signup and confirmation
+- Lambda function, execution role, and CloudWatch logs for blog email subscriptions
+- DynamoDB table for blog email subscriber storage
+- SES send permissions for blog subscription confirmation emails
 
 CloudFront requires ACM certificates to be in `us-east-1`, so this config uses a secondary AWS provider for the certificate while keeping the existing S3 bucket in `us-east-2`.
 
@@ -34,6 +38,39 @@ The Lambda source lives at `lambda/recipe-submissions/index.mjs`. It validates s
 The Lambda request body limit defaults to `16384` bytes and can be adjusted with `recipe_submissions_max_body_bytes` if the text-only V1 form needs more room later. V1 intentionally does not include CAPTCHA; add it only if real abuse requires the extra friction.
 
 See `../docs/recipe-submission-system.md` for the end-to-end recipe submission system documentation, including frontend wiring, API behavior, deployment, testing, and CloudWatch log locations.
+
+## Blog Email Subscriptions
+
+The blog subscription backend is defined as low-cost serverless infrastructure:
+
+- API Gateway HTTP API exposes `POST /blog-subscriptions` and `GET /blog-subscriptions/confirm`.
+- CORS is restricted to `drakesfood.com`, `www.drakesfood.com`, and local Angular development by default.
+- Lambda receives the table name, source site, allowed origins, API base URL, site URL, and SES sender through environment variables.
+- DynamoDB stores subscriber records by `subscriberId` with lookup indexes for email hashes and confirmation token hashes.
+- SES sends a plain-text confirmation email after a valid signup is stored.
+- CloudWatch log groups use the configured retention period.
+- API Gateway throttling defaults to 10 burst requests and 5 sustained requests per second.
+
+The Lambda source lives at `lambda/blog-subscriptions/index.mjs`. It validates signup requests, handles honeypot submissions without storing or emailing them, stores pending subscribers in DynamoDB, sends SES confirmation emails when a sender is configured, and activates pending subscribers from confirmation links.
+
+The Lambda request body limit defaults to `8192` bytes and can be adjusted with `blog_subscriptions_max_body_bytes` if needed.
+
+See `../docs/blog-email-subscriptions.md` for the end-to-end blog subscription documentation, including frontend wiring, API behavior, deployment, testing, privacy notes, and follow-up work.
+
+Before applying blog subscription infrastructure for production, set these values with a local `.tfvars` file or `-var` arguments. The SES identity ARN can be omitted if the verified identity is the site domain in the active AWS account.
+
+```hcl
+blog_subscriptions_ses_identity_arn = "arn:aws:ses:us-east-2:<account-id>:identity/drakesfood.com"
+blog_subscriptions_ses_sender_email = "Drake's Food <updates@drakesfood.com>"
+```
+
+Do not commit real private email addresses or account-specific values unless they are intentionally public. The SES sender identity must be verified before confirmation emails can work. If the SES sender is missing, accepted signups are still stored but confirmation email is skipped and logged.
+
+After apply, get the API endpoint for frontend configuration:
+
+```bash
+AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_api_endpoint
+```
 
 Before applying recipe submission infrastructure for production, set these values with a local `.tfvars` file or `-var` arguments. The SES identity ARN can be omitted if the verified identity is the site domain in the active AWS account.
 
@@ -107,6 +144,7 @@ After apply finishes, get the CloudFront distribution ID and recipe submission A
 ```bash
 AWS_PROFILE=drakesfood tofu output -raw cloudfront_distribution_id
 AWS_PROFILE=drakesfood tofu output -raw recipe_submissions_api_endpoint
+AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_api_endpoint
 ```
 
 Add that value as a GitHub repository variable named `CLOUDFRONT_DISTRIBUTION_ID`.
@@ -122,8 +160,11 @@ It also needs these GitHub repository variables:
 
 - `CLOUDFRONT_DISTRIBUTION_ID`
 - `RECIPE_SUBMISSIONS_API_BASE_URL`
+- `BLOG_SUBSCRIPTIONS_API_BASE_URL`
 
 Set `RECIPE_SUBMISSIONS_API_BASE_URL` to the `recipe_submissions_api_endpoint` OpenTofu output after the recipe submission infrastructure is applied. The deploy workflow writes this value into `app-config.json` at deploy time. Until it is configured, the public form keeps its not-connected-yet fallback.
+
+Set `BLOG_SUBSCRIPTIONS_API_BASE_URL` to the `blog_subscriptions_api_endpoint` OpenTofu output after the blog subscription infrastructure is applied. Until it is configured, the public signup form keeps its not-connected-yet fallback.
 
 The AWS credentials must be allowed to sync files to the S3 bucket and create CloudFront invalidations. Until `CLOUDFRONT_DISTRIBUTION_ID` is configured, the deploy workflow will still sync to S3 but will skip CloudFront invalidation.
 

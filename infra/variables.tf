@@ -103,3 +103,73 @@ variable "recipe_submissions_throttling_rate_limit" {
   type        = number
   default     = 5
 }
+
+variable "blog_subscriptions_api_name" {
+  description = "API Gateway HTTP API name for blog email subscriptions."
+  type        = string
+  default     = "drakesfood-blog-subscriptions"
+}
+
+variable "blog_subscriptions_allowed_origins" {
+  description = "Browser origins allowed to call the blog subscription API."
+  type        = list(string)
+  default = [
+    "https://drakesfood.com",
+    "https://www.drakesfood.com",
+    "http://localhost:4200",
+  ]
+}
+
+variable "blog_subscriptions_lambda_function_name" {
+  description = "Lambda function name for blog email subscriptions."
+  type        = string
+  default     = "drakesfood-blog-subscriptions"
+}
+
+variable "blog_subscriptions_log_retention_days" {
+  description = "CloudWatch log retention in days for blog subscription resources."
+  type        = number
+  default     = 30
+}
+
+variable "blog_subscriptions_max_body_bytes" {
+  description = "Maximum request body size accepted by the blog subscription Lambda."
+  type        = number
+  default     = 8192
+}
+
+variable "blog_subscriptions_ses_identity_arn" {
+  description = "Optional SES identity ARN allowed to send blog subscription emails. Defaults to the domain identity for the active AWS account."
+  type        = string
+  default     = ""
+}
+
+variable "blog_subscriptions_ses_sender_email" {
+  description = "Verified SES sender email address for blog subscription confirmation emails. Set with a tfvars file or CLI variable."
+  type        = string
+  default     = ""
+}
+
+variable "blog_subscriptions_source_site" {
+  description = "Source site value stored with blog subscriber records."
+  type        = string
+  default     = "drakesfood.com"
+}
+
+variable "blog_subscriptions_table_name" {
+  description = "DynamoDB table name for blog email subscribers."
+  type        = string
+  default     = "drakesfood-blog-subscribers"
+}
+
+variable "blog_subscriptions_throttling_burst_limit" {
+  description = "API Gateway burst throttling limit for blog subscriptions."
+  type        = number
+  default     = 10
+}
+
+variable "blog_subscriptions_throttling_rate_limit" {
+  description = "API Gateway steady-state requests per second limit for blog subscriptions."
+  type        = number
+  default     = 5
+}

@@ -96,6 +96,10 @@ When adding public pages, add route metadata in `src/app/app.ts` and `scripts/ge
 
 The V1 recipe submission system is documented in `docs/recipe-submission-system.md`. The detailed API contract is documented in `docs/recipe-submission-api.md`.
 
+## Blog email subscriptions
+
+The V1 blog email subscription signup and confirmation system is documented in `docs/blog-email-subscriptions.md`. It uses confirmed opt-in before activating subscribers. Unsubscribe support and new-post notification sending are tracked separately.
+
 ## Deployment
 
 The site deploys built Angular assets to the existing `drakesfood.com` S3 bucket through GitHub Actions. HTTPS is handled by CloudFront with an ACM certificate and Route 53 records managed by OpenTofu in `infra/`.
