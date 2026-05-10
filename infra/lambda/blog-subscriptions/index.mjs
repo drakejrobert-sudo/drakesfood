@@ -6,6 +6,8 @@ const CONFIRMATION_SUCCESS_REDIRECT = '/blog?subscription=confirmed';
 const CONFIRMATION_FAILURE_REDIRECT = '/blog?subscription=invalid';
 const UNSUBSCRIBE_SUCCESS_REDIRECT = '/blog?subscription=unsubscribed';
 const DEFAULT_MAX_BODY_BYTES = 8 * 1024;
+const DEFAULT_NOTIFICATION_BATCH_SIZE = 5;
+const DEFAULT_NOTIFICATION_MAX_RECIPIENTS = 50;
 const EMAIL_LIMIT = 254;
 
 let dynamoClient;
@@ -286,6 +288,8 @@ async function sendBlogPostNotification(event, { now, getBlogPost, listActiveSub
 
   const subscribers = await listActiveSubscribers();
   const sendStartedAt = now().toISOString();
+  const maxRecipients = getNotificationMaxRecipients();
+  const overRecipientLimit = subscribers.length > maxRecipients;
 
   if (dryRun) {
     return internalResponse(200, {
@@ -293,9 +297,26 @@ async function sendBlogPostNotification(event, { now, getBlogPost, listActiveSub
       dryRun,
       postSlug,
       recipientCount: subscribers.length,
+      maxRecipients,
+      overRecipientLimit,
       sentCount: 0,
       failedCount: 0,
-      message: `Dry run found ${subscribers.length} active subscriber(s) for ${post.title}.`,
+      message: overRecipientLimit
+        ? `Dry run found ${subscribers.length} active subscriber(s), which exceeds the V1 safety cap of ${maxRecipients}. Real send will be blocked.`
+        : `Dry run found ${subscribers.length} active subscriber(s) for ${post.title}.`,
+    });
+  }
+
+  if (overRecipientLimit) {
+    return internalResponse(400, {
+      success: false,
+      dryRun,
+      postSlug,
+      recipientCount: subscribers.length,
+      maxRecipients,
+      sentCount: 0,
+      failedCount: 0,
+      message: `Real send blocked because ${subscribers.length} active subscriber(s) exceeds the V1 safety cap of ${maxRecipients}.`,
     });
   }
 
@@ -337,14 +358,20 @@ async function sendBlogPostNotification(event, { now, getBlogPost, listActiveSub
   let sentCount = 0;
   let failedCount = 0;
 
-  for (const subscriber of subscribers) {
-    try {
-      await sendBlogNotification(post, subscriber);
-      sentCount += 1;
-    } catch (error) {
+  for (const subscriberBatch of chunkArray(subscribers, DEFAULT_NOTIFICATION_BATCH_SIZE)) {
+    const results = await Promise.allSettled(subscriberBatch.map((subscriber) => sendBlogNotification(post, subscriber)));
+
+    for (const [index, result] of results.entries()) {
+      const subscriber = subscriberBatch[index];
+
+      if (result.status === 'fulfilled') {
+        sentCount += 1;
+        continue;
+      }
+
       failedCount += 1;
       console.error('Failed to send blog post notification.', {
-        errorName: error?.name,
+        errorName: result.reason?.name,
         postSlug,
         subscriberId: subscriber.subscriberId,
       });
@@ -455,6 +482,12 @@ function getMaxBodyBytes() {
   const configuredLimit = Number.parseInt(process.env.BLOG_SUBSCRIPTIONS_MAX_BODY_BYTES || '', 10);
 
   return Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : DEFAULT_MAX_BODY_BYTES;
+}
+
+function getNotificationMaxRecipients() {
+  const configuredLimit = Number.parseInt(process.env.BLOG_NOTIFICATION_MAX_RECIPIENTS || '', 10);
+
+  return Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : DEFAULT_NOTIFICATION_MAX_RECIPIENTS;
 }
 
 function normalizeSignupBody(body) {
@@ -952,6 +985,16 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return escapeHtml(value);
+}
+
+function chunkArray(values, size) {
+  const chunks = [];
+
+  for (let index = 0; index < values.length; index += size) {
+    chunks.push(values.slice(index, index + size));
+  }
+
+  return chunks;
 }
 
 class RequestBodyTooLargeError extends Error {}

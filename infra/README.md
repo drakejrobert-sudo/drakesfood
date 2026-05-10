@@ -48,6 +48,7 @@ The blog subscription backend is defined as low-cost serverless infrastructure:
 - Lambda receives the subscriber table name, notification send table name, source site, allowed origins, API base URL, site URL, and SES sender through environment variables.
 - DynamoDB stores subscriber records by `emailHash` so each normalized email has one record, keeps private unsubscribe tokens for notification links, uses lookup indexes for confirmation and unsubscribe token hashes, and tracks notification sends by `postSlug`.
 - SES sends plain-text confirmation emails and controlled blog post notification emails. Notification emails include an unsubscribe link.
+- Blog notification sending is capped by `blog_notification_max_recipients` for the V1 synchronous sender and runs in small batches to reduce timeout risk.
 - CloudWatch log groups use the configured retention period.
 - API Gateway throttling defaults to 10 burst requests and 5 sustained requests per second.
 

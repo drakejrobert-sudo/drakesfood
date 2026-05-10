@@ -469,10 +469,58 @@ test('dry run reports active recipient count without reserving or sending', asyn
   assert.equal(response.success, true);
   assert.equal(response.dryRun, true);
   assert.equal(response.recipientCount, 2);
+  assert.equal(response.maxRecipients, 50);
+  assert.equal(response.overRecipientLimit, false);
   assert.equal(response.sentCount, 0);
   assert.equal(response.failedCount, 0);
   assert.deepEqual(reservations, []);
   assert.deepEqual(notifications, []);
+});
+
+test('dry run reports when recipient count exceeds safety cap', async () => {
+  process.env.BLOG_NOTIFICATION_MAX_RECIPIENTS = '1';
+  const handler = createHandler({
+    getBlogPost: () => ({ slug: 'pizza-night', title: 'Pizza Night', summary: 'A crispy backyard pizza experiment.', path: '/blog/pizza-night' }),
+    listActiveSubscribers: async () => [
+      { subscriberId: 'subscriber-1', emailNormalized: 'one@example.com', unsubscribeToken: 'token-1' },
+      { subscriberId: 'subscriber-2', emailNormalized: 'two@example.com', unsubscribeToken: 'token-2' },
+    ],
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'pizza-night', dryRun: true });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.success, true);
+  assert.equal(response.recipientCount, 2);
+  assert.equal(response.maxRecipients, 1);
+  assert.equal(response.overRecipientLimit, true);
+  assert.match(response.message, /Real send will be blocked/);
+  delete process.env.BLOG_NOTIFICATION_MAX_RECIPIENTS;
+});
+
+test('real send over recipient cap aborts before reservation', async () => {
+  const reservations = [];
+  const notifications = [];
+  process.env.BLOG_NOTIFICATION_MAX_RECIPIENTS = '1';
+  const handler = createHandler({
+    getBlogPost: () => ({ slug: 'pizza-night', title: 'Pizza Night', summary: 'A crispy backyard pizza experiment.', path: '/blog/pizza-night' }),
+    listActiveSubscribers: async () => [
+      { subscriberId: 'subscriber-1', emailNormalized: 'one@example.com', unsubscribeToken: 'token-1' },
+      { subscriberId: 'subscriber-2', emailNormalized: 'two@example.com', unsubscribeToken: 'token-2' },
+    ],
+    reserveNotificationSend: async (item) => reservations.push(item),
+    sendBlogNotification: async (post, subscriber) => notifications.push({ post, subscriber }),
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'pizza-night', dryRun: false });
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(response.success, false);
+  assert.equal(response.recipientCount, 2);
+  assert.equal(response.maxRecipients, 1);
+  assert.deepEqual(reservations, []);
+  assert.deepEqual(notifications, []);
+  delete process.env.BLOG_NOTIFICATION_MAX_RECIPIENTS;
 });
 
 test('real send reserves post slug and sends to active subscribers', async () => {
@@ -526,6 +574,34 @@ test('real send reserves post slug and sends to active subscribers', async () =>
       },
     },
   ]);
+});
+
+test('real send uses bounded concurrent batches', async () => {
+  let inFlight = 0;
+  let maxInFlight = 0;
+  const subscribers = Array.from({ length: 7 }, (_, index) => ({
+    subscriberId: `subscriber-${index}`,
+    emailNormalized: `reader-${index}@example.com`,
+    unsubscribeToken: `token-${index}`,
+  }));
+  const handler = createHandler({
+    getBlogPost: () => ({ slug: 'pizza-night', title: 'Pizza Night', summary: 'A crispy backyard pizza experiment.', path: '/blog/pizza-night' }),
+    listActiveSubscribers: async () => subscribers,
+    reserveNotificationSend: async () => undefined,
+    completeNotificationSend: async () => undefined,
+    sendBlogNotification: async () => {
+      inFlight += 1;
+      maxInFlight = Math.max(maxInFlight, inFlight);
+      await new Promise((resolve) => setTimeout(resolve, 1));
+      inFlight -= 1;
+    },
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'pizza-night', dryRun: false });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.sentCount, 7);
+  assert.equal(maxInFlight, 5);
 });
 
 test('duplicate real send is blocked before sending', async () => {

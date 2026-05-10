@@ -167,11 +167,12 @@ resource "aws_lambda_function" "blog_subscriptions" {
   handler          = "index.handler"
   runtime          = "nodejs22.x"
   role             = aws_iam_role.blog_subscriptions_lambda.arn
-  timeout          = 10
+  timeout          = 60
   memory_size      = 128
 
   environment {
     variables = {
+      BLOG_NOTIFICATION_MAX_RECIPIENTS   = tostring(var.blog_notification_max_recipients)
       ALLOWED_ORIGINS                    = join(",", var.blog_subscriptions_allowed_origins)
       BLOG_NOTIFICATION_SENDS_TABLE_NAME = aws_dynamodb_table.blog_notification_sends.name
       BLOG_SUBSCRIPTIONS_API_BASE_URL    = aws_apigatewayv2_api.blog_subscriptions.api_endpoint

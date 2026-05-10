@@ -133,6 +133,8 @@ Default table name: `drakesfood-blog-notification-sends`
 
 It is keyed by `postSlug` so each post can be sent once. Dry runs do not write to this table. Real sends first reserve the slug with `status: sending`; repeated real sends for the same slug are rejected to prevent duplicate emails.
 
+The V1 notification sender is intentionally bounded. The Lambda timeout is 60 seconds, sends run in small concurrent batches, and real sends are blocked when the active subscriber count exceeds `blog_notification_max_recipients` (default `50`). Dry runs still report the full count so Drake can see when the list is too large for the V1 synchronous sender.
+
 Send tracking item shape:
 
 ```json
@@ -210,6 +212,7 @@ Useful variables for this feature are defined in `infra/variables.tf`:
 - `blog_subscriptions_source_site`
 - `blog_subscriptions_table_name`
 - `blog_notification_sends_table_name`
+- `blog_notification_max_recipients`
 - `blog_subscriptions_throttling_burst_limit`
 - `blog_subscriptions_throttling_rate_limit`
 
