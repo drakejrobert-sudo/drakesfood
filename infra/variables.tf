@@ -138,6 +138,12 @@ variable "blog_subscriptions_max_body_bytes" {
   default     = 8192
 }
 
+variable "blog_notification_max_recipients" {
+  description = "Maximum active subscribers allowed for one synchronous blog notification send. Raise only after testing or replacing with a queued sender."
+  type        = number
+  default     = 50
+}
+
 variable "blog_subscriptions_ses_identity_arn" {
   description = "Optional SES identity ARN allowed to send blog subscription emails. Defaults to the domain identity for the active AWS account."
   type        = string
@@ -160,6 +166,12 @@ variable "blog_subscriptions_table_name" {
   description = "DynamoDB table name for blog email subscribers."
   type        = string
   default     = "drakesfood-blog-subscribers"
+}
+
+variable "blog_notification_sends_table_name" {
+  description = "DynamoDB table name for tracking sent blog post notifications."
+  type        = string
+  default     = "drakesfood-blog-notification-sends"
 }
 
 variable "blog_subscriptions_throttling_burst_limit" {

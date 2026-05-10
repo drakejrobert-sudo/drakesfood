@@ -7,8 +7,8 @@ V1 is intentionally small:
 - Readers submit only an email address.
 - Readers must confirm before becoming active subscribers.
 - Readers can unsubscribe from notification emails without creating an account.
+- New-post notifications are sent by a manual GitHub Actions workflow with a dry-run mode.
 - Subscriber emails are private operational data.
-- New-post notification sending is tracked separately in #84.
 
 ## Frontend
 
@@ -93,9 +93,9 @@ Blog subscription infrastructure is defined in `infra/blog_subscriptions.tf`.
 The V1 architecture uses:
 
 - API Gateway HTTP API for `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, `GET /blog-subscriptions/unsubscribe`, and `POST /blog-subscriptions/unsubscribe`.
-- Lambda for validation, honeypot handling, DynamoDB writes, SES confirmation emails, confirmation activation, and unsubscribe handling.
-- DynamoDB for subscriber records.
-- SES for confirmation emails.
+- Lambda for validation, honeypot handling, DynamoDB writes, SES confirmation emails, confirmation activation, unsubscribe handling, and controlled blog post notification sending.
+- DynamoDB for subscriber records and notification send tracking.
+- SES for confirmation emails and blog post notification emails.
 - CloudWatch Logs for API Gateway access logs and Lambda logs.
 - OpenTofu for resource management.
 
@@ -126,6 +126,47 @@ Subscriber item shape:
 ```
 
 `subscriberId` is a stored identifier for logging and debugging, not the table key. `confirmedAt` appears after confirmation. `unsubscribedAt` appears after unsubscribe. `confirmationTokenHash` is removed after successful confirmation or unsubscribe. `unsubscribeToken` is retained so #84 can build deliverable unsubscribe links in notification emails, while `unsubscribeTokenHash` is retained so unsubscribe requests can be looked up without querying by the raw token.
+
+The notification send tracking table is created by `aws_dynamodb_table.blog_notification_sends`.
+
+Default table name: `drakesfood-blog-notification-sends`
+
+It is keyed by `postSlug` so each post can be sent once. Dry runs do not write to this table. Real sends first reserve the slug with `status: sending`; repeated real sends for the same slug are rejected to prevent duplicate emails.
+
+The V1 notification sender is intentionally bounded. The Lambda timeout is 60 seconds, sends run in small concurrent batches, and real sends are blocked when the active subscriber count exceeds `blog_notification_max_recipients` (default `50`). Dry runs still report the full count so Drake can see when the list is too large for the V1 synchronous sender.
+
+Send tracking item shape:
+
+```json
+{
+  "postSlug": "mothers-day-baking",
+  "status": "sent",
+  "dryRun": "false",
+  "startedAt": "2026-05-09T12:00:00.000Z",
+  "completedAt": "2026-05-09T12:00:12.000Z",
+  "recipientCount": "25",
+  "sentCount": "25",
+  "failedCount": "0"
+}
+```
+
+## Blog Notification Sending
+
+Blog post notification metadata lives in `infra/lambda/blog-subscriptions/blog-notification-posts.mjs`. Add new posts there before sending notifications for them.
+
+The manual workflow `.github/workflows/send-blog-notification.yml` invokes the blog subscriptions Lambda with an internal event:
+
+```json
+{
+  "action": "sendBlogPostNotification",
+  "postSlug": "mothers-day-baking",
+  "dryRun": true
+}
+```
+
+Run with `dry_run: true` first. Dry runs count active subscribers and do not send email or mark the post as sent. Run with `dry_run: false` only after reviewing the dry-run output.
+
+Notification emails are sent only to subscribers with `status: active` and an `unsubscribeToken`. Pending and unsubscribed readers are excluded. Each email includes a post link and an unsubscribe link that lands on the unsubscribe confirmation page.
 
 ## Privacy
 
@@ -170,6 +211,8 @@ Useful variables for this feature are defined in `infra/variables.tf`:
 - `blog_subscriptions_ses_sender_email`
 - `blog_subscriptions_source_site`
 - `blog_subscriptions_table_name`
+- `blog_notification_sends_table_name`
+- `blog_notification_max_recipients`
 - `blog_subscriptions_throttling_burst_limit`
 - `blog_subscriptions_throttling_rate_limit`
 
@@ -186,6 +229,7 @@ After apply, get the values needed for frontend configuration and operational ch
 AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_api_endpoint
 AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_table_name
 AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_lambda_function_name
+AWS_PROFILE=drakesfood tofu output -raw blog_notification_sends_table_name
 ```
 
 ## GitHub Actions Deployment
@@ -195,6 +239,7 @@ The static site deploy workflow is `.github/workflows/deploy.yml`. It runs on pu
 Required GitHub repository variable:
 
 - `BLOG_SUBSCRIPTIONS_API_BASE_URL`: set to the OpenTofu output `blog_subscriptions_api_endpoint`.
+- `BLOG_SUBSCRIPTIONS_LAMBDA_FUNCTION_NAME`: optional for the manual notification workflow; defaults to `drakesfood-blog-subscriptions` when blank.
 
 Related deployment requirements:
 
@@ -203,6 +248,17 @@ Related deployment requirements:
 - `CLOUDFRONT_DISTRIBUTION_ID` repository variable for cache invalidation
 
 If `BLOG_SUBSCRIPTIONS_API_BASE_URL` is missing or blank, production will deploy successfully but the public signup form will use its not-connected-yet fallback.
+
+## Manual Notification Workflow
+
+Use the `Send Blog Notification` GitHub Actions workflow to notify subscribers about a post.
+
+Inputs:
+
+- `post_slug`: blog post slug from `blog-notification-posts.mjs`.
+- `dry_run`: use `true` first, then `false` for the real send.
+
+The workflow uses the repository AWS credentials and invokes the blog subscription Lambda directly. The GitHub Actions IAM user needs `lambda:InvokeFunction` permission for that Lambda, which OpenTofu grants.
 
 ## Local Testing
 
@@ -222,5 +278,4 @@ node --test infra/lambda/blog-subscriptions/index.test.mjs
 
 ## Follow-Up Work
 
-- #84 sends new-post notifications to active subscribers.
 - #85 expands operating documentation after the full notification flow exists.

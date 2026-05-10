@@ -44,6 +44,18 @@ data "aws_iam_policy_document" "github_actions_deploy" {
       aws_cloudfront_distribution.site.arn,
     ]
   }
+
+  statement {
+    sid = "InvokeBlogNotificationSender"
+
+    actions = [
+      "lambda:InvokeFunction",
+    ]
+
+    resources = [
+      aws_lambda_function.blog_subscriptions.arn,
+    ]
+  }
 }
 
 resource "aws_iam_user_policy" "github_actions_deploy" {

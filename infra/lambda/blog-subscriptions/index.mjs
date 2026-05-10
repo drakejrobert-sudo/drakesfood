@@ -1,10 +1,13 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
+import { getBlogNotificationPost } from './blog-notification-posts.mjs';
 
 const SIGNUP_SUCCESS_MESSAGE = 'If that email can be subscribed, a confirmation link is on the way.';
 const CONFIRMATION_SUCCESS_REDIRECT = '/blog?subscription=confirmed';
 const CONFIRMATION_FAILURE_REDIRECT = '/blog?subscription=invalid';
 const UNSUBSCRIBE_SUCCESS_REDIRECT = '/blog?subscription=unsubscribed';
 const DEFAULT_MAX_BODY_BYTES = 8 * 1024;
+const DEFAULT_NOTIFICATION_BATCH_SIZE = 5;
+const DEFAULT_NOTIFICATION_MAX_RECIPIENTS = 50;
 const EMAIL_LIMIT = 254;
 
 let dynamoClient;
@@ -23,7 +26,23 @@ export const createHandler = ({
   activateSubscriber = activateSubscriberInDynamoDb,
   unsubscribeSubscriber = unsubscribeSubscriberInDynamoDb,
   sendConfirmation = sendConfirmationEmail,
+  getBlogPost = getBlogNotificationPost,
+  listActiveSubscribers = listActiveSubscribersFromDynamoDb,
+  reserveNotificationSend = reserveNotificationSendInDynamoDb,
+  completeNotificationSend = completeNotificationSendInDynamoDb,
+  sendBlogNotification = sendBlogNotificationEmail,
 } = {}) => async (event = {}) => {
+  if (event.action === 'sendBlogPostNotification') {
+    return sendBlogPostNotification(event, {
+      now,
+      getBlogPost,
+      listActiveSubscribers,
+      reserveNotificationSend,
+      completeNotificationSend,
+      sendBlogNotification,
+    });
+  }
+
   const method = getMethod(event);
   const path = getPath(event);
 
@@ -247,6 +266,146 @@ async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeToke
   return redirectResponse(`${siteUrl}${UNSUBSCRIBE_SUCCESS_REDIRECT}`);
 }
 
+async function sendBlogPostNotification(event, { now, getBlogPost, listActiveSubscribers, reserveNotificationSend, completeNotificationSend, sendBlogNotification }) {
+  const postSlug = typeof event.postSlug === 'string' ? event.postSlug.trim() : '';
+  const dryRun = event.dryRun === true || event.dryRun === 'true';
+
+  if (!postSlug) {
+    return internalResponse(400, {
+      success: false,
+      message: 'Please provide a blog post slug.',
+    });
+  }
+
+  const post = getBlogPost(postSlug);
+
+  if (!post) {
+    return internalResponse(404, {
+      success: false,
+      message: `No blog notification metadata found for "${postSlug}".`,
+    });
+  }
+
+  const subscribers = await listActiveSubscribers();
+  const sendStartedAt = now().toISOString();
+  const maxRecipients = getNotificationMaxRecipients();
+  const overRecipientLimit = subscribers.length > maxRecipients;
+
+  if (dryRun) {
+    return internalResponse(200, {
+      success: true,
+      dryRun,
+      postSlug,
+      recipientCount: subscribers.length,
+      maxRecipients,
+      overRecipientLimit,
+      sentCount: 0,
+      failedCount: 0,
+      message: overRecipientLimit
+        ? `Dry run found ${subscribers.length} active subscriber(s), which exceeds the V1 safety cap of ${maxRecipients}. Real send will be blocked.`
+        : `Dry run found ${subscribers.length} active subscriber(s) for ${post.title}.`,
+    });
+  }
+
+  if (overRecipientLimit) {
+    return internalResponse(400, {
+      success: false,
+      dryRun,
+      postSlug,
+      recipientCount: subscribers.length,
+      maxRecipients,
+      sentCount: 0,
+      failedCount: 0,
+      message: `Real send blocked because ${subscribers.length} active subscriber(s) exceeds the V1 safety cap of ${maxRecipients}.`,
+    });
+  }
+
+  if (sendBlogNotification === sendBlogNotificationEmail && !process.env.SES_SENDER_EMAIL) {
+    return internalResponse(500, {
+      success: false,
+      dryRun,
+      postSlug,
+      recipientCount: subscribers.length,
+      sentCount: 0,
+      failedCount: 0,
+      message: 'SES sender email is not configured; notification was not reserved or sent.',
+    });
+  }
+
+  try {
+    await reserveNotificationSend({
+      postSlug,
+      status: 'sending',
+      dryRun: 'false',
+      startedAt: sendStartedAt,
+      recipientCount: String(subscribers.length),
+      sentCount: '0',
+      failedCount: '0',
+    });
+  } catch (error) {
+    if (error?.name === 'ConditionalCheckFailedException') {
+      return internalResponse(409, {
+        success: false,
+        duplicate: true,
+        postSlug,
+        message: `Notification for "${postSlug}" was already sent or is already in progress.`,
+      });
+    }
+
+    throw error;
+  }
+
+  let sentCount = 0;
+  let failedCount = 0;
+
+  for (const subscriberBatch of chunkArray(subscribers, DEFAULT_NOTIFICATION_BATCH_SIZE)) {
+    const results = await Promise.allSettled(subscriberBatch.map((subscriber) => sendBlogNotification(post, subscriber)));
+
+    for (const [index, result] of results.entries()) {
+      const subscriber = subscriberBatch[index];
+
+      if (result.status === 'fulfilled') {
+        sentCount += 1;
+        continue;
+      }
+
+      failedCount += 1;
+      console.error('Failed to send blog post notification.', {
+        errorName: result.reason?.name,
+        postSlug,
+        subscriberId: subscriber.subscriberId,
+      });
+    }
+  }
+
+  const status = failedCount > 0 ? 'failed' : 'sent';
+
+  await completeNotificationSend(postSlug, {
+    status,
+    completedAt: now().toISOString(),
+    recipientCount: String(subscribers.length),
+    sentCount: String(sentCount),
+    failedCount: String(failedCount),
+  });
+
+  console.info('Blog post notification send completed.', {
+    postSlug,
+    recipientCount: subscribers.length,
+    sentCount,
+    failedCount,
+  });
+
+  return internalResponse(200, {
+    success: failedCount === 0,
+    dryRun,
+    postSlug,
+    recipientCount: subscribers.length,
+    sentCount,
+    failedCount,
+    message: `Sent ${sentCount} blog notification(s) for ${post.title}; ${failedCount} failed.`,
+  });
+}
+
 async function findExistingSubscriber(emailHash, findSubscriberByEmailHash) {
   try {
     return await findSubscriberByEmailHash(emailHash);
@@ -323,6 +482,12 @@ function getMaxBodyBytes() {
   const configuredLimit = Number.parseInt(process.env.BLOG_SUBSCRIPTIONS_MAX_BODY_BYTES || '', 10);
 
   return Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : DEFAULT_MAX_BODY_BYTES;
+}
+
+function getNotificationMaxRecipients() {
+  const configuredLimit = Number.parseInt(process.env.BLOG_NOTIFICATION_MAX_RECIPIENTS || '', 10);
+
+  return Number.isFinite(configuredLimit) && configuredLimit > 0 ? configuredLimit : DEFAULT_NOTIFICATION_MAX_RECIPIENTS;
 }
 
 function normalizeSignupBody(body) {
@@ -476,6 +641,82 @@ async function unsubscribeSubscriberInDynamoDb(emailHash, unsubscribedAt) {
   );
 }
 
+async function listActiveSubscribersFromDynamoDb() {
+  const tableName = getTableName();
+  const { DynamoDBClient, ScanCommand } = await loadDynamoDbClient();
+  const client = dynamoClient ?? new DynamoDBClient({});
+  dynamoClient = client;
+  const subscribers = [];
+  let exclusiveStartKey;
+
+  do {
+    const response = await client.send(
+      new ScanCommand({
+        TableName: tableName,
+        ExclusiveStartKey: exclusiveStartKey,
+        FilterExpression: '#status = :active AND attribute_exists(unsubscribeToken)',
+        ExpressionAttributeNames: {
+          '#status': 'status',
+        },
+        ExpressionAttributeValues: {
+          ':active': { S: 'active' },
+        },
+      }),
+    );
+
+    for (const item of response.Items || []) {
+      subscribers.push(fromDynamoDbItem(item));
+    }
+
+    exclusiveStartKey = response.LastEvaluatedKey;
+  } while (exclusiveStartKey);
+
+  return subscribers;
+}
+
+async function reserveNotificationSendInDynamoDb(item) {
+  const tableName = getNotificationSendsTableName();
+  const { DynamoDBClient, PutItemCommand } = await loadDynamoDbClient();
+  const client = dynamoClient ?? new DynamoDBClient({});
+  dynamoClient = client;
+
+  await client.send(
+    new PutItemCommand({
+      TableName: tableName,
+      Item: toDynamoDbItem(item),
+      ConditionExpression: 'attribute_not_exists(postSlug)',
+    }),
+  );
+}
+
+async function completeNotificationSendInDynamoDb(postSlug, values) {
+  const tableName = getNotificationSendsTableName();
+  const { DynamoDBClient, UpdateItemCommand } = await loadDynamoDbClient();
+  const client = dynamoClient ?? new DynamoDBClient({});
+  dynamoClient = client;
+
+  await client.send(
+    new UpdateItemCommand({
+      TableName: tableName,
+      Key: {
+        postSlug: { S: postSlug },
+      },
+      UpdateExpression:
+        'SET #status = :status, completedAt = :completedAt, recipientCount = :recipientCount, sentCount = :sentCount, failedCount = :failedCount',
+      ExpressionAttributeNames: {
+        '#status': 'status',
+      },
+      ExpressionAttributeValues: {
+        ':status': { S: values.status },
+        ':completedAt': { S: values.completedAt },
+        ':recipientCount': { S: values.recipientCount },
+        ':sentCount': { S: values.sentCount },
+        ':failedCount': { S: values.failedCount },
+      },
+    }),
+  );
+}
+
 async function sendConfirmationEmail(subscriber, confirmationToken) {
   const senderEmail = process.env.SES_SENDER_EMAIL;
 
@@ -505,6 +746,39 @@ async function sendConfirmationEmail(subscriber, confirmationToken) {
           Text: {
             Charset: 'UTF-8',
             Data: formatConfirmationEmail(confirmationToken),
+          },
+        },
+      },
+    }),
+  );
+}
+
+async function sendBlogNotificationEmail(post, subscriber) {
+  const senderEmail = process.env.SES_SENDER_EMAIL;
+
+  if (!senderEmail) {
+    throw new Error('Missing SES_SENDER_EMAIL');
+  }
+
+  const { SESClient, SendEmailCommand } = await loadSesClient();
+  const client = sesClient ?? new SESClient({});
+  sesClient = client;
+
+  await client.send(
+    new SendEmailCommand({
+      Source: senderEmail,
+      Destination: {
+        ToAddresses: [subscriber.emailNormalized],
+      },
+      Message: {
+        Subject: {
+          Charset: 'UTF-8',
+          Data: `New Drake's Food post: ${post.title}`,
+        },
+        Body: {
+          Text: {
+            Charset: 'UTF-8',
+            Data: formatBlogNotificationEmail(post, subscriber),
           },
         },
       },
@@ -542,6 +816,16 @@ function getTableName() {
   return tableName;
 }
 
+function getNotificationSendsTableName() {
+  const tableName = process.env.BLOG_NOTIFICATION_SENDS_TABLE_NAME;
+
+  if (!tableName) {
+    throw new Error('Missing BLOG_NOTIFICATION_SENDS_TABLE_NAME');
+  }
+
+  return tableName;
+}
+
 function getSiteUrl() {
   return (process.env.BLOG_SUBSCRIPTIONS_SITE_URL || 'https://drakesfood.com').replace(/\/+$/, '');
 }
@@ -563,11 +847,32 @@ function formatConfirmationEmail(confirmationToken) {
   ].join('\n');
 }
 
+function formatBlogNotificationEmail(post, subscriber) {
+  const siteUrl = getSiteUrl();
+  const postUrl = `${siteUrl}${post.path}`;
+  const unsubscribeUrl = `${getApiBaseUrl()}/blog-subscriptions/unsubscribe?token=${encodeURIComponent(subscriber.unsubscribeToken)}`;
+
+  return [
+    `New on Drake's Food: ${post.title}`,
+    '',
+    post.summary,
+    '',
+    `Read it here: ${postUrl}`,
+    '',
+    'Want fewer emails? You can unsubscribe here:',
+    unsubscribeUrl,
+  ].join('\n');
+}
+
 function toDynamoDbItem(item) {
   const dynamoItem = {};
 
   for (const [key, value] of Object.entries(item)) {
-    if (value !== undefined && value !== '') {
+    if (typeof value === 'number') {
+      dynamoItem[key] = { N: String(value) };
+    } else if (typeof value === 'boolean') {
+      dynamoItem[key] = { BOOL: value };
+    } else if (value !== undefined && value !== '') {
       dynamoItem[key] = { S: value };
     }
   }
@@ -576,7 +881,7 @@ function toDynamoDbItem(item) {
 }
 
 function fromDynamoDbItem(item) {
-  return Object.fromEntries(Object.entries(item).map(([key, value]) => [key, value.S ?? '']));
+  return Object.fromEntries(Object.entries(item).map(([key, value]) => [key, value.S ?? value.N ?? value.BOOL ?? '']));
 }
 
 function hashValue(value) {
@@ -594,6 +899,13 @@ function jsonResponse(statusCode, body) {
       'content-type': 'application/json',
     },
     body: JSON.stringify(body),
+  };
+}
+
+function internalResponse(statusCode, body) {
+  return {
+    statusCode,
+    ...body,
   };
 }
 
@@ -673,6 +985,16 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return escapeHtml(value);
+}
+
+function chunkArray(values, size) {
+  const chunks = [];
+
+  for (let index = 0; index < values.length; index += size) {
+    chunks.push(values.slice(index, index + size));
+  }
+
+  return chunks;
 }
 
 class RequestBodyTooLargeError extends Error {}

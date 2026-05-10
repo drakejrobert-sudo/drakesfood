@@ -39,6 +39,21 @@ resource "aws_dynamodb_table" "blog_subscribers" {
   }
 }
 
+resource "aws_dynamodb_table" "blog_notification_sends" {
+  name         = var.blog_notification_sends_table_name
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "postSlug"
+
+  attribute {
+    name = "postSlug"
+    type = "S"
+  }
+
+  server_side_encryption {
+    enabled = true
+  }
+}
+
 resource "aws_cloudwatch_log_group" "blog_subscriptions_lambda" {
   name              = "/aws/lambda/${var.blog_subscriptions_lambda_function_name}"
   retention_in_days = var.blog_subscriptions_log_retention_days
@@ -72,11 +87,26 @@ data "aws_iam_policy_document" "blog_subscriptions_lambda" {
     actions = [
       "dynamodb:GetItem",
       "dynamodb:PutItem",
+      "dynamodb:Scan",
       "dynamodb:UpdateItem",
     ]
 
     resources = [
       aws_dynamodb_table.blog_subscribers.arn,
+    ]
+  }
+
+  statement {
+    sid = "TrackBlogNotificationSends"
+
+    actions = [
+      "dynamodb:GetItem",
+      "dynamodb:PutItem",
+      "dynamodb:UpdateItem",
+    ]
+
+    resources = [
+      aws_dynamodb_table.blog_notification_sends.arn,
     ]
   }
 
@@ -125,7 +155,7 @@ resource "aws_iam_role_policy" "blog_subscriptions_lambda" {
 
 data "archive_file" "blog_subscriptions_lambda" {
   type        = "zip"
-  source_file = "${path.module}/lambda/blog-subscriptions/index.mjs"
+  source_dir  = "${path.module}/lambda/blog-subscriptions"
   output_path = "${path.module}/.terraform/blog-subscriptions-lambda.zip"
 }
 
@@ -137,18 +167,20 @@ resource "aws_lambda_function" "blog_subscriptions" {
   handler          = "index.handler"
   runtime          = "nodejs22.x"
   role             = aws_iam_role.blog_subscriptions_lambda.arn
-  timeout          = 10
+  timeout          = 60
   memory_size      = 128
 
   environment {
     variables = {
-      ALLOWED_ORIGINS                   = join(",", var.blog_subscriptions_allowed_origins)
-      BLOG_SUBSCRIPTIONS_API_BASE_URL   = aws_apigatewayv2_api.blog_subscriptions.api_endpoint
-      BLOG_SUBSCRIPTIONS_MAX_BODY_BYTES = tostring(var.blog_subscriptions_max_body_bytes)
-      BLOG_SUBSCRIPTIONS_SITE_URL       = "https://${var.domain_name}"
-      BLOG_SUBSCRIPTIONS_SOURCE_SITE    = var.blog_subscriptions_source_site
-      BLOG_SUBSCRIPTIONS_TABLE_NAME     = aws_dynamodb_table.blog_subscribers.name
-      SES_SENDER_EMAIL                  = var.blog_subscriptions_ses_sender_email
+      BLOG_NOTIFICATION_MAX_RECIPIENTS   = tostring(var.blog_notification_max_recipients)
+      ALLOWED_ORIGINS                    = join(",", var.blog_subscriptions_allowed_origins)
+      BLOG_NOTIFICATION_SENDS_TABLE_NAME = aws_dynamodb_table.blog_notification_sends.name
+      BLOG_SUBSCRIPTIONS_API_BASE_URL    = aws_apigatewayv2_api.blog_subscriptions.api_endpoint
+      BLOG_SUBSCRIPTIONS_MAX_BODY_BYTES  = tostring(var.blog_subscriptions_max_body_bytes)
+      BLOG_SUBSCRIPTIONS_SITE_URL        = "https://${var.domain_name}"
+      BLOG_SUBSCRIPTIONS_SOURCE_SITE     = var.blog_subscriptions_source_site
+      BLOG_SUBSCRIPTIONS_TABLE_NAME      = aws_dynamodb_table.blog_subscribers.name
+      SES_SENDER_EMAIL                   = var.blog_subscriptions_ses_sender_email
     }
   }
 
