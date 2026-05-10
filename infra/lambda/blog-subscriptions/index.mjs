@@ -3,6 +3,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 const SIGNUP_SUCCESS_MESSAGE = 'If that email can be subscribed, a confirmation link is on the way.';
 const CONFIRMATION_SUCCESS_REDIRECT = '/blog?subscription=confirmed';
 const CONFIRMATION_FAILURE_REDIRECT = '/blog?subscription=invalid';
+const UNSUBSCRIBE_SUCCESS_REDIRECT = '/blog?subscription=unsubscribed';
 const DEFAULT_MAX_BODY_BYTES = 8 * 1024;
 const EMAIL_LIMIT = 254;
 
@@ -17,8 +18,10 @@ export const createHandler = ({
   createToken = () => randomBytes(32).toString('base64url'),
   findSubscriberByEmailHash = findSubscriberByEmailHashInDynamoDb,
   findSubscriberByConfirmationTokenHash = findSubscriberByConfirmationTokenHashInDynamoDb,
+  findSubscriberByUnsubscribeTokenHash = findSubscriberByUnsubscribeTokenHashInDynamoDb,
   savePendingSubscriber = savePendingSubscriberToDynamoDb,
   activateSubscriber = activateSubscriberInDynamoDb,
+  unsubscribeSubscriber = unsubscribeSubscriberInDynamoDb,
   sendConfirmation = sendConfirmationEmail,
 } = {}) => async (event = {}) => {
   const method = getMethod(event);
@@ -26,6 +29,10 @@ export const createHandler = ({
 
   if (method === 'GET' && path.endsWith('/blog-subscriptions/confirm')) {
     return confirmSubscription(event, { now, findSubscriberByConfirmationTokenHash, activateSubscriber });
+  }
+
+  if (method === 'GET' && path.endsWith('/blog-subscriptions/unsubscribe')) {
+    return unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber });
   }
 
   if (method !== 'POST') {
@@ -179,6 +186,39 @@ async function confirmSubscription(event, { now, findSubscriberByConfirmationTok
   return redirectResponse(`${siteUrl}${CONFIRMATION_SUCCESS_REDIRECT}`);
 }
 
+async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber }) {
+  const token = getQueryStringParameter(event, 'token');
+  const siteUrl = getSiteUrl();
+
+  if (!token) {
+    return redirectResponse(`${siteUrl}${CONFIRMATION_FAILURE_REDIRECT}`);
+  }
+
+  const unsubscribeTokenHash = hashValue(token);
+  const subscriber = await findSubscriberByUnsubscribeTokenHash(unsubscribeTokenHash);
+
+  if (!subscriber) {
+    return redirectResponse(`${siteUrl}${CONFIRMATION_FAILURE_REDIRECT}`);
+  }
+
+  if (subscriber.status === 'unsubscribed') {
+    return redirectResponse(`${siteUrl}${UNSUBSCRIBE_SUCCESS_REDIRECT}`);
+  }
+
+  try {
+    await unsubscribeSubscriber(subscriber.emailHash, now().toISOString());
+  } catch (error) {
+    console.error('Failed to unsubscribe blog subscriber.', {
+      errorName: error?.name,
+      subscriberId: subscriber.subscriberId,
+    });
+
+    return redirectResponse(`${siteUrl}${CONFIRMATION_FAILURE_REDIRECT}`);
+  }
+
+  return redirectResponse(`${siteUrl}${UNSUBSCRIBE_SUCCESS_REDIRECT}`);
+}
+
 async function findExistingSubscriber(emailHash, findSubscriberByEmailHash) {
   try {
     return await findSubscriberByEmailHash(emailHash);
@@ -323,6 +363,27 @@ async function findSubscriberByConfirmationTokenHashInDynamoDb(confirmationToken
   return response.Items?.[0] ? fromDynamoDbItem(response.Items[0]) : undefined;
 }
 
+async function findSubscriberByUnsubscribeTokenHashInDynamoDb(unsubscribeTokenHash) {
+  const tableName = getTableName();
+  const { DynamoDBClient, QueryCommand } = await loadDynamoDbClient();
+  const client = dynamoClient ?? new DynamoDBClient({});
+  dynamoClient = client;
+
+  const response = await client.send(
+    new QueryCommand({
+      TableName: tableName,
+      IndexName: 'unsubscribeTokenHash-index',
+      KeyConditionExpression: 'unsubscribeTokenHash = :unsubscribeTokenHash',
+      ExpressionAttributeValues: {
+        ':unsubscribeTokenHash': { S: unsubscribeTokenHash },
+      },
+      Limit: 1,
+    }),
+  );
+
+  return response.Items?.[0] ? fromDynamoDbItem(response.Items[0]) : undefined;
+}
+
 async function savePendingSubscriberToDynamoDb(subscriber) {
   const tableName = getTableName();
   const { DynamoDBClient, PutItemCommand } = await loadDynamoDbClient();
@@ -358,6 +419,30 @@ async function activateSubscriberInDynamoDb(emailHash, confirmedAt) {
         ':active': { S: 'active' },
         ':pending': { S: 'pending' },
         ':confirmedAt': { S: confirmedAt },
+      },
+    }),
+  );
+}
+
+async function unsubscribeSubscriberInDynamoDb(emailHash, unsubscribedAt) {
+  const tableName = getTableName();
+  const { DynamoDBClient, UpdateItemCommand } = await loadDynamoDbClient();
+  const client = dynamoClient ?? new DynamoDBClient({});
+  dynamoClient = client;
+
+  await client.send(
+    new UpdateItemCommand({
+      TableName: tableName,
+      Key: {
+        emailHash: { S: emailHash },
+      },
+      UpdateExpression: 'SET #status = :unsubscribed, unsubscribedAt = :unsubscribedAt, updatedAt = :unsubscribedAt REMOVE confirmationTokenHash',
+      ExpressionAttributeNames: {
+        '#status': 'status',
+      },
+      ExpressionAttributeValues: {
+        ':unsubscribed': { S: 'unsubscribed' },
+        ':unsubscribedAt': { S: unsubscribedAt },
       },
     }),
   );

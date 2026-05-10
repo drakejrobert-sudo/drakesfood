@@ -55,7 +55,7 @@
 ## 🔄 In Progress
 
 - [ ] Expand SEO, social sharing, sitemap, and robots metadata — #58
-- [ ] Add blog email signup form and confirmed subscriptions — #82
+- [ ] Add unsubscribe support for blog email notifications — #83
 
 ## 📋 Remaining Tasks
 
@@ -135,6 +135,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Homepage hero now leads with a clearer Drake's Food introduction, stronger gallery/Instagram/RecipeSensei CTAs, and a lighter submit-idea prompt.
 - Blog now includes a featured story layout and the first full post, `The One Day a Year I Bake`, with process photos and a RecipeSensei import link.
 - Blog email subscription signup and confirmed opt-in are being added with a dedicated Angular form, runtime API config, API Gateway, Lambda, DynamoDB, and SES confirmation emails.
+- Blog email unsubscribe support is being added before new-post notification sending so every future notification can include a working unsubscribe link.
 
 ## Last Updated
 

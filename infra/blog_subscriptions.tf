@@ -17,9 +17,20 @@ resource "aws_dynamodb_table" "blog_subscribers" {
     type = "S"
   }
 
+  attribute {
+    name = "unsubscribeTokenHash"
+    type = "S"
+  }
+
   global_secondary_index {
     name            = "confirmationTokenHash-index"
     hash_key        = "confirmationTokenHash"
+    projection_type = "ALL"
+  }
+
+  global_secondary_index {
+    name            = "unsubscribeTokenHash-index"
+    hash_key        = "unsubscribeTokenHash"
     projection_type = "ALL"
   }
 
@@ -175,6 +186,12 @@ resource "aws_apigatewayv2_route" "blog_subscriptions_post" {
 resource "aws_apigatewayv2_route" "blog_subscriptions_confirm_get" {
   api_id    = aws_apigatewayv2_api.blog_subscriptions.id
   route_key = "GET /blog-subscriptions/confirm"
+  target    = "integrations/${aws_apigatewayv2_integration.blog_subscriptions.id}"
+}
+
+resource "aws_apigatewayv2_route" "blog_subscriptions_unsubscribe_get" {
+  api_id    = aws_apigatewayv2_api.blog_subscriptions.id
+  route_key = "GET /blog-subscriptions/unsubscribe"
   target    = "integrations/${aws_apigatewayv2_integration.blog_subscriptions.id}"
 }
 
