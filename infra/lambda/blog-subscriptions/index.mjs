@@ -32,6 +32,10 @@ export const createHandler = ({
   }
 
   if (method === 'GET' && path.endsWith('/blog-subscriptions/unsubscribe')) {
+    return renderUnsubscribeConfirmation(event, { findSubscriberByUnsubscribeTokenHash });
+  }
+
+  if (method === 'POST' && path.endsWith('/blog-subscriptions/unsubscribe')) {
     return unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber });
   }
 
@@ -186,6 +190,28 @@ async function confirmSubscription(event, { now, findSubscriberByConfirmationTok
   }
 
   return redirectResponse(`${siteUrl}${CONFIRMATION_SUCCESS_REDIRECT}`);
+}
+
+async function renderUnsubscribeConfirmation(event, { findSubscriberByUnsubscribeTokenHash }) {
+  const token = getQueryStringParameter(event, 'token');
+  const siteUrl = getSiteUrl();
+
+  if (!token) {
+    return redirectResponse(`${siteUrl}${CONFIRMATION_FAILURE_REDIRECT}`);
+  }
+
+  const unsubscribeTokenHash = hashValue(token);
+  const subscriber = await findSubscriberByUnsubscribeTokenHash(unsubscribeTokenHash);
+
+  if (!subscriber) {
+    return redirectResponse(`${siteUrl}${CONFIRMATION_FAILURE_REDIRECT}`);
+  }
+
+  if (subscriber.status === 'unsubscribed') {
+    return htmlResponse(200, buildUnsubscribeCompleteHtml(siteUrl));
+  }
+
+  return htmlResponse(200, buildUnsubscribeConfirmationHtml(token, siteUrl));
 }
 
 async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber }) {
@@ -579,6 +605,74 @@ function redirectResponse(location) {
     },
     body: '',
   };
+}
+
+function htmlResponse(statusCode, body) {
+  return {
+    statusCode,
+    headers: {
+      'content-type': 'text/html; charset=UTF-8',
+    },
+    body,
+  };
+}
+
+function buildUnsubscribeConfirmationHtml(token, siteUrl) {
+  const action = `${getApiBaseUrl()}/blog-subscriptions/unsubscribe?token=${encodeURIComponent(token)}`;
+
+  return buildHtmlPage({
+    title: "Unsubscribe from Drake's Food emails?",
+    body: [
+      '<p>You are about to stop receiving new Drake\'s Food post emails.</p>',
+      `<form method="post" action="${escapeAttribute(action)}">`,
+      '<button type="submit">Yes, unsubscribe me</button>',
+      '</form>',
+      `<p><a href="${escapeAttribute(`${siteUrl}/blog`)}">Keep me subscribed</a></p>`,
+    ].join('\n'),
+  });
+}
+
+function buildUnsubscribeCompleteHtml(siteUrl) {
+  return buildHtmlPage({
+    title: 'You are unsubscribed',
+    body: [
+      '<p>You will no longer receive Drake\'s Food post emails.</p>',
+      `<p><a href="${escapeAttribute(`${siteUrl}/blog`)}">Back to the blog</a></p>`,
+    ].join('\n'),
+  });
+}
+
+function buildHtmlPage({ title, body }) {
+  return [
+    '<!doctype html>',
+    '<html lang="en">',
+    '<head>',
+    '<meta charset="utf-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1">',
+    `<title>${escapeHtml(title)}</title>`,
+    '<style>body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#fffaf5;color:#3d2d21;line-height:1.6}main{max-width:38rem;margin:0 auto;padding:4rem 1.25rem}h1{font-size:clamp(2rem,8vw,3.5rem);line-height:1;margin:0 0 1rem;letter-spacing:-.05em}button,a{font:inherit}button{border:0;border-radius:999px;background:#3d2d21;color:#fff;padding:.9rem 1.2rem;font-weight:800;cursor:pointer}a{color:#6f3f9d;font-weight:800}</style>',
+    '</head>',
+    '<body>',
+    '<main>',
+    `<h1>${escapeHtml(title)}</h1>`,
+    body,
+    '</main>',
+    '</body>',
+    '</html>',
+  ].join('\n');
+}
+
+function escapeHtml(value) {
+  return value.replace(/[&<>"]/g, (character) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+  })[character]);
+}
+
+function escapeAttribute(value) {
+  return escapeHtml(value);
 }
 
 class RequestBodyTooLargeError extends Error {}

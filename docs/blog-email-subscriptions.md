@@ -70,10 +70,18 @@ GET /blog-subscriptions/confirm?token=<confirmation-token>
 
 Valid confirmation tokens activate the pending subscriber and redirect to `/blog?subscription=confirmed`. Invalid or expired tokens redirect to `/blog?subscription=invalid`.
 
-Unsubscribe endpoint:
+Unsubscribe confirmation endpoint:
 
 ```http
 GET /blog-subscriptions/unsubscribe?token=<unsubscribe-token>
+```
+
+Valid unsubscribe tokens return a confirmation page and do not change subscriber state. This keeps email security scanners and link preview clients from unsubscribing readers automatically. Invalid tokens redirect to `/blog?subscription=invalid`.
+
+Unsubscribe mutation endpoint:
+
+```http
+POST /blog-subscriptions/unsubscribe?token=<unsubscribe-token>
 ```
 
 Valid unsubscribe tokens mark the subscriber as `unsubscribed` and redirect to `/blog?subscription=unsubscribed`. Repeated unsubscribe requests are treated as success. Invalid tokens redirect to `/blog?subscription=invalid`.
@@ -84,7 +92,7 @@ Blog subscription infrastructure is defined in `infra/blog_subscriptions.tf`.
 
 The V1 architecture uses:
 
-- API Gateway HTTP API for `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, and `GET /blog-subscriptions/unsubscribe`.
+- API Gateway HTTP API for `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, `GET /blog-subscriptions/unsubscribe`, and `POST /blog-subscriptions/unsubscribe`.
 - Lambda for validation, honeypot handling, DynamoDB writes, SES confirmation emails, confirmation activation, and unsubscribe handling.
 - DynamoDB for subscriber records.
 - SES for confirmation emails.
@@ -128,7 +136,7 @@ Subscriber email addresses are private data.
 - Prefer logging `subscriberId` and error names instead of raw email addresses or tokens.
 - Confirmation tokens are stored only as SHA-256 hashes.
 - Unsubscribe tokens are private bearer-token data. Store them only in DynamoDB, use them only for notification email links, and do not log them.
-- Every future notification email must include the subscriber's unsubscribe link.
+- Every future notification email must include the subscriber's unsubscribe link. That link should use `GET /blog-subscriptions/unsubscribe?token=<unsubscribe-token>` so the reader lands on the confirmation page before any state change.
 
 ## SES
 

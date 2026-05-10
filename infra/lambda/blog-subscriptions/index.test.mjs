@@ -34,11 +34,11 @@ function createConfirmEvent(token) {
   };
 }
 
-function createUnsubscribeEvent(token) {
+function createUnsubscribeEvent(token, method = 'GET') {
   return {
     requestContext: {
       http: {
-        method: 'GET',
+        method,
       },
     },
     rawPath: '/blog-subscriptions/unsubscribe',
@@ -362,7 +362,7 @@ test('valid unsubscribe token marks subscriber unsubscribed and redirects to suc
     unsubscribeSubscriber: async (unsubscribedEmailHash, unsubscribedAt) => unsubscribes.push({ emailHash: unsubscribedEmailHash, unsubscribedAt }),
   });
 
-  const response = await handler(createUnsubscribeEvent('unsubscribe-token'));
+  const response = await handler(createUnsubscribeEvent('unsubscribe-token', 'POST'));
 
   assert.equal(response.statusCode, 302);
   assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=unsubscribed');
@@ -382,7 +382,7 @@ test('already unsubscribed token redirects to success without another update', a
     unsubscribeSubscriber: async (emailHash) => unsubscribes.push(emailHash),
   });
 
-  const response = await handler(createUnsubscribeEvent('unsubscribe-token'));
+  const response = await handler(createUnsubscribeEvent('unsubscribe-token', 'POST'));
 
   assert.equal(response.statusCode, 302);
   assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=unsubscribed');
@@ -396,9 +396,51 @@ test('invalid unsubscribe token redirects to failure', async () => {
     findSubscriberByUnsubscribeTokenHash: async () => undefined,
   });
 
-  const response = await handler(createUnsubscribeEvent('bad-token'));
+  const response = await handler(createUnsubscribeEvent('bad-token', 'POST'));
 
   assert.equal(response.statusCode, 302);
   assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=invalid');
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
+test('unsubscribe GET returns confirmation page without unsubscribing', async () => {
+  const unsubscribes = [];
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  process.env.BLOG_SUBSCRIPTIONS_API_BASE_URL = 'https://api.example.com';
+  const handler = createHandler({
+    findSubscriberByUnsubscribeTokenHash: async () => ({
+      subscriberId: 'subscriber-123',
+      emailHash: hash('fan@example.com'),
+      status: 'active',
+    }),
+    unsubscribeSubscriber: async (emailHash) => unsubscribes.push(emailHash),
+  });
+
+  const response = await handler(createUnsubscribeEvent('unsubscribe-token'));
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.headers['content-type'], 'text/html; charset=UTF-8');
+  assert.match(response.body, /Unsubscribe from Drake's Food emails\?/);
+  assert.match(response.body, /method="post"/);
+  assert.match(response.body, /https:\/\/api\.example\.com\/blog-subscriptions\/unsubscribe\?token=unsubscribe-token/);
+  assert.deepEqual(unsubscribes, []);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+  delete process.env.BLOG_SUBSCRIPTIONS_API_BASE_URL;
+});
+
+test('unsubscribe GET for already unsubscribed reader returns complete page', async () => {
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    findSubscriberByUnsubscribeTokenHash: async () => ({
+      subscriberId: 'subscriber-123',
+      emailHash: hash('fan@example.com'),
+      status: 'unsubscribed',
+    }),
+  });
+
+  const response = await handler(createUnsubscribeEvent('unsubscribe-token'));
+
+  assert.equal(response.statusCode, 200);
+  assert.match(response.body, /You are unsubscribed/);
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
