@@ -113,6 +113,7 @@ export const createHandler = ({
 
   const confirmationToken = createToken();
   const unsubscribeToken = createToken();
+  const deliverableUnsubscribeToken = existingSubscriber?.unsubscribeToken || unsubscribeToken;
   const timestamp = now().toISOString();
   const subscriber = {
     subscriberId: existingSubscriber?.subscriberId || uuid(),
@@ -122,8 +123,8 @@ export const createHandler = ({
     createdAt: existingSubscriber?.createdAt || timestamp,
     updatedAt: timestamp,
     confirmationTokenHash: hashValue(confirmationToken),
-    unsubscribeToken: existingSubscriber?.unsubscribeToken || unsubscribeToken,
-    unsubscribeTokenHash: existingSubscriber?.unsubscribeTokenHash || hashValue(unsubscribeToken),
+    unsubscribeToken: deliverableUnsubscribeToken,
+    unsubscribeTokenHash: hashValue(deliverableUnsubscribeToken),
     source: process.env.BLOG_SUBSCRIPTIONS_SOURCE_SITE || 'drakesfood.com',
   };
 

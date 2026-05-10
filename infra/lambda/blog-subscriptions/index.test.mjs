@@ -229,7 +229,7 @@ test('duplicate active signup returns generic success without resending confirma
       status: 'active',
       createdAt: '2026-05-01T12:00:00.000Z',
       unsubscribeToken: 'existing-unsubscribe-token',
-      unsubscribeTokenHash: 'existing-unsubscribe-hash',
+      unsubscribeTokenHash: hash('existing-unsubscribe-token'),
     }),
     savePendingSubscriber: async (subscriber) => saves.push(subscriber),
     sendConfirmation: async (subscriber) => confirmations.push(subscriber),
@@ -277,8 +277,38 @@ test('duplicate pending signup refreshes confirmation token', async () => {
   assert.equal(savedSubscribers[0].createdAt, '2026-05-01T12:00:00.000Z');
   assert.equal(savedSubscribers[0].confirmationTokenHash, hash('new-confirm-token'));
   assert.equal(savedSubscribers[0].unsubscribeToken, 'existing-unsubscribe-token');
-  assert.equal(savedSubscribers[0].unsubscribeTokenHash, 'existing-unsubscribe-hash');
+  assert.equal(savedSubscribers[0].unsubscribeTokenHash, hash('existing-unsubscribe-token'));
   assert.equal(confirmations[0].token, 'new-confirm-token');
+});
+
+test('duplicate pending signup rotates unsubscribe token when legacy record has only a hash', async () => {
+  const savedSubscribers = [];
+  const handler = createHandler({
+    now: () => fixedDate,
+    uuid: () => 'new-subscriber-id',
+    createToken: (() => {
+      const tokens = ['new-confirm-token', 'new-unsubscribe-token'];
+
+      return () => tokens.shift();
+    })(),
+    findSubscriberByEmailHash: async () => ({
+      subscriberId: 'subscriber-123',
+      emailNormalized: 'fan@example.com',
+      emailHash: hash('fan@example.com'),
+      status: 'pending',
+      createdAt: '2026-05-01T12:00:00.000Z',
+      unsubscribeTokenHash: 'legacy-unsubscribe-hash',
+    }),
+    savePendingSubscriber: async (subscriber) => savedSubscribers.push(subscriber),
+    sendConfirmation: async () => undefined,
+  });
+
+  const response = await handler(createPostEvent({ email: 'fan@example.com' }));
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(savedSubscribers[0].subscriberId, 'subscriber-123');
+  assert.equal(savedSubscribers[0].unsubscribeToken, 'new-unsubscribe-token');
+  assert.equal(savedSubscribers[0].unsubscribeTokenHash, hash('new-unsubscribe-token'));
 });
 
 test('valid confirmation activates a pending subscriber and redirects to success', async () => {
