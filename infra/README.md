@@ -45,13 +45,13 @@ The blog subscription backend is defined as low-cost serverless infrastructure:
 
 - API Gateway HTTP API exposes `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, `GET /blog-subscriptions/unsubscribe`, and `POST /blog-subscriptions/unsubscribe`.
 - CORS is restricted to `drakesfood.com`, `www.drakesfood.com`, and local Angular development by default.
-- Lambda receives the table name, source site, allowed origins, API base URL, site URL, and SES sender through environment variables.
-- DynamoDB stores subscriber records by `emailHash` so each normalized email has one record, keeps private unsubscribe tokens for future notification links, and uses lookup indexes for confirmation and unsubscribe token hashes.
-- SES sends a plain-text confirmation email after a valid signup is stored. Future blog notification emails must include an unsubscribe link.
+- Lambda receives the subscriber table name, notification send table name, source site, allowed origins, API base URL, site URL, and SES sender through environment variables.
+- DynamoDB stores subscriber records by `emailHash` so each normalized email has one record, keeps private unsubscribe tokens for notification links, uses lookup indexes for confirmation and unsubscribe token hashes, and tracks notification sends by `postSlug`.
+- SES sends plain-text confirmation emails and controlled blog post notification emails. Notification emails include an unsubscribe link.
 - CloudWatch log groups use the configured retention period.
 - API Gateway throttling defaults to 10 burst requests and 5 sustained requests per second.
 
-The Lambda source lives at `lambda/blog-subscriptions/index.mjs`. It validates signup requests, handles honeypot submissions without storing or emailing them, stores pending subscribers in DynamoDB, sends SES confirmation emails when a sender is configured, activates pending subscribers from confirmation links, serves a read-only unsubscribe confirmation page for email links, and marks subscribers unsubscribed only after the confirmation page submits a POST request.
+The Lambda source lives at `lambda/blog-subscriptions/index.mjs`. It validates signup requests, handles honeypot submissions without storing or emailing them, stores pending subscribers in DynamoDB, sends SES confirmation emails when a sender is configured, activates pending subscribers from confirmation links, serves a read-only unsubscribe confirmation page for email links, marks subscribers unsubscribed only after the confirmation page submits a POST request, and sends blog post notifications from an internal GitHub Actions-triggered event.
 
 The Lambda request body limit defaults to `8192` bytes and can be adjusted with `blog_subscriptions_max_body_bytes` if needed.
 
@@ -145,6 +145,7 @@ After apply finishes, get the CloudFront distribution ID and recipe submission A
 AWS_PROFILE=drakesfood tofu output -raw cloudfront_distribution_id
 AWS_PROFILE=drakesfood tofu output -raw recipe_submissions_api_endpoint
 AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_api_endpoint
+AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_lambda_function_name
 ```
 
 Add that value as a GitHub repository variable named `CLOUDFRONT_DISTRIBUTION_ID`.
@@ -161,6 +162,7 @@ It also needs these GitHub repository variables:
 - `CLOUDFRONT_DISTRIBUTION_ID`
 - `RECIPE_SUBMISSIONS_API_BASE_URL`
 - `BLOG_SUBSCRIPTIONS_API_BASE_URL`
+- `BLOG_SUBSCRIPTIONS_LAMBDA_FUNCTION_NAME` optional, defaults to `drakesfood-blog-subscriptions` for the manual notification workflow
 
 Set `RECIPE_SUBMISSIONS_API_BASE_URL` to the `recipe_submissions_api_endpoint` OpenTofu output after the recipe submission infrastructure is applied. The deploy workflow writes this value into `app-config.json` at deploy time. Until it is configured, the public form keeps its not-connected-yet fallback.
 
@@ -173,6 +175,7 @@ The OpenTofu-managed deploy policy grants the GitHub Actions IAM user these perm
 - `s3:ListBucket` on the site bucket
 - `s3:GetObject`, `s3:PutObject`, and `s3:DeleteObject` on site bucket objects
 - `cloudfront:CreateInvalidation` on the site CloudFront distribution
+- `lambda:InvokeFunction` on the blog subscription Lambda for the manual blog notification workflow
 
 If older manually attached deploy policies exist on the IAM user, review and remove them after `tofu apply` confirms the OpenTofu-managed policy is active.
 

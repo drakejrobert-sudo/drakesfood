@@ -1,0 +1,53 @@
+name: Send Blog Notification
+
+on:
+  workflow_dispatch:
+    inputs:
+      post_slug:
+        description: Blog post slug to notify subscribers about
+        required: true
+        type: string
+      dry_run:
+        description: Preview recipient count without sending emails
+        required: true
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: send-blog-notification-${{ inputs.post_slug }}
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-2
+  BLOG_SUBSCRIPTIONS_LAMBDA_FUNCTION_NAME: ${{ vars.BLOG_SUBSCRIPTIONS_LAMBDA_FUNCTION_NAME }}
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Send notification
+        env:
+          POST_SLUG: ${{ inputs.post_slug }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          FUNCTION_NAME="${BLOG_SUBSCRIPTIONS_LAMBDA_FUNCTION_NAME:-drakesfood-blog-subscriptions}"
+          node -e 'const fs = require("node:fs"); fs.writeFileSync("payload.json", JSON.stringify({ action: "sendBlogPostNotification", postSlug: process.env.POST_SLUG, dryRun: process.env.DRY_RUN === "true" }));'
+          aws lambda invoke \
+            --function-name "$FUNCTION_NAME" \
+            --cli-binary-format raw-in-base64-out \
+            --payload file://payload.json \
+            response.json
+          node -e 'const fs = require("node:fs"); const response = JSON.parse(fs.readFileSync("response.json", "utf8")); console.log(JSON.stringify(response, null, 2)); if (response.success !== true) process.exit(1);'

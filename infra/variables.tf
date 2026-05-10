@@ -162,6 +162,12 @@ variable "blog_subscriptions_table_name" {
   default     = "drakesfood-blog-subscribers"
 }
 
+variable "blog_notification_sends_table_name" {
+  description = "DynamoDB table name for tracking sent blog post notifications."
+  type        = string
+  default     = "drakesfood-blog-notification-sends"
+}
+
 variable "blog_subscriptions_throttling_burst_limit" {
   description = "API Gateway burst throttling limit for blog subscriptions."
   type        = number

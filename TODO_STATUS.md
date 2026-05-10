@@ -55,7 +55,7 @@
 ## 🔄 In Progress
 
 - [ ] Expand SEO, social sharing, sitemap, and robots metadata — #58
-- [ ] Add unsubscribe support for blog email notifications — #83
+- [ ] Send email notification when a new blog post is published — #84
 
 ## 📋 Remaining Tasks
 
@@ -136,6 +136,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Blog now includes a featured story layout and the first full post, `The One Day a Year I Bake`, with process photos and a RecipeSensei import link.
 - Blog email subscription signup and confirmed opt-in are being added with a dedicated Angular form, runtime API config, API Gateway, Lambda, DynamoDB, and SES confirmation emails.
 - Blog email unsubscribe support is being added before new-post notification sending so every future notification can include a working unsubscribe link.
+- Blog post notification sending is being added as a manual GitHub Actions workflow with dry-run support, duplicate-send tracking, and unsubscribe links in every email.
 
 ## Last Updated
 

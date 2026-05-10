@@ -47,3 +47,8 @@ output "blog_subscriptions_lambda_function_name" {
   description = "Lambda function that handles blog email subscriptions."
   value       = aws_lambda_function.blog_subscriptions.function_name
 }
+
+output "blog_notification_sends_table_name" {
+  description = "DynamoDB table used for blog post notification send tracking."
+  value       = aws_dynamodb_table.blog_notification_sends.name
+}

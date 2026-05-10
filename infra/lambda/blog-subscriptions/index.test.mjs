@@ -444,3 +444,163 @@ test('unsubscribe GET for already unsubscribed reader returns complete page', as
   assert.match(response.body, /You are unsubscribed/);
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
+
+test('dry run reports active recipient count without reserving or sending', async () => {
+  const reservations = [];
+  const notifications = [];
+  const handler = createHandler({
+    getBlogPost: () => ({
+      slug: 'pizza-night',
+      title: 'Pizza Night',
+      summary: 'A crispy backyard pizza experiment.',
+      path: '/blog/pizza-night',
+    }),
+    listActiveSubscribers: async () => [
+      { subscriberId: 'subscriber-1', emailNormalized: 'one@example.com', unsubscribeToken: 'token-1' },
+      { subscriberId: 'subscriber-2', emailNormalized: 'two@example.com', unsubscribeToken: 'token-2' },
+    ],
+    reserveNotificationSend: async (item) => reservations.push(item),
+    sendBlogNotification: async (post, subscriber) => notifications.push({ post, subscriber }),
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'pizza-night', dryRun: true });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.success, true);
+  assert.equal(response.dryRun, true);
+  assert.equal(response.recipientCount, 2);
+  assert.equal(response.sentCount, 0);
+  assert.equal(response.failedCount, 0);
+  assert.deepEqual(reservations, []);
+  assert.deepEqual(notifications, []);
+});
+
+test('real send reserves post slug and sends to active subscribers', async () => {
+  const reservations = [];
+  const completions = [];
+  const notifications = [];
+  const post = {
+    slug: 'pizza-night',
+    title: 'Pizza Night',
+    summary: 'A crispy backyard pizza experiment.',
+    path: '/blog/pizza-night',
+  };
+  const handler = createHandler({
+    now: () => fixedDate,
+    getBlogPost: () => post,
+    listActiveSubscribers: async () => [
+      { subscriberId: 'subscriber-1', emailNormalized: 'one@example.com', unsubscribeToken: 'token-1' },
+      { subscriberId: 'subscriber-2', emailNormalized: 'two@example.com', unsubscribeToken: 'token-2' },
+    ],
+    reserveNotificationSend: async (item) => reservations.push(item),
+    completeNotificationSend: async (postSlug, values) => completions.push({ postSlug, values }),
+    sendBlogNotification: async (sentPost, subscriber) => notifications.push({ post: sentPost, subscriber }),
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'pizza-night', dryRun: false });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.success, true);
+  assert.deepEqual(reservations, [
+    {
+      postSlug: 'pizza-night',
+      status: 'sending',
+      dryRun: 'false',
+      startedAt: '2026-05-09T12:00:00.000Z',
+      recipientCount: '2',
+      sentCount: '0',
+      failedCount: '0',
+    },
+  ]);
+  assert.equal(notifications.length, 2);
+  assert.equal(notifications[0].subscriber.unsubscribeToken, 'token-1');
+  assert.deepEqual(completions, [
+    {
+      postSlug: 'pizza-night',
+      values: {
+        status: 'sent',
+        completedAt: '2026-05-09T12:00:00.000Z',
+        recipientCount: '2',
+        sentCount: '2',
+        failedCount: '0',
+      },
+    },
+  ]);
+});
+
+test('duplicate real send is blocked before sending', async () => {
+  const notifications = [];
+  const handler = createHandler({
+    getBlogPost: () => ({ slug: 'pizza-night', title: 'Pizza Night', summary: 'A crispy backyard pizza experiment.', path: '/blog/pizza-night' }),
+    listActiveSubscribers: async () => [{ subscriberId: 'subscriber-1', emailNormalized: 'one@example.com', unsubscribeToken: 'token-1' }],
+    reserveNotificationSend: async () => {
+      const error = new Error('Duplicate');
+      error.name = 'ConditionalCheckFailedException';
+      throw error;
+    },
+    sendBlogNotification: async (post, subscriber) => notifications.push({ post, subscriber }),
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'pizza-night', dryRun: false });
+
+  assert.equal(response.statusCode, 409);
+  assert.equal(response.success, false);
+  assert.equal(response.duplicate, true);
+  assert.deepEqual(notifications, []);
+});
+
+test('send action counts subscriber send failures without exposing email addresses', async () => {
+  const completions = [];
+  const handler = createHandler({
+    now: () => fixedDate,
+    getBlogPost: () => ({ slug: 'pizza-night', title: 'Pizza Night', summary: 'A crispy backyard pizza experiment.', path: '/blog/pizza-night' }),
+    listActiveSubscribers: async () => [
+      { subscriberId: 'subscriber-1', emailNormalized: 'one@example.com', unsubscribeToken: 'token-1' },
+      { subscriberId: 'subscriber-2', emailNormalized: 'two@example.com', unsubscribeToken: 'token-2' },
+    ],
+    reserveNotificationSend: async () => undefined,
+    completeNotificationSend: async (postSlug, values) => completions.push({ postSlug, values }),
+    sendBlogNotification: async (_post, subscriber) => {
+      if (subscriber.subscriberId === 'subscriber-2') {
+        throw new Error('SES failed');
+      }
+    },
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'pizza-night', dryRun: false });
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.success, false);
+  assert.equal(response.recipientCount, 2);
+  assert.equal(response.sentCount, 1);
+  assert.equal(response.failedCount, 1);
+  assert.equal(completions[0].values.status, 'failed');
+});
+
+test('send action rejects unknown post slug', async () => {
+  const handler = createHandler({
+    getBlogPost: () => undefined,
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'missing-post', dryRun: true });
+
+  assert.equal(response.statusCode, 404);
+  assert.equal(response.success, false);
+});
+
+test('default real send fails before reservation when SES sender is missing', async () => {
+  const reservations = [];
+  delete process.env.SES_SENDER_EMAIL;
+  const handler = createHandler({
+    getBlogPost: () => ({ slug: 'pizza-night', title: 'Pizza Night', summary: 'A crispy backyard pizza experiment.', path: '/blog/pizza-night' }),
+    listActiveSubscribers: async () => [{ subscriberId: 'subscriber-1', emailNormalized: 'one@example.com', unsubscribeToken: 'token-1' }],
+    reserveNotificationSend: async (item) => reservations.push(item),
+  });
+
+  const response = await handler({ action: 'sendBlogPostNotification', postSlug: 'pizza-night', dryRun: false });
+
+  assert.equal(response.statusCode, 500);
+  assert.equal(response.success, false);
+  assert.equal(response.recipientCount, 1);
+  assert.deepEqual(reservations, []);
+});
