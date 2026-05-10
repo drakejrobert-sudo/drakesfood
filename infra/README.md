@@ -46,7 +46,7 @@ The blog subscription backend is defined as low-cost serverless infrastructure:
 - API Gateway HTTP API exposes `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, and `GET /blog-subscriptions/unsubscribe`.
 - CORS is restricted to `drakesfood.com`, `www.drakesfood.com`, and local Angular development by default.
 - Lambda receives the table name, source site, allowed origins, API base URL, site URL, and SES sender through environment variables.
-- DynamoDB stores subscriber records by `emailHash` so each normalized email has one record, with lookup indexes for confirmation and unsubscribe token hashes.
+- DynamoDB stores subscriber records by `emailHash` so each normalized email has one record, keeps private unsubscribe tokens for future notification links, and uses lookup indexes for confirmation and unsubscribe token hashes.
 - SES sends a plain-text confirmation email after a valid signup is stored. Future blog notification emails must include an unsubscribe link.
 - CloudWatch log groups use the configured retention period.
 - API Gateway throttling defaults to 10 burst requests and 5 sustained requests per second.

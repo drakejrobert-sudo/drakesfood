@@ -122,6 +122,7 @@ export const createHandler = ({
     createdAt: existingSubscriber?.createdAt || timestamp,
     updatedAt: timestamp,
     confirmationTokenHash: hashValue(confirmationToken),
+    unsubscribeToken: existingSubscriber?.unsubscribeToken || unsubscribeToken,
     unsubscribeTokenHash: existingSubscriber?.unsubscribeTokenHash || hashValue(unsubscribeToken),
     source: process.env.BLOG_SUBSCRIPTIONS_SOURCE_SITE || 'drakesfood.com',
   };

@@ -111,12 +111,13 @@ Subscriber item shape:
   "updatedAt": "2026-05-09T12:00:00.000Z",
   "confirmedAt": "2026-05-09T12:05:00.000Z",
   "confirmationTokenHash": "sha256 hash",
+  "unsubscribeToken": "random token for notification email links",
   "unsubscribeTokenHash": "sha256 hash",
   "source": "drakesfood.com"
 }
 ```
 
-`subscriberId` is a stored identifier for logging and debugging, not the table key. `confirmedAt` appears after confirmation. `unsubscribedAt` appears after unsubscribe. `confirmationTokenHash` is removed after successful confirmation or unsubscribe. `unsubscribeTokenHash` is retained so repeated unsubscribe requests remain idempotent.
+`subscriberId` is a stored identifier for logging and debugging, not the table key. `confirmedAt` appears after confirmation. `unsubscribedAt` appears after unsubscribe. `confirmationTokenHash` is removed after successful confirmation or unsubscribe. `unsubscribeToken` is retained so #84 can build deliverable unsubscribe links in notification emails, while `unsubscribeTokenHash` is retained so unsubscribe requests can be looked up without querying by the raw token.
 
 ## Privacy
 
@@ -124,8 +125,9 @@ Subscriber email addresses are private data.
 
 - Do not commit subscriber exports.
 - Do not add subscriber emails to GitHub issues, logs, screenshots, or docs.
-- Prefer logging `subscriberId` and error names instead of raw email addresses.
-- Tokens are stored as SHA-256 hashes, not raw token values.
+- Prefer logging `subscriberId` and error names instead of raw email addresses or tokens.
+- Confirmation tokens are stored only as SHA-256 hashes.
+- Unsubscribe tokens are private bearer-token data. Store them only in DynamoDB, use them only for notification email links, and do not log them.
 - Every future notification email must include the subscriber's unsubscribe link.
 
 ## SES

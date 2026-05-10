@@ -88,6 +88,7 @@ test('stores a pending subscriber and sends a confirmation email', async () => {
       createdAt: '2026-05-09T12:00:00.000Z',
       updatedAt: '2026-05-09T12:00:00.000Z',
       confirmationTokenHash: hash('confirm-token'),
+      unsubscribeToken: 'unsubscribe-token',
       unsubscribeTokenHash: hash('unsubscribe-token'),
       source: 'drakesfood.com',
     },
@@ -227,6 +228,7 @@ test('duplicate active signup returns generic success without resending confirma
       emailHash: hash('fan@example.com'),
       status: 'active',
       createdAt: '2026-05-01T12:00:00.000Z',
+      unsubscribeToken: 'existing-unsubscribe-token',
       unsubscribeTokenHash: 'existing-unsubscribe-hash',
     }),
     savePendingSubscriber: async (subscriber) => saves.push(subscriber),
@@ -261,6 +263,7 @@ test('duplicate pending signup refreshes confirmation token', async () => {
       emailHash: hash('fan@example.com'),
       status: 'pending',
       createdAt: '2026-05-01T12:00:00.000Z',
+      unsubscribeToken: 'existing-unsubscribe-token',
       unsubscribeTokenHash: 'existing-unsubscribe-hash',
     }),
     savePendingSubscriber: async (subscriber) => savedSubscribers.push(subscriber),
@@ -273,6 +276,7 @@ test('duplicate pending signup refreshes confirmation token', async () => {
   assert.equal(savedSubscribers[0].subscriberId, 'subscriber-123');
   assert.equal(savedSubscribers[0].createdAt, '2026-05-01T12:00:00.000Z');
   assert.equal(savedSubscribers[0].confirmationTokenHash, hash('new-confirm-token'));
+  assert.equal(savedSubscribers[0].unsubscribeToken, 'existing-unsubscribe-token');
   assert.equal(savedSubscribers[0].unsubscribeTokenHash, 'existing-unsubscribe-hash');
   assert.equal(confirmations[0].token, 'new-confirm-token');
 });
