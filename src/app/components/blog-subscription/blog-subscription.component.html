@@ -1,0 +1,51 @@
+<section class="blog-subscription" aria-labelledby="blog-subscription-title">
+  <div class="subscription-copy">
+    <p class="eyebrow">New post emails</p>
+    <h3 id="blog-subscription-title">Get the next kitchen story.</h3>
+    <p>
+      I will email you when a new Drake's Food post goes live. No spam, no accounts, just a confirmation email before updates start arriving.
+    </p>
+  </div>
+
+  <form class="subscription-form" [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="field">
+      <label for="blog-subscription-email">Email address <span aria-hidden="true">*</span></label>
+      <input
+        id="blog-subscription-email"
+        type="email"
+        formControlName="email"
+        autocomplete="email"
+        maxlength="254"
+        placeholder="you@example.com"
+        aria-describedby="blog-subscription-help blog-subscription-error"
+      />
+      <p id="blog-subscription-help" class="field-help">Confirm your email before updates start arriving.</p>
+      @if (hasFieldError('email', 'required')) {
+        <p id="blog-subscription-error" class="field-error">Please enter your email address.</p>
+      } @else if (hasFieldError('email', 'email')) {
+        <p id="blog-subscription-error" class="field-error">Enter a valid email address.</p>
+      } @else if (hasFieldError('email', 'maxlength')) {
+        <p id="blog-subscription-error" class="field-error">Keep the email under 254 characters.</p>
+      }
+    </div>
+
+    <div class="honeypot" aria-hidden="true">
+      <label for="blog-subscription-website">Website</label>
+      <input id="blog-subscription-website" type="text" formControlName="website" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <button class="button button-primary" type="submit" [disabled]="isSubmitting()">
+      @if (isSubmitting()) {
+        Sending link...
+      } @else {
+        Subscribe
+      }
+    </button>
+
+    @if (statusMessage()) {
+      <p class="status-message" [class.status-success]="status() === 'success'" [class.status-error]="status() === 'error'" aria-live="polite">
+        {{ statusMessage() }}
+      </p>
+    }
+  </form>
+</section>

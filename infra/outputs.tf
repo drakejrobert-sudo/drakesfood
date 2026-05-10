@@ -32,3 +32,18 @@ output "recipe_submissions_lambda_function_name" {
   description = "Lambda function that handles recipe submissions."
   value       = aws_lambda_function.recipe_submissions.function_name
 }
+
+output "blog_subscriptions_api_endpoint" {
+  description = "Base endpoint URL for the blog subscription HTTP API."
+  value       = aws_apigatewayv2_api.blog_subscriptions.api_endpoint
+}
+
+output "blog_subscriptions_table_name" {
+  description = "DynamoDB table used for blog email subscribers."
+  value       = aws_dynamodb_table.blog_subscribers.name
+}
+
+output "blog_subscriptions_lambda_function_name" {
+  description = "Lambda function that handles blog email subscriptions."
+  value       = aws_lambda_function.blog_subscriptions.function_name
+}
