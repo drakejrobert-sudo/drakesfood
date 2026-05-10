@@ -6,8 +6,9 @@ V1 is intentionally small:
 
 - Readers submit only an email address.
 - Readers must confirm before becoming active subscribers.
+- Readers can unsubscribe from notification emails without creating an account.
 - Subscriber emails are private operational data.
-- New-post notification sending and unsubscribe handling are tracked separately in #84 and #83.
+- New-post notification sending is tracked separately in #84.
 
 ## Frontend
 
@@ -69,14 +70,30 @@ GET /blog-subscriptions/confirm?token=<confirmation-token>
 
 Valid confirmation tokens activate the pending subscriber and redirect to `/blog?subscription=confirmed`. Invalid or expired tokens redirect to `/blog?subscription=invalid`.
 
+Unsubscribe confirmation endpoint:
+
+```http
+GET /blog-subscriptions/unsubscribe?token=<unsubscribe-token>
+```
+
+Valid unsubscribe tokens return a confirmation page and do not change subscriber state. This keeps email security scanners and link preview clients from unsubscribing readers automatically. Invalid tokens redirect to `/blog?subscription=invalid`.
+
+Unsubscribe mutation endpoint:
+
+```http
+POST /blog-subscriptions/unsubscribe?token=<unsubscribe-token>
+```
+
+Valid unsubscribe tokens mark the subscriber as `unsubscribed` and redirect to `/blog?subscription=unsubscribed`. Repeated unsubscribe requests are treated as success. Invalid tokens redirect to `/blog?subscription=invalid`.
+
 ## Backend Resources
 
 Blog subscription infrastructure is defined in `infra/blog_subscriptions.tf`.
 
 The V1 architecture uses:
 
-- API Gateway HTTP API for `POST /blog-subscriptions` and `GET /blog-subscriptions/confirm`.
-- Lambda for validation, honeypot handling, DynamoDB writes, SES confirmation emails, and confirmation activation.
+- API Gateway HTTP API for `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, `GET /blog-subscriptions/unsubscribe`, and `POST /blog-subscriptions/unsubscribe`.
+- Lambda for validation, honeypot handling, DynamoDB writes, SES confirmation emails, confirmation activation, and unsubscribe handling.
 - DynamoDB for subscriber records.
 - SES for confirmation emails.
 - CloudWatch Logs for API Gateway access logs and Lambda logs.
@@ -88,7 +105,7 @@ The DynamoDB table is created by `aws_dynamodb_table.blog_subscribers`.
 
 Default table name: `drakesfood-blog-subscribers`
 
-The table uses pay-per-request billing and is keyed by `emailHash` so each normalized email can have only one subscriber record. It includes a GSI for `confirmationTokenHash` lookups.
+The table uses pay-per-request billing and is keyed by `emailHash` so each normalized email can have only one subscriber record. It includes GSIs for `confirmationTokenHash` and `unsubscribeTokenHash` lookups.
 
 Subscriber item shape:
 
@@ -102,12 +119,13 @@ Subscriber item shape:
   "updatedAt": "2026-05-09T12:00:00.000Z",
   "confirmedAt": "2026-05-09T12:05:00.000Z",
   "confirmationTokenHash": "sha256 hash",
+  "unsubscribeToken": "random token for notification email links",
   "unsubscribeTokenHash": "sha256 hash",
   "source": "drakesfood.com"
 }
 ```
 
-`subscriberId` is a stored identifier for logging and debugging, not the table key. `confirmedAt` appears after confirmation. `confirmationTokenHash` is removed after successful confirmation. `unsubscribeTokenHash` is stored now so #83 can add unsubscribe support without changing the subscriber creation flow.
+`subscriberId` is a stored identifier for logging and debugging, not the table key. `confirmedAt` appears after confirmation. `unsubscribedAt` appears after unsubscribe. `confirmationTokenHash` is removed after successful confirmation or unsubscribe. `unsubscribeToken` is retained so #84 can build deliverable unsubscribe links in notification emails, while `unsubscribeTokenHash` is retained so unsubscribe requests can be looked up without querying by the raw token.
 
 ## Privacy
 
@@ -115,8 +133,10 @@ Subscriber email addresses are private data.
 
 - Do not commit subscriber exports.
 - Do not add subscriber emails to GitHub issues, logs, screenshots, or docs.
-- Prefer logging `subscriberId` and error names instead of raw email addresses.
-- Tokens are stored as SHA-256 hashes, not raw token values.
+- Prefer logging `subscriberId` and error names instead of raw email addresses or tokens.
+- Confirmation tokens are stored only as SHA-256 hashes.
+- Unsubscribe tokens are private bearer-token data. Store them only in DynamoDB, use them only for notification email links, and do not log them.
+- Every future notification email must include the subscriber's unsubscribe link. That link should use `GET /blog-subscriptions/unsubscribe?token=<unsubscribe-token>` so the reader lands on the confirmation page before any state change.
 
 ## SES
 
@@ -202,6 +222,5 @@ node --test infra/lambda/blog-subscriptions/index.test.mjs
 
 ## Follow-Up Work
 
-- #83 adds unsubscribe support.
 - #84 sends new-post notifications to active subscribers.
 - #85 expands operating documentation after the full notification flow exists.

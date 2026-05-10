@@ -43,15 +43,15 @@ See `../docs/recipe-submission-system.md` for the end-to-end recipe submission s
 
 The blog subscription backend is defined as low-cost serverless infrastructure:
 
-- API Gateway HTTP API exposes `POST /blog-subscriptions` and `GET /blog-subscriptions/confirm`.
+- API Gateway HTTP API exposes `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, `GET /blog-subscriptions/unsubscribe`, and `POST /blog-subscriptions/unsubscribe`.
 - CORS is restricted to `drakesfood.com`, `www.drakesfood.com`, and local Angular development by default.
 - Lambda receives the table name, source site, allowed origins, API base URL, site URL, and SES sender through environment variables.
-- DynamoDB stores subscriber records by `emailHash` so each normalized email has one record, with a lookup index for confirmation token hashes.
-- SES sends a plain-text confirmation email after a valid signup is stored.
+- DynamoDB stores subscriber records by `emailHash` so each normalized email has one record, keeps private unsubscribe tokens for future notification links, and uses lookup indexes for confirmation and unsubscribe token hashes.
+- SES sends a plain-text confirmation email after a valid signup is stored. Future blog notification emails must include an unsubscribe link.
 - CloudWatch log groups use the configured retention period.
 - API Gateway throttling defaults to 10 burst requests and 5 sustained requests per second.
 
-The Lambda source lives at `lambda/blog-subscriptions/index.mjs`. It validates signup requests, handles honeypot submissions without storing or emailing them, stores pending subscribers in DynamoDB, sends SES confirmation emails when a sender is configured, and activates pending subscribers from confirmation links.
+The Lambda source lives at `lambda/blog-subscriptions/index.mjs`. It validates signup requests, handles honeypot submissions without storing or emailing them, stores pending subscribers in DynamoDB, sends SES confirmation emails when a sender is configured, activates pending subscribers from confirmation links, serves a read-only unsubscribe confirmation page for email links, and marks subscribers unsubscribed only after the confirmation page submits a POST request.
 
 The Lambda request body limit defaults to `8192` bytes and can be adjusted with `blog_subscriptions_max_body_bytes` if needed.
 
