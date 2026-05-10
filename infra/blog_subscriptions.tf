@@ -195,6 +195,12 @@ resource "aws_apigatewayv2_route" "blog_subscriptions_unsubscribe_get" {
   target    = "integrations/${aws_apigatewayv2_integration.blog_subscriptions.id}"
 }
 
+resource "aws_apigatewayv2_route" "blog_subscriptions_unsubscribe_post" {
+  api_id    = aws_apigatewayv2_api.blog_subscriptions.id
+  route_key = "POST /blog-subscriptions/unsubscribe"
+  target    = "integrations/${aws_apigatewayv2_integration.blog_subscriptions.id}"
+}
+
 resource "aws_apigatewayv2_stage" "blog_subscriptions_default" {
   api_id      = aws_apigatewayv2_api.blog_subscriptions.id
   name        = "$default"
