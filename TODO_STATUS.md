@@ -52,11 +52,11 @@
 - [x] Add dedicated RecipeSensei teaser page — #59
 - [x] Add first recipe/story blog detail page
 - [x] Document blog email notification operations — #85
+- [x] Notify Drake when readers subscribe or unsubscribe — #88
 
 ## 🔄 In Progress
 
-- [ ] Expand SEO, social sharing, sitemap, and robots metadata — #58
-- [ ] Notify Drake when readers subscribe or unsubscribe — #88
+- [ ] Verify SES email deliverability DNS setup — #94
 
 ## 📋 Remaining Tasks
 
@@ -140,7 +140,8 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Blog post notification sending is being added as a manual GitHub Actions workflow with dry-run support, duplicate-send tracking, and unsubscribe links in every email.
 - Blog email operations documentation is being expanded into a setup, testing, sending, privacy, cost, and recovery runbook.
 - Optional blog subscription admin alerts are being added so Drake can be notified after confirmed subscriptions and unsubscribes without exposing subscriber emails in alert bodies.
+- SES deliverability verification is in progress for #94. Production access, domain verification, and DKIM are confirmed in `us-east-2`; SPF is being added through OpenTofu and the existing DKIM/DMARC records are being brought under infrastructure management.
 
 ## Last Updated
 
-May 10, 2026
+May 11, 2026

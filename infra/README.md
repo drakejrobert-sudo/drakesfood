@@ -18,6 +18,7 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - Lambda function, execution role, and CloudWatch logs for blog email subscriptions
 - DynamoDB table for blog email subscriber storage
 - SES send permissions for blog subscription confirmation emails
+- Route 53 DNS authentication records for SES email deliverability: DKIM, SPF, and DMARC
 
 CloudFront requires ACM certificates to be in `us-east-1`, so this config uses a secondary AWS provider for the certificate while keeping the existing S3 bucket in `us-east-2`.
 
@@ -55,6 +56,8 @@ The blog subscription backend is defined as low-cost serverless infrastructure:
 The Lambda source lives at `lambda/blog-subscriptions/index.mjs`. It validates signup requests, handles honeypot submissions without storing or emailing them, stores pending subscribers in DynamoDB, sends SES confirmation emails when a sender is configured, activates pending subscribers from confirmation links, optionally emails Drake after successful confirmations or unsubscribes, serves a read-only unsubscribe confirmation page for email links, marks subscribers unsubscribed only after the confirmation page submits a POST request, and sends blog post notifications from an internal GitHub Actions-triggered event.
 
 The Lambda request body limit defaults to `8192` bytes and can be adjusted with `blog_subscriptions_max_body_bytes` if needed.
+
+Email deliverability DNS records are defined in `email_deliverability.tf`. OpenTofu manages the SES DKIM CNAME records, the apex SPF TXT record for Amazon SES, and the `_dmarc` TXT record. Custom MAIL FROM is intentionally not configured for V1.
 
 See `../docs/blog-email-subscriptions.md` for the end-to-end blog subscription documentation, including frontend wiring, API behavior, deployment, testing, privacy notes, and follow-up work.
 
