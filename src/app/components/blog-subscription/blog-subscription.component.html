@@ -19,7 +19,7 @@
         placeholder="you@example.com"
         aria-describedby="blog-subscription-help blog-subscription-error"
       />
-      <p id="blog-subscription-help" class="field-help">Confirm your email before updates start arriving.</p>
+      <p id="blog-subscription-help" class="field-help">Confirm your email before updates start arriving. Check junk or spam if the link is slow.</p>
       @if (hasFieldError('email', 'required')) {
         <p id="blog-subscription-error" class="field-error">Please enter your email address.</p>
       } @else if (hasFieldError('email', 'email')) {

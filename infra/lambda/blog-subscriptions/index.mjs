@@ -1,7 +1,7 @@
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 import { getBlogNotificationPost } from './blog-notification-posts.mjs';
 
-const SIGNUP_SUCCESS_MESSAGE = 'If that email can be subscribed, a confirmation link is on the way.';
+const SIGNUP_SUCCESS_MESSAGE = 'If that email can be subscribed, a confirmation link is on the way. Check your junk or spam folder if you do not see it soon.';
 const CONFIRMATION_SUCCESS_REDIRECT = '/blog?subscription=confirmed';
 const CONFIRMATION_FAILURE_REDIRECT = '/blog?subscription=invalid';
 const UNSUBSCRIBE_SUCCESS_REDIRECT = '/blog?subscription=unsubscribed';
@@ -895,6 +895,7 @@ function formatConfirmationEmail(confirmationToken) {
 
   return [
     "You're almost subscribed to Drake's Food blog emails.",
+    'You requested this confirmation from https://drakesfood.com.',
     '',
     'Confirm your subscription here:',
     confirmationUrl,

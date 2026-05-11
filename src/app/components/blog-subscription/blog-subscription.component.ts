@@ -4,6 +4,8 @@ import { BlogSubscriptionApiService, type BlogSubscriptionPayload } from '../../
 
 type SubscriptionStatus = 'idle' | 'submitting' | 'success' | 'error';
 
+const SIGNUP_SUCCESS_MESSAGE = 'If that email can be subscribed, a confirmation link is on the way. Check your junk or spam folder if you do not see it soon.';
+
 @Component({
   selector: 'app-blog-subscription',
   standalone: true,
@@ -29,7 +31,7 @@ export class BlogSubscriptionComponent {
 
     if (payload.website) {
       this.status.set('success');
-      this.statusMessage.set('If that email can be subscribed, a confirmation link is on the way.');
+      this.statusMessage.set(SIGNUP_SUCCESS_MESSAGE);
       return;
     }
 
