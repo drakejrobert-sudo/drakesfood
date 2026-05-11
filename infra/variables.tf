@@ -120,6 +120,12 @@ variable "blog_subscriptions_allowed_origins" {
   ]
 }
 
+variable "blog_subscriptions_admin_recipient_email" {
+  description = "Optional email address that receives admin alerts when readers confirm blog subscriptions or unsubscribe. Leave blank to disable alerts."
+  type        = string
+  default     = ""
+}
+
 variable "blog_subscriptions_lambda_function_name" {
   description = "Lambda function name for blog email subscriptions."
   type        = string

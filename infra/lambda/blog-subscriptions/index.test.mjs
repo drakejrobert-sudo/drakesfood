@@ -334,6 +334,92 @@ test('valid confirmation activates a pending subscriber and redirects to success
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
 
+test('valid confirmation sends admin notification when configured', async () => {
+  const adminNotifications = [];
+  const emailHash = hash('fan@example.com');
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    now: () => fixedDate,
+    findSubscriberByConfirmationTokenHash: async (confirmationTokenHash) => ({
+      subscriberId: 'subscriber-123',
+      emailHash,
+      confirmationTokenHash,
+      status: 'pending',
+      source: 'drakesfood.com',
+    }),
+    activateSubscriber: async () => undefined,
+    sendAdminNotification: async (eventType, subscriber, timestamp) => adminNotifications.push({ eventType, subscriber, timestamp }),
+  });
+
+  const response = await handler(createConfirmEvent('confirm-token'));
+
+  assert.equal(response.statusCode, 302);
+  assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=confirmed');
+  assert.deepEqual(adminNotifications, [
+    {
+      eventType: 'confirmed',
+      subscriber: {
+        subscriberId: 'subscriber-123',
+        emailHash,
+        confirmationTokenHash: hash('confirm-token'),
+        status: 'pending',
+        source: 'drakesfood.com',
+      },
+      timestamp: '2026-05-09T12:00:00.000Z',
+    },
+  ]);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
+test('blank admin recipient skips default confirmation admin notification', async () => {
+  const emailHash = hash('fan@example.com');
+  delete process.env.BLOG_SUBSCRIPTIONS_ADMIN_RECIPIENT_EMAIL;
+  delete process.env.SES_SENDER_EMAIL;
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    now: () => fixedDate,
+    findSubscriberByConfirmationTokenHash: async (confirmationTokenHash) => ({
+      subscriberId: 'subscriber-123',
+      emailHash,
+      confirmationTokenHash,
+      status: 'pending',
+    }),
+    activateSubscriber: async () => undefined,
+  });
+
+  const response = await handler(createConfirmEvent('confirm-token'));
+
+  assert.equal(response.statusCode, 302);
+  assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=confirmed');
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
+test('admin notification failure does not block confirmation success', async () => {
+  const activations = [];
+  const emailHash = hash('fan@example.com');
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    now: () => fixedDate,
+    findSubscriberByConfirmationTokenHash: async (confirmationTokenHash) => ({
+      subscriberId: 'subscriber-123',
+      emailHash,
+      confirmationTokenHash,
+      status: 'pending',
+    }),
+    activateSubscriber: async (activatedEmailHash, confirmedAt) => activations.push({ emailHash: activatedEmailHash, confirmedAt }),
+    sendAdminNotification: async () => {
+      throw new Error('SES failed');
+    },
+  });
+
+  const response = await handler(createConfirmEvent('confirm-token'));
+
+  assert.equal(response.statusCode, 302);
+  assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=confirmed');
+  assert.deepEqual(activations, [{ emailHash, confirmedAt: '2026-05-09T12:00:00.000Z' }]);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
 test('invalid confirmation token redirects to failure', async () => {
   process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
   const handler = createHandler({
@@ -370,8 +456,72 @@ test('valid unsubscribe token marks subscriber unsubscribed and redirects to suc
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
 
+test('valid unsubscribe sends admin notification when configured', async () => {
+  const adminNotifications = [];
+  const emailHash = hash('fan@example.com');
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    now: () => fixedDate,
+    findSubscriberByUnsubscribeTokenHash: async (unsubscribeTokenHash) => ({
+      subscriberId: 'subscriber-123',
+      emailHash,
+      unsubscribeTokenHash,
+      status: 'active',
+      source: 'drakesfood.com',
+    }),
+    unsubscribeSubscriber: async () => undefined,
+    sendAdminNotification: async (eventType, subscriber, timestamp) => adminNotifications.push({ eventType, subscriber, timestamp }),
+  });
+
+  const response = await handler(createUnsubscribeEvent('unsubscribe-token', 'POST'));
+
+  assert.equal(response.statusCode, 302);
+  assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=unsubscribed');
+  assert.deepEqual(adminNotifications, [
+    {
+      eventType: 'unsubscribed',
+      subscriber: {
+        subscriberId: 'subscriber-123',
+        emailHash,
+        unsubscribeTokenHash: hash('unsubscribe-token'),
+        status: 'active',
+        source: 'drakesfood.com',
+      },
+      timestamp: '2026-05-09T12:00:00.000Z',
+    },
+  ]);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
+test('admin notification failure does not block unsubscribe success', async () => {
+  const unsubscribes = [];
+  const emailHash = hash('fan@example.com');
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    now: () => fixedDate,
+    findSubscriberByUnsubscribeTokenHash: async (unsubscribeTokenHash) => ({
+      subscriberId: 'subscriber-123',
+      emailHash,
+      unsubscribeTokenHash,
+      status: 'active',
+    }),
+    unsubscribeSubscriber: async (unsubscribedEmailHash, unsubscribedAt) => unsubscribes.push({ emailHash: unsubscribedEmailHash, unsubscribedAt }),
+    sendAdminNotification: async () => {
+      throw new Error('SES failed');
+    },
+  });
+
+  const response = await handler(createUnsubscribeEvent('unsubscribe-token', 'POST'));
+
+  assert.equal(response.statusCode, 302);
+  assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=unsubscribed');
+  assert.deepEqual(unsubscribes, [{ emailHash, unsubscribedAt: '2026-05-09T12:00:00.000Z' }]);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
 test('already unsubscribed token redirects to success without another update', async () => {
   const unsubscribes = [];
+  const adminNotifications = [];
   process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
   const handler = createHandler({
     findSubscriberByUnsubscribeTokenHash: async () => ({
@@ -380,6 +530,7 @@ test('already unsubscribed token redirects to success without another update', a
       status: 'unsubscribed',
     }),
     unsubscribeSubscriber: async (emailHash) => unsubscribes.push(emailHash),
+    sendAdminNotification: async (eventType) => adminNotifications.push(eventType),
   });
 
   const response = await handler(createUnsubscribeEvent('unsubscribe-token', 'POST'));
@@ -387,6 +538,7 @@ test('already unsubscribed token redirects to success without another update', a
   assert.equal(response.statusCode, 302);
   assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=unsubscribed');
   assert.deepEqual(unsubscribes, []);
+  assert.deepEqual(adminNotifications, []);
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
 

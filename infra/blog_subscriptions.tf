@@ -172,15 +172,16 @@ resource "aws_lambda_function" "blog_subscriptions" {
 
   environment {
     variables = {
-      BLOG_NOTIFICATION_MAX_RECIPIENTS   = tostring(var.blog_notification_max_recipients)
-      ALLOWED_ORIGINS                    = join(",", var.blog_subscriptions_allowed_origins)
-      BLOG_NOTIFICATION_SENDS_TABLE_NAME = aws_dynamodb_table.blog_notification_sends.name
-      BLOG_SUBSCRIPTIONS_API_BASE_URL    = aws_apigatewayv2_api.blog_subscriptions.api_endpoint
-      BLOG_SUBSCRIPTIONS_MAX_BODY_BYTES  = tostring(var.blog_subscriptions_max_body_bytes)
-      BLOG_SUBSCRIPTIONS_SITE_URL        = "https://${var.domain_name}"
-      BLOG_SUBSCRIPTIONS_SOURCE_SITE     = var.blog_subscriptions_source_site
-      BLOG_SUBSCRIPTIONS_TABLE_NAME      = aws_dynamodb_table.blog_subscribers.name
-      SES_SENDER_EMAIL                   = var.blog_subscriptions_ses_sender_email
+      BLOG_NOTIFICATION_MAX_RECIPIENTS         = tostring(var.blog_notification_max_recipients)
+      ALLOWED_ORIGINS                          = join(",", var.blog_subscriptions_allowed_origins)
+      BLOG_NOTIFICATION_SENDS_TABLE_NAME       = aws_dynamodb_table.blog_notification_sends.name
+      BLOG_SUBSCRIPTIONS_ADMIN_RECIPIENT_EMAIL = var.blog_subscriptions_admin_recipient_email
+      BLOG_SUBSCRIPTIONS_API_BASE_URL          = aws_apigatewayv2_api.blog_subscriptions.api_endpoint
+      BLOG_SUBSCRIPTIONS_MAX_BODY_BYTES        = tostring(var.blog_subscriptions_max_body_bytes)
+      BLOG_SUBSCRIPTIONS_SITE_URL              = "https://${var.domain_name}"
+      BLOG_SUBSCRIPTIONS_SOURCE_SITE           = var.blog_subscriptions_source_site
+      BLOG_SUBSCRIPTIONS_TABLE_NAME            = aws_dynamodb_table.blog_subscribers.name
+      SES_SENDER_EMAIL                         = var.blog_subscriptions_ses_sender_email
     }
   }
 

@@ -19,6 +19,7 @@ Before accepting public subscribers or sending real notification emails:
 - Verify the SES sending identity for `drakesfood.com` or the configured sender address.
 - Confirm SES production access, or understand sandbox limits if still in sandbox.
 - Set `blog_subscriptions_ses_sender_email` locally for OpenTofu, for example `Drake's Food <updates@drakesfood.com>`.
+- Optionally set `blog_subscriptions_admin_recipient_email = "drakejrobert@gmail.com"` locally for admin alerts when readers confirm or unsubscribe.
 - Run `AWS_PROFILE=drakesfood tofu plan` from `infra/` and review the planned blog subscription resources.
 - Run `AWS_PROFILE=drakesfood tofu apply` only after the plan looks correct.
 - Set GitHub repository variable `BLOG_SUBSCRIPTIONS_API_BASE_URL` from `tofu output -raw blog_subscriptions_api_endpoint`.
@@ -113,9 +114,9 @@ Blog subscription infrastructure is defined in `infra/blog_subscriptions.tf`.
 The V1 architecture uses:
 
 - API Gateway HTTP API for `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, `GET /blog-subscriptions/unsubscribe`, and `POST /blog-subscriptions/unsubscribe`.
-- Lambda for validation, honeypot handling, DynamoDB writes, SES confirmation emails, confirmation activation, unsubscribe handling, and controlled blog post notification sending.
+- Lambda for validation, honeypot handling, DynamoDB writes, SES confirmation emails, confirmation activation, unsubscribe handling, optional admin alerts, and controlled blog post notification sending.
 - DynamoDB for subscriber records and notification send tracking.
-- SES for confirmation emails and blog post notification emails.
+- SES for confirmation emails, optional admin alerts, and blog post notification emails.
 - CloudWatch Logs for API Gateway access logs and Lambda logs.
 - OpenTofu for resource management.
 
@@ -188,6 +189,22 @@ Run with `dry_run: true` first. Dry runs count active subscribers and do not sen
 
 Notification emails are sent only to subscribers with `status: active` and an `unsubscribeToken`. Pending and unsubscribed readers are excluded. Each email includes a post link and an unsubscribe link that lands on the unsubscribe confirmation page.
 
+## Admin Alerts
+
+Admin alerts are optional emails to Drake when a reader confirms a blog subscription or unsubscribes.
+
+Set `blog_subscriptions_admin_recipient_email` through a local `.tfvars` file or `-var` argument to enable them. Leave it blank to disable them. The Lambda receives this as `BLOG_SUBSCRIPTIONS_ADMIN_RECIPIENT_EMAIL`.
+
+Recommended V1 value:
+
+```hcl
+blog_subscriptions_admin_recipient_email = "drakejrobert@gmail.com"
+```
+
+Admin alerts use the same configured SES sender as the reader-facing emails. If SES is still in sandbox, `drakejrobert@gmail.com` must be verified as an SES recipient before alerts can be delivered.
+
+Admin alert failures are logged but do not block the reader-facing confirmation or unsubscribe success redirect. Alert bodies intentionally omit the subscriber email address and include only operational metadata such as event type, subscriber ID, timestamp, and source site.
+
 ## Privacy
 
 Subscriber email addresses are private data.
@@ -195,6 +212,7 @@ Subscriber email addresses are private data.
 - Do not commit subscriber exports.
 - Do not add subscriber emails to GitHub issues, logs, screenshots, or docs.
 - Prefer logging `subscriberId` and error names instead of raw email addresses or tokens.
+- Admin subscription alerts intentionally omit raw subscriber email addresses.
 - Confirmation tokens are stored only as SHA-256 hashes.
 - Unsubscribe tokens are private bearer-token data. Store them only in DynamoDB, use them only for notification email links, and do not log them.
 - Every future notification email must include the subscriber's unsubscribe link. That link should use `GET /blog-subscriptions/unsubscribe?token=<unsubscribe-token>` so the reader lands on the confirmation page before any state change.
@@ -208,6 +226,7 @@ Before production confirmations or notification emails can work:
 - Verify `drakesfood.com` as an SES sending identity, or provide a specific verified identity ARN.
 - If the AWS account is still in the SES sandbox, verified recipient limitations will apply.
 - Set `blog_subscriptions_ses_sender_email` through a local `.tfvars` file or `-var` argument.
+- Set `blog_subscriptions_admin_recipient_email` only if Drake should receive confirm/unsubscribe admin alerts.
 - Set `blog_subscriptions_ses_identity_arn` only if the sending identity is not the default `drakesfood.com` domain identity in the active AWS account.
 
 If SES is still in sandbox, signup confirmations and blog notifications can only be sent to verified recipient addresses. Request SES production access before inviting public subscribers.
@@ -237,6 +256,7 @@ Useful variables for this feature are defined in `infra/variables.tf`:
 
 - `blog_subscriptions_api_name`
 - `blog_subscriptions_allowed_origins`
+- `blog_subscriptions_admin_recipient_email`
 - `blog_subscriptions_lambda_function_name`
 - `blog_subscriptions_log_retention_days`
 - `blog_subscriptions_max_body_bytes`
@@ -379,5 +399,4 @@ When publishing a new blog post that should support email notification:
 
 ## Follow-Up Work
 
-- #88 can optionally notify Drake when readers subscribe or unsubscribe.
 - A future queued sender can replace the V1 synchronous sender if the subscriber list grows beyond the configured cap.

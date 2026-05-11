@@ -51,11 +51,12 @@
 - [x] Redesign homepage hero and primary calls-to-action — #55
 - [x] Add dedicated RecipeSensei teaser page — #59
 - [x] Add first recipe/story blog detail page
+- [x] Document blog email notification operations — #85
 
 ## 🔄 In Progress
 
 - [ ] Expand SEO, social sharing, sitemap, and robots metadata — #58
-- [ ] Document blog email notification operations — #85
+- [ ] Notify Drake when readers subscribe or unsubscribe — #88
 
 ## 📋 Remaining Tasks
 
@@ -138,7 +139,8 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Blog email unsubscribe support is being added before new-post notification sending so every future notification can include a working unsubscribe link.
 - Blog post notification sending is being added as a manual GitHub Actions workflow with dry-run support, duplicate-send tracking, and unsubscribe links in every email.
 - Blog email operations documentation is being expanded into a setup, testing, sending, privacy, cost, and recovery runbook.
+- Optional blog subscription admin alerts are being added so Drake can be notified after confirmed subscriptions and unsubscribes without exposing subscriber emails in alert bodies.
 
 ## Last Updated
 
-May 9, 2026
+May 10, 2026

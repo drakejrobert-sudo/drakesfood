@@ -45,14 +45,14 @@ The blog subscription backend is defined as low-cost serverless infrastructure:
 
 - API Gateway HTTP API exposes `POST /blog-subscriptions`, `GET /blog-subscriptions/confirm`, `GET /blog-subscriptions/unsubscribe`, and `POST /blog-subscriptions/unsubscribe`.
 - CORS is restricted to `drakesfood.com`, `www.drakesfood.com`, and local Angular development by default.
-- Lambda receives the subscriber table name, notification send table name, source site, allowed origins, API base URL, site URL, and SES sender through environment variables.
+- Lambda receives the subscriber table name, notification send table name, source site, allowed origins, API base URL, site URL, optional admin alert recipient, and SES sender through environment variables.
 - DynamoDB stores subscriber records by `emailHash` so each normalized email has one record, keeps private unsubscribe tokens for notification links, uses lookup indexes for confirmation and unsubscribe token hashes, and tracks notification sends by `postSlug`.
-- SES sends plain-text confirmation emails and controlled blog post notification emails. Notification emails include an unsubscribe link.
+- SES sends plain-text confirmation emails, optional admin alerts, and controlled blog post notification emails. Notification emails include an unsubscribe link.
 - Blog notification sending is capped by `blog_notification_max_recipients` for the V1 synchronous sender and runs in small batches to reduce timeout risk.
 - CloudWatch log groups use the configured retention period.
 - API Gateway throttling defaults to 10 burst requests and 5 sustained requests per second.
 
-The Lambda source lives at `lambda/blog-subscriptions/index.mjs`. It validates signup requests, handles honeypot submissions without storing or emailing them, stores pending subscribers in DynamoDB, sends SES confirmation emails when a sender is configured, activates pending subscribers from confirmation links, serves a read-only unsubscribe confirmation page for email links, marks subscribers unsubscribed only after the confirmation page submits a POST request, and sends blog post notifications from an internal GitHub Actions-triggered event.
+The Lambda source lives at `lambda/blog-subscriptions/index.mjs`. It validates signup requests, handles honeypot submissions without storing or emailing them, stores pending subscribers in DynamoDB, sends SES confirmation emails when a sender is configured, activates pending subscribers from confirmation links, optionally emails Drake after successful confirmations or unsubscribes, serves a read-only unsubscribe confirmation page for email links, marks subscribers unsubscribed only after the confirmation page submits a POST request, and sends blog post notifications from an internal GitHub Actions-triggered event.
 
 The Lambda request body limit defaults to `8192` bytes and can be adjusted with `blog_subscriptions_max_body_bytes` if needed.
 
@@ -63,9 +63,10 @@ Before applying blog subscription infrastructure for production, set these value
 ```hcl
 blog_subscriptions_ses_identity_arn = "arn:aws:ses:us-east-2:<account-id>:identity/drakesfood.com"
 blog_subscriptions_ses_sender_email = "Drake's Food <updates@drakesfood.com>"
+blog_subscriptions_admin_recipient_email = "drakejrobert@gmail.com"
 ```
 
-Do not commit real private email addresses or account-specific values unless they are intentionally public. The SES sender identity must be verified before confirmation emails can work. If the SES sender is missing, accepted signups are still stored but confirmation email is skipped and logged.
+Do not commit real private email addresses or account-specific values unless they are intentionally public. The SES sender identity must be verified before confirmation emails can work. If the SES sender is missing, accepted signups are still stored but confirmation email is skipped and logged. The admin recipient is optional; leave `blog_subscriptions_admin_recipient_email` blank to disable confirm/unsubscribe alerts. If SES is still in sandbox, the admin recipient must also be verified in SES.
 
 After apply, get the API endpoint for frontend configuration:
 
