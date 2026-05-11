@@ -52,11 +52,10 @@
 - [x] Add dedicated RecipeSensei teaser page — #59
 - [x] Add first recipe/story blog detail page
 - [x] Document blog email notification operations — #85
+- [x] Notify Drake when readers subscribe or unsubscribe — #88
 
 ## 🔄 In Progress
 
-- [ ] Expand SEO, social sharing, sitemap, and robots metadata — #58
-- [ ] Notify Drake when readers subscribe or unsubscribe — #88
 - [ ] Verify SES email deliverability DNS setup — #94
 
 ## 📋 Remaining Tasks
