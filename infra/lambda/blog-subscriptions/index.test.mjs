@@ -77,7 +77,7 @@ test('stores a pending subscriber and sends a confirmation email', async () => {
   assert.equal(response.statusCode, 200);
   assert.deepEqual(parseResponse(response), {
     success: true,
-    message: 'If that email can be subscribed, a confirmation link is on the way.',
+    message: 'If that email can be subscribed, a confirmation link is on the way. Check your junk or spam folder if you do not see it soon.',
   });
   assert.deepEqual(savedSubscribers, [
     {
@@ -132,7 +132,7 @@ test('handles populated honeypot as generic success without saving', async () =>
   assert.equal(response.statusCode, 200);
   assert.deepEqual(parseResponse(response), {
     success: true,
-    message: 'If that email can be subscribed, a confirmation link is on the way.',
+    message: 'If that email can be subscribed, a confirmation link is on the way. Check your junk or spam folder if you do not see it soon.',
   });
   assert.deepEqual(savedSubscribers, []);
   assert.deepEqual(confirmations, []);
@@ -240,7 +240,7 @@ test('duplicate active signup returns generic success without resending confirma
   assert.equal(response.statusCode, 200);
   assert.deepEqual(parseResponse(response), {
     success: true,
-    message: 'If that email can be subscribed, a confirmation link is on the way.',
+    message: 'If that email can be subscribed, a confirmation link is on the way. Check your junk or spam folder if you do not see it soon.',
   });
   assert.deepEqual(saves, []);
   assert.deepEqual(confirmations, []);

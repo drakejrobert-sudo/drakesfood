@@ -77,7 +77,7 @@ Success response:
 ```json
 {
   "success": true,
-  "message": "If that email can be subscribed, a confirmation link is on the way."
+  "message": "If that email can be subscribed, a confirmation link is on the way. Check your junk or spam folder if you do not see it soon."
 }
 ```
 
