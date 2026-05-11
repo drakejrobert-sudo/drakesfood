@@ -1,6 +1,9 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RecipeSubmissionApiService, type RecipeSubmissionPayload } from '../../services/recipe-submission-api.service';
+import {
+  RecipeSubmissionApiService,
+  type RecipeSubmissionPayload,
+} from '../../services/recipe-submission-api.service';
 
 type SubmissionStatus = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -14,6 +17,7 @@ type SubmissionStatus = 'idle' | 'submitting' | 'success' | 'error';
 export class RecipeSubmissionComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly recipeSubmissionApi = inject(RecipeSubmissionApiService);
+  private readonly host = inject(ElementRef<HTMLElement>);
 
   readonly status = signal<SubmissionStatus>('idle');
   readonly statusMessage = signal('');
@@ -44,6 +48,7 @@ export class RecipeSubmissionComponent {
       this.submissionForm.markAllAsTouched();
       this.status.set('error');
       this.statusMessage.set('Please include a recipe title and description.');
+      this.focusFirstInvalidControl();
       return;
     }
 
@@ -74,7 +79,11 @@ export class RecipeSubmissionComponent {
       this.statusMessage.set(message);
     } catch (error) {
       this.status.set('error');
-      this.statusMessage.set(error instanceof Error ? error.message : 'Recipe submissions are temporarily unavailable. Please try again later.');
+      this.statusMessage.set(
+        error instanceof Error
+          ? error.message
+          : 'Recipe submissions are temporarily unavailable. Please try again later.',
+      );
     }
   }
 
@@ -82,6 +91,22 @@ export class RecipeSubmissionComponent {
     const field = this.submissionForm.controls[fieldName];
 
     return field.hasError(errorName) && (field.dirty || field.touched);
+  }
+
+  protected fieldHasVisibleError(
+    fieldName: keyof RecipeSubmissionPayload,
+    errorNames: string[],
+  ): boolean {
+    return errorNames.some((errorName) => this.hasFieldError(fieldName, errorName));
+  }
+
+  protected fieldDescribedBy(
+    fieldName: keyof RecipeSubmissionPayload,
+    helpId: string,
+    errorId: string,
+    errorNames: string[],
+  ): string {
+    return this.fieldHasVisibleError(fieldName, errorNames) ? `${helpId} ${errorId}` : helpId;
   }
 
   private buildPayload(): RecipeSubmissionPayload {
@@ -97,5 +122,17 @@ export class RecipeSubmissionComponent {
       permissionToCredit: rawValue.permissionToCredit,
       website: rawValue.website.trim(),
     };
+  }
+
+  private focusFirstInvalidControl(): void {
+    const window = this.host.nativeElement.ownerDocument.defaultView;
+
+    window?.requestAnimationFrame(() => {
+      const firstInvalidControl = this.host.nativeElement.querySelector('[aria-invalid="true"]');
+
+      if (firstInvalidControl instanceof HTMLElement) {
+        firstInvalidControl.focus();
+      }
+    });
   }
 }

@@ -53,6 +53,7 @@
 - [x] Add first recipe/story blog detail page
 - [x] Document blog email notification operations — #85
 - [x] Notify Drake when readers subscribe or unsubscribe — #88
+- [x] Complete accessibility and mobile polish pass for multi-page site — #65
 
 ## 🔄 In Progress
 
@@ -141,6 +142,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Blog email operations documentation is being expanded into a setup, testing, sending, privacy, cost, and recovery runbook.
 - Optional blog subscription admin alerts are being added so Drake can be notified after confirmed subscriptions and unsubscribes without exposing subscriber emails in alert bodies.
 - SES deliverability verification is in progress for #94. Production access, domain verification, and DKIM are confirmed in `us-east-2`; SPF is being added through OpenTofu and the existing DKIM/DMARC records are being brought under infrastructure management.
+- Multi-page accessibility polish added active navigation semantics, route-change focus handling, page-level headings, form invalid-state announcements, invalid-field focus, required-label text for screen readers, clearer external-link labels, and mobile nav tap-target sizing.
 
 ## Last Updated
 
