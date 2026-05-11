@@ -26,6 +26,7 @@ export const createHandler = ({
   activateSubscriber = activateSubscriberInDynamoDb,
   unsubscribeSubscriber = unsubscribeSubscriberInDynamoDb,
   sendConfirmation = sendConfirmationEmail,
+  sendAdminNotification = sendAdminNotificationEmail,
   getBlogPost = getBlogNotificationPost,
   listActiveSubscribers = listActiveSubscribersFromDynamoDb,
   reserveNotificationSend = reserveNotificationSendInDynamoDb,
@@ -47,7 +48,7 @@ export const createHandler = ({
   const path = getPath(event);
 
   if (method === 'GET' && path.endsWith('/blog-subscriptions/confirm')) {
-    return confirmSubscription(event, { now, findSubscriberByConfirmationTokenHash, activateSubscriber });
+    return confirmSubscription(event, { now, findSubscriberByConfirmationTokenHash, activateSubscriber, sendAdminNotification });
   }
 
   if (method === 'GET' && path.endsWith('/blog-subscriptions/unsubscribe')) {
@@ -55,7 +56,7 @@ export const createHandler = ({
   }
 
   if (method === 'POST' && path.endsWith('/blog-subscriptions/unsubscribe')) {
-    return unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber });
+    return unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber, sendAdminNotification });
   }
 
   if (method !== 'POST') {
@@ -182,7 +183,7 @@ export const createHandler = ({
 
 export const handler = createHandler();
 
-async function confirmSubscription(event, { now, findSubscriberByConfirmationTokenHash, activateSubscriber }) {
+async function confirmSubscription(event, { now, findSubscriberByConfirmationTokenHash, activateSubscriber, sendAdminNotification }) {
   const token = getQueryStringParameter(event, 'token');
   const siteUrl = getSiteUrl();
 
@@ -198,7 +199,9 @@ async function confirmSubscription(event, { now, findSubscriberByConfirmationTok
   }
 
   try {
-    await activateSubscriber(subscriber.emailHash, now().toISOString());
+    const confirmedAt = now().toISOString();
+    await activateSubscriber(subscriber.emailHash, confirmedAt);
+    await trySendAdminNotification(sendAdminNotification, 'confirmed', subscriber, confirmedAt);
   } catch (error) {
     console.error('Failed to confirm blog subscriber.', {
       errorName: error?.name,
@@ -233,7 +236,7 @@ async function renderUnsubscribeConfirmation(event, { findSubscriberByUnsubscrib
   return htmlResponse(200, buildUnsubscribeConfirmationHtml(token, siteUrl));
 }
 
-async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber }) {
+async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber, sendAdminNotification }) {
   const token = getQueryStringParameter(event, 'token');
   const siteUrl = getSiteUrl();
 
@@ -253,7 +256,9 @@ async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeToke
   }
 
   try {
-    await unsubscribeSubscriber(subscriber.emailHash, now().toISOString());
+    const unsubscribedAt = now().toISOString();
+    await unsubscribeSubscriber(subscriber.emailHash, unsubscribedAt);
+    await trySendAdminNotification(sendAdminNotification, 'unsubscribed', subscriber, unsubscribedAt);
   } catch (error) {
     console.error('Failed to unsubscribe blog subscriber.', {
       errorName: error?.name,
@@ -786,6 +791,57 @@ async function sendBlogNotificationEmail(post, subscriber) {
   );
 }
 
+async function sendAdminNotificationEmail(eventType, subscriber, timestamp) {
+  const recipientEmail = process.env.BLOG_SUBSCRIPTIONS_ADMIN_RECIPIENT_EMAIL;
+
+  if (!recipientEmail) {
+    return;
+  }
+
+  const senderEmail = process.env.SES_SENDER_EMAIL;
+
+  if (!senderEmail) {
+    throw new Error('Missing SES_SENDER_EMAIL');
+  }
+
+  const { SESClient, SendEmailCommand } = await loadSesClient();
+  const client = sesClient ?? new SESClient({});
+  sesClient = client;
+
+  await client.send(
+    new SendEmailCommand({
+      Source: senderEmail,
+      Destination: {
+        ToAddresses: [recipientEmail],
+      },
+      Message: {
+        Subject: {
+          Charset: 'UTF-8',
+          Data: `Drakesfood Blog Subscription Alert: ${eventType}`,
+        },
+        Body: {
+          Text: {
+            Charset: 'UTF-8',
+            Data: formatAdminNotificationEmail(eventType, subscriber, timestamp),
+          },
+        },
+      },
+    }),
+  );
+}
+
+async function trySendAdminNotification(sendAdminNotification, eventType, subscriber, timestamp) {
+  try {
+    await sendAdminNotification(eventType, subscriber, timestamp);
+  } catch (error) {
+    console.error('Failed to send blog subscription admin notification.', {
+      errorName: error?.name,
+      eventType,
+      subscriberId: subscriber.subscriberId,
+    });
+  }
+}
+
 async function loadDynamoDbClient() {
   if (dynamoModule) {
     return dynamoModule;
@@ -861,6 +917,18 @@ function formatBlogNotificationEmail(post, subscriber) {
     '',
     'Want fewer emails? You can unsubscribe here:',
     unsubscribeUrl,
+  ].join('\n');
+}
+
+function formatAdminNotificationEmail(eventType, subscriber, timestamp) {
+  return [
+    `Blog subscription event: ${eventType}`,
+    '',
+    `Subscriber ID: ${subscriber.subscriberId || 'unknown'}`,
+    `Timestamp: ${timestamp}`,
+    `Source: ${subscriber.source || process.env.BLOG_SUBSCRIPTIONS_SOURCE_SITE || 'drakesfood.com'}`,
+    '',
+    'Subscriber email is intentionally omitted from this admin alert for privacy.',
   ].join('\n');
 }
 
