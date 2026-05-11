@@ -12,21 +12,28 @@
       <span>Drake's Food</span>
     </a>
     <nav class="primary-nav" aria-label="Primary navigation">
-      <a routerLink="/" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }"
+      <a
+        routerLink="/"
+        routerLinkActive="active-link"
+        ariaCurrentWhenActive="page"
+        [routerLinkActiveOptions]="{ exact: true }"
         >Home</a
       >
-      <a routerLink="/gallery" routerLinkActive="active-link">Gallery</a>
-      <a routerLink="/blog" routerLinkActive="active-link">Blog</a>
+      <a routerLink="/gallery" routerLinkActive="active-link" ariaCurrentWhenActive="page"
+        >Gallery</a
+      >
+      <a routerLink="/blog" routerLinkActive="active-link" ariaCurrentWhenActive="page">Blog</a>
       <a
         routerLink="/recipesensei"
         routerLinkActive="active-link"
+        ariaCurrentWhenActive="page"
         [routerLinkActiveOptions]="{ exact: true }"
         >RecipeSensei</a
       >
-      <a routerLink="/about" routerLinkActive="active-link">About</a>
+      <a routerLink="/about" routerLinkActive="active-link" ariaCurrentWhenActive="page">About</a>
     </nav>
   </header>
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
     <router-outlet></router-outlet>
   </main>
   <app-site-footer></app-site-footer>

@@ -95,7 +95,10 @@ export class App {
         filter((event): event is NavigationEnd => event instanceof NavigationEnd),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe((event) => this.applyPageMetadata(event.urlAfterRedirects));
+      .subscribe((event) => {
+        this.applyPageMetadata(event.urlAfterRedirects);
+        this.focusMainContent();
+      });
   }
 
   private applyPageMetadata(url: string): void {
@@ -148,5 +151,14 @@ export class App {
     }
 
     canonicalLink.href = canonicalUrl;
+  }
+
+  private focusMainContent(): void {
+    const mainContent = this.document.getElementById('main-content');
+    const window = this.document.defaultView;
+
+    window?.requestAnimationFrame(() => {
+      mainContent?.focus({ preventScroll: true });
+    });
   }
 }

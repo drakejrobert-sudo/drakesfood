@@ -7,6 +7,10 @@
   color: var(--color-text);
 }
 
+#main-content:focus {
+  outline: none;
+}
+
 .site-header {
   display: flex;
   flex-direction: column;
@@ -39,6 +43,7 @@
 }
 
 .primary-nav a {
+  min-height: 2.75rem;
   border: 1px solid rgba(109, 74, 163, 0.16);
   border-radius: 999px;
   background: rgba(255, 250, 245, 0.68);

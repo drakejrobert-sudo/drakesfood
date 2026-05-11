@@ -43,6 +43,7 @@
             [href]="post.sourceRecipe.href"
             target="_blank"
             rel="noopener"
+            [attr.aria-label]="post.sourceRecipe.label + ', opens in a new tab'"
             >{{ post.sourceRecipe.label }}</a
           >
         </div>

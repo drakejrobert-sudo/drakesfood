@@ -1,10 +1,14 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, ElementRef, computed, inject, signal } from '@angular/core';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { BlogSubscriptionApiService, type BlogSubscriptionPayload } from '../../services/blog-subscription-api.service';
+import {
+  BlogSubscriptionApiService,
+  type BlogSubscriptionPayload,
+} from '../../services/blog-subscription-api.service';
 
 type SubscriptionStatus = 'idle' | 'submitting' | 'success' | 'error';
 
-const SIGNUP_SUCCESS_MESSAGE = 'If that email can be subscribed, a confirmation link is on the way. Check your junk or spam folder if you do not see it soon.';
+const SIGNUP_SUCCESS_MESSAGE =
+  'If that email can be subscribed, a confirmation link is on the way. Check your junk or spam folder if you do not see it soon.';
 
 @Component({
   selector: 'app-blog-subscription',
@@ -16,6 +20,7 @@ const SIGNUP_SUCCESS_MESSAGE = 'If that email can be subscribed, a confirmation 
 export class BlogSubscriptionComponent {
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly blogSubscriptionApi = inject(BlogSubscriptionApiService);
+  private readonly host = inject(ElementRef<HTMLElement>);
 
   readonly status = signal<SubscriptionStatus>('idle');
   readonly statusMessage = signal('');
@@ -39,6 +44,7 @@ export class BlogSubscriptionComponent {
       this.subscriptionForm.markAllAsTouched();
       this.status.set('error');
       this.statusMessage.set('Please enter a valid email address.');
+      this.focusFirstInvalidControl();
       return;
     }
 
@@ -47,7 +53,9 @@ export class BlogSubscriptionComponent {
 
     if (!(await this.blogSubscriptionApi.isConfigured())) {
       this.status.set('error');
-      this.statusMessage.set('Email updates are ready on the site, but the subscription API is not connected yet.');
+      this.statusMessage.set(
+        'Email updates are ready on the site, but the subscription API is not connected yet.',
+      );
       return;
     }
 
@@ -61,7 +69,11 @@ export class BlogSubscriptionComponent {
       this.statusMessage.set(message);
     } catch (error) {
       this.status.set('error');
-      this.statusMessage.set(error instanceof Error ? error.message : 'Blog subscriptions are temporarily unavailable. Please try again later.');
+      this.statusMessage.set(
+        error instanceof Error
+          ? error.message
+          : 'Blog subscriptions are temporarily unavailable. Please try again later.',
+      );
     }
   }
 
@@ -71,6 +83,18 @@ export class BlogSubscriptionComponent {
     return field.hasError(errorName) && (field.dirty || field.touched);
   }
 
+  protected emailHasVisibleError(): boolean {
+    return ['required', 'email', 'maxlength'].some((errorName) =>
+      this.hasFieldError('email', errorName),
+    );
+  }
+
+  protected emailDescribedBy(): string {
+    return this.emailHasVisibleError()
+      ? 'blog-subscription-help blog-subscription-error'
+      : 'blog-subscription-help';
+  }
+
   private buildPayload(): BlogSubscriptionPayload {
     const rawValue = this.subscriptionForm.getRawValue();
 
@@ -78,5 +102,17 @@ export class BlogSubscriptionComponent {
       email: rawValue.email.trim(),
       website: rawValue.website.trim(),
     };
+  }
+
+  private focusFirstInvalidControl(): void {
+    const window = this.host.nativeElement.ownerDocument.defaultView;
+
+    window?.requestAnimationFrame(() => {
+      const firstInvalidControl = this.host.nativeElement.querySelector('[aria-invalid="true"]');
+
+      if (firstInvalidControl instanceof HTMLElement) {
+        firstInvalidControl.focus();
+      }
+    });
   }
 }
