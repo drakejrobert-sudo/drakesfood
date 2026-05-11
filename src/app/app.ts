@@ -159,7 +159,6 @@ export class App {
 
     window?.requestAnimationFrame(() => {
       mainContent?.focus({ preventScroll: true });
-      window.scrollTo({ top: 0, left: 0 });
     });
   }
 }
