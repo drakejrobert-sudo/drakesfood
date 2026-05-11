@@ -2,6 +2,8 @@
 
 This document explains the V1 blog email subscription system for `drakesfood.com`. The feature lets readers request email notifications for new Drake's Food blog posts.
 
+Use this as the operating runbook for setup, testing, notification sends, troubleshooting, and privacy handling.
+
 V1 is intentionally small:
 
 - Readers submit only an email address.
@@ -9,6 +11,24 @@ V1 is intentionally small:
 - Readers can unsubscribe from notification emails without creating an account.
 - New-post notifications are sent by a manual GitHub Actions workflow with a dry-run mode.
 - Subscriber emails are private operational data.
+
+## Operating Checklist
+
+Before accepting public subscribers or sending real notification emails:
+
+- Verify the SES sending identity for `drakesfood.com` or the configured sender address.
+- Confirm SES production access, or understand sandbox limits if still in sandbox.
+- Set `blog_subscriptions_ses_sender_email` locally for OpenTofu, for example `Drake's Food <updates@drakesfood.com>`.
+- Run `AWS_PROFILE=drakesfood tofu plan` from `infra/` and review the planned blog subscription resources.
+- Run `AWS_PROFILE=drakesfood tofu apply` only after the plan looks correct.
+- Set GitHub repository variable `BLOG_SUBSCRIPTIONS_API_BASE_URL` from `tofu output -raw blog_subscriptions_api_endpoint`.
+- Optionally set GitHub repository variable `BLOG_SUBSCRIPTIONS_LAMBDA_FUNCTION_NAME` from `tofu output -raw blog_subscriptions_lambda_function_name`; the workflow defaults to `drakesfood-blog-subscriptions` if blank.
+- Let the normal deploy workflow publish the updated `app-config.json`.
+- Smoke-test signup, confirmation, and unsubscribe before any real notification send.
+- Run `Send Blog Notification` with `dry_run: true` and review the output.
+- Run `Send Blog Notification` with `dry_run: false` only after the dry run looks correct.
+
+Do not run the real send workflow before unsubscribe has been smoke-tested in production.
 
 ## Frontend
 
@@ -183,12 +203,14 @@ Subscriber email addresses are private data.
 
 SES sends confirmation emails from the configured sender.
 
-Before production confirmations can work:
+Before production confirmations or notification emails can work:
 
 - Verify `drakesfood.com` as an SES sending identity, or provide a specific verified identity ARN.
 - If the AWS account is still in the SES sandbox, verified recipient limitations will apply.
 - Set `blog_subscriptions_ses_sender_email` through a local `.tfvars` file or `-var` argument.
 - Set `blog_subscriptions_ses_identity_arn` only if the sending identity is not the default `drakesfood.com` domain identity in the active AWS account.
+
+If SES is still in sandbox, signup confirmations and blog notifications can only be sent to verified recipient addresses. Request SES production access before inviting public subscribers.
 
 Recommended sender:
 
@@ -197,6 +219,17 @@ Drake's Food <updates@drakesfood.com>
 ```
 
 A real mailbox for `updates@drakesfood.com` is not required for V1 sending, but forwarding is recommended later if reader replies should land somewhere useful.
+
+## Cost Expectations
+
+Expected low-volume cost should be very small:
+
+- SES sending is roughly `$0.10` per 1,000 emails.
+- Lambda, API Gateway, CloudWatch Logs, and DynamoDB pay-per-request usage should usually be free-tier or pennies at early traffic levels.
+- 100 subscribers x 4 posts/month is about 400 notification emails/month, roughly `$0.04` in SES send cost.
+- 1,000 subscribers x 4 posts/month is about 4,000 notification emails/month, roughly `$0.40` in SES send cost.
+
+CloudWatch log volume and repeated tests can add small extra cost. Keep logs concise and avoid logging subscriber lists.
 
 ## OpenTofu Deployment
 
@@ -260,6 +293,65 @@ Inputs:
 
 The workflow uses the repository AWS credentials and invokes the blog subscription Lambda directly. The GitHub Actions IAM user needs `lambda:InvokeFunction` permission for that Lambda, which OpenTofu grants.
 
+### Safe Send Procedure
+
+1. Add the post metadata to `infra/lambda/blog-subscriptions/blog-notification-posts.mjs` in the same PR or a prior PR that publishes the blog post.
+2. Confirm the post URL is live on `https://drakesfood.com`.
+3. Open GitHub Actions and choose `Send Blog Notification`.
+4. Enter the post slug exactly as it appears in `blog-notification-posts.mjs`.
+5. Run with `dry_run` set to `true`.
+6. Review the workflow output for `recipientCount`, `maxRecipients`, and `overRecipientLimit`.
+7. If `overRecipientLimit` is `true`, do not run a real send; either raise the cap intentionally after testing or build a queued sender.
+8. If the dry run looks correct, rerun the workflow with `dry_run` set to `false`.
+9. Confirm the workflow output shows the expected `sentCount` and `failedCount`.
+10. If failures occurred, review CloudWatch logs by `subscriberId`, not by email address.
+
+### Duplicate Send Prevention
+
+Real sends reserve the post slug in `drakesfood-blog-notification-sends` before sending. If a row already exists for that `postSlug`, the Lambda returns a duplicate-send response and sends nothing.
+
+Dry runs do not create a tracking row and can be repeated safely.
+
+If you need to resend a post intentionally, do not edit DynamoDB casually. First confirm why the resend is needed, whether some subscribers already received the message, and whether a new issue should track a safe resend or force-send path.
+
+### Disable Sending
+
+Fast ways to prevent real notification sends:
+
+- Do not run the `Send Blog Notification` workflow with `dry_run: false`.
+- Remove or blank the SES sender value in the OpenTofu variables and apply; real sends fail before reserving the post slug when `SES_SENDER_EMAIL` is missing.
+- Temporarily disable the GitHub Actions workflow in GitHub if needed.
+- As a stronger infrastructure change, remove the GitHub Actions IAM `lambda:InvokeFunction` permission and apply OpenTofu.
+
+The public signup form can also be effectively disabled by blanking `BLOG_SUBSCRIPTIONS_API_BASE_URL` and redeploying; the form remains visible but reports that email updates are not connected.
+
+### Failure Recovery
+
+Common failure cases:
+
+- Missing SES sender: configure `blog_subscriptions_ses_sender_email` and apply OpenTofu; no post slug should be reserved.
+- SES sandbox recipient failure: verify recipients for testing or request SES production access.
+- `overRecipientLimit: true`: do not force a real send; increase `blog_notification_max_recipients` only after testing or build a queued sender.
+- Duplicate send response: a send row already exists for the post slug. Review the tracking row before deciding whether any manual recovery is safe.
+- Partial failures with `status: failed`: some subscribers may have received the email. Review counts and logs before considering any resend.
+
+Avoid deleting or editing send-tracking rows unless you have confirmed exactly what was sent. Manual DynamoDB edits can cause duplicate emails.
+
+### Smoke Testing Production
+
+After OpenTofu apply and deploy:
+
+1. Submit your own email through the public signup form.
+2. Confirm the confirmation email arrives.
+3. Click the confirmation link and verify the subscriber row becomes `active`.
+4. Use the stored `unsubscribeToken` to open the unsubscribe confirmation URL in a browser.
+5. Confirm the GET page does not unsubscribe by itself.
+6. Submit the unsubscribe form and verify the row becomes `unsubscribed`.
+7. Subscribe and confirm again if you want your address active for notification dry-run/real-send testing.
+8. Run `Send Blog Notification` with `dry_run: true` for a known post slug.
+
+Do not use real subscriber addresses in screenshots, docs, issue comments, or PR comments while testing.
+
 ## Local Testing
 
 Run the standard app checks from the repository root:
@@ -276,6 +368,16 @@ Run the Lambda tests:
 node --test infra/lambda/blog-subscriptions/index.test.mjs
 ```
 
+## Adding Future Blog Posts
+
+When publishing a new blog post that should support email notification:
+
+- Add the public blog post content and route metadata as usual.
+- Add notification metadata to `infra/lambda/blog-subscriptions/blog-notification-posts.mjs` with `slug`, `title`, `summary`, and `path`.
+- Keep the notification `summary` concise and accurate; it becomes email copy.
+- After merge/deploy, run the manual workflow with `dry_run: true` before sending.
+
 ## Follow-Up Work
 
-- #85 expands operating documentation after the full notification flow exists.
+- #88 can optionally notify Drake when readers subscribe or unsubscribe.
+- A future queued sender can replace the V1 synchronous sender if the subscriber list grows beyond the configured cap.

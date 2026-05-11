@@ -55,7 +55,7 @@
 ## 🔄 In Progress
 
 - [ ] Expand SEO, social sharing, sitemap, and robots metadata — #58
-- [ ] Send email notification when a new blog post is published — #84
+- [ ] Document blog email notification operations — #85
 
 ## 📋 Remaining Tasks
 
@@ -137,6 +137,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Blog email subscription signup and confirmed opt-in are being added with a dedicated Angular form, runtime API config, API Gateway, Lambda, DynamoDB, and SES confirmation emails.
 - Blog email unsubscribe support is being added before new-post notification sending so every future notification can include a working unsubscribe link.
 - Blog post notification sending is being added as a manual GitHub Actions workflow with dry-run support, duplicate-send tracking, and unsubscribe links in every email.
+- Blog email operations documentation is being expanded into a setup, testing, sending, privacy, cost, and recovery runbook.
 
 ## Last Updated
 
