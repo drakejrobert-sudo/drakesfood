@@ -144,6 +144,16 @@ AWS_PROFILE=drakesfood tofu plan
 AWS_PROFILE=drakesfood tofu apply
 ```
 
+## OpenTofu State
+
+This repository currently uses local OpenTofu state for infrastructure work. That is acceptable for the current single-maintainer setup, but state files can contain account-specific resource details and must not be committed. The repository `.gitignore` excludes `.terraform/`, `terraform.tfstate`, `terraform.tfstate.backup`, `*.tfplan`, and `*.tfvars` files.
+
+Before managing infrastructure from multiple machines or by multiple people, move state to a remote backend. The recommended AWS backend is an S3 state bucket with locking enabled, using a bucket and lock resource that are created outside this main site stack so the site infrastructure can be planned and applied reliably.
+
+Do not store AWS access keys or other secrets in OpenTofu inputs. Local `.tfvars` files and CLI `-var` arguments keep account-specific values out of Git, but values used in managed resources can still be written to OpenTofu state. The current SES sender, recipient, and admin email variables are used as Lambda environment variables, so they should be treated as state data. Restrict access to local or remote state accordingly.
+
+If those email addresses need to stay out of state in the future, refactor the Lambdas to read them at runtime from a separate mechanism such as SSM Parameter Store or Secrets Manager instead of managing them directly as Lambda environment variables.
+
 After apply finishes, get the CloudFront distribution ID and recipe submission API endpoint:
 
 ```bash
