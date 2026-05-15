@@ -8,6 +8,13 @@ The site is being fully redesigned as a clean, modern, mobile-first food portfol
 
 The website should feel personal, polished, warm, food-focused, and lightweight. It is not currently intended to be a complex social platform, recipe database, or user-account system.
 
+## AI Quick Context
+
+- Read `WORKFLOW.md` for branch, issue, PR, merge, and task-tracking rules.
+- Use `docs/ai-agent-context.md` as the fast project map before making changes.
+- Treat `README.md`, `TODO_STATUS.md`, `docs/`, and `infra/README.md` as the current implementation context.
+- Treat `initial-angular-rebuild-prompt.txt` as historical background, not the current source of truth.
+
 ## Primary Goals
 
 - Showcase high-quality food photos in a visually appealing way.
@@ -45,28 +52,27 @@ Recommended first version:
 - Use S3 later if the gallery grows or if image management becomes annoying.
 - Link prominently to Instagram `@drakesfood`.
 
-### Initial Content Scope
+### Current Content Scope
 
-The first version should focus on:
+The current site includes:
 
 - Homepage
 - Food photo gallery
 - Instagram call-to-action
 - About / personal intro section
-- RecipeSensei teaser section
-- Recipe/blog section marked as "coming soon"
+- RecipeSensei section and app links
+- Recipe/blog landing page
+- First blog story page
+- Recipe idea submission form
+- Blog email subscription form
 
-Do not build full recipe/blog functionality yet.
+Do not build a full CMS, user account system, comments, or complex recipe database unless Drake explicitly requests it.
 
 ### RecipeSensei
 
-For now, include a simple RecipeSensei teaser section.
-
-RecipeSensei should be described as in development or coming soon until Drake confirms it is publicly available.
-
-Possible copy direction:
-
-> RecipeSensei is a recipe-saving and cooking companion app currently in development. More coming soon.
+RecipeSensei is Drake's recipe-saving and cooking companion app. Current repository docs
+indicate it is live on the App Store, so copy may link to the app. Do not invent launch
+details, feature claims, pricing, or availability beyond confirmed project content.
 
 ### Infrastructure Location
 
@@ -114,14 +120,16 @@ Do not add deployment steps that require paid third-party services unless Drake 
 
 ## Product Direction
 
-The site should eventually include:
+The site currently includes or is expected to continue supporting:
 
 - Homepage / landing page
 - Food photo gallery
 - Instagram call-to-action
 - About section
-- RecipeSensei teaser or app link section
-- Optional featured recipes or cooking posts in the future
+- RecipeSensei app link section
+- Lightweight recipe/blog posts
+- Recipe idea submissions
+- Blog email subscriptions
 
 Do not build advanced functionality unless requested. Avoid adding accounts, comments, payments, CMS complexity, databases, or server-side features unless they are explicitly approved.
 
@@ -259,13 +267,7 @@ Prioritize fast load times.
 
 The site should speak in Drake's voice: friendly, casual, and food-loving.
 
-Avoid fake claims, fake restaurant affiliations, or fake app availability.
-
-RecipeSensei should only be described as available once Drake confirms it is ready. Until then, phrase it as:
-
-- "Coming soon"
-- "In development"
-- "A future app for saving and organizing recipes"
+Avoid fake claims, fake restaurant affiliations, or fake app details.
 
 Instagram should be referenced as:
 
@@ -329,15 +331,14 @@ Before making broad changes:
 - Explain major architectural changes before implementing them.
 - Update documentation when changing setup, deployment, or commands.
 
-For large redesign work, prefer phases:
+For large redesign or expansion work, prefer phases:
 
-1. Establish project structure.
-2. Add design system and layout shell.
-3. Build homepage.
-4. Build gallery/content sections.
-5. Add RecipeSensei section.
-6. Add AWS/OpenTofu deployment.
-7. Add CI/CD validation.
+1. Confirm the current route/content map.
+2. Establish or refine the layout shell.
+3. Update the target page or feature.
+4. Update metadata, sitemap, and generated route HTML if public routes change.
+5. Update docs for setup, content, infrastructure, or operations changes.
+6. Run focused validation.
 
 ## Agent Behavior
 
