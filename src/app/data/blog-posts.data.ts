@@ -1,18 +1,108 @@
 import { BlogPost } from './blog-post.model';
 
 const mothersDayImagePath = '/assets/blog/mothers-day-baking';
+const sweetTurkeyBowlImagePath = '/assets/blog/chef-eds-sweet-turkey-bowl';
+const recipeSenseiDownloadUrl = 'https://apps.apple.com/us/app/recipesensei/id6759845210';
 
 export const blogPosts: BlogPost[] = [
+  {
+    title: "Chef Ed's Sweet Turkey Bowl",
+    slug: 'chef-eds-sweet-turkey-bowl',
+    eyebrow: 'Recipe submissions',
+    date: 'May 15, 2026',
+    summary: 'A simple, healthy, in one bowl meal; my first shot at a submitted recipe!',
+    heroImage: {
+      src: `${sweetTurkeyBowlImagePath}/hero-assembled-in-sun.jpeg`,
+      alt: 'Finished sweet turkey bowl with sweet potato, avocado, cottage cheese, Tajín, and lime',
+    },
+    recipeTitle: 'Sweet Turkey Bowl',
+    submittedBy: 'Chef Ed',
+    recipeCredit: 'Recipe credit goes to Edgar Sandoval.',
+    body: [
+      'When I first saw "Chef Ed" as the author of the first recipe submission to me, I thought I was going to have to eat sardines for sure. Luckily, he spared me his unappetizing snack of choice and submitted something that I was not sure really all went together.',
+      'He gave me quite a bit of creative freedom, which I appreciate, as the "recipe" was:',
+      'A bowl of: ground turkey, sweet potato, avocado, cottage cheese, and Tajín.',
+      'Not much for direction in this one, but I gave it a shot.',
+      'First off, I diced an onion and started sauteing it to add flavor and another texture. I was absolutely not taking a trip to the store just for ground turkey, so we used ground pork instead.',
+      'Knowing the Tajín needed to be added eventually, I went for chili powder, garlic powder or garlic salt, a bit of cayenne pepper, and black pepper on the meat as I browned it. With pork, it is more like "greyed" than browned, but we made it work.',
+      'After microwaving the sweet potato for a few minutes, I cubed it, tossed it in oil, garlic salt, and pepper, and threw it in the oven at 450°F to roast for around 20 minutes.',
+      'I went for a rough chop on the avocado and added it cold, along with a dollop of cottage cheese. I topped it all off with a generous dash of Tajín and a little squeeze of lime.',
+      'Now, I was told I took a bit of liberties with ingredients and seasoning. I do warn about this in the submission section. But this was a hit with the whole family! It felt light but filling, with a mild spice and a fresh zing from the lime and Tajín.',
+      "Overall, in its final form, I'd give it a 9/10 for us!",
+      'Below is a recipe you can download, or you can download RecipeSensei for iOS and use the other button to import the recipe.',
+    ],
+    recipeNotes: [
+      "Chef Ed's original submission was ground turkey, sweet potato, avocado, cottage cheese, and Tajín.",
+      'I used ground pork, added onion and extra seasoning, roasted the sweet potato, and finished the bowl with lime.',
+      'My final rating: 9/10.',
+    ],
+    recipeDownload: {
+      label: 'Download Recipe',
+      href: '/recipes/chef-eds-sweet-turkey-bowl-recipe.pdf',
+      download: 'chef-eds-sweet-turkey-bowl-recipe.pdf',
+      ariaLabel: "Download Chef Ed's Sweet Turkey Bowl recipe",
+    },
+    recipeSenseiImport: {
+      label: 'Import into RecipeSensei',
+      href: '/recipesensei/imports/chef-eds-sweet-turkey-bowl.recipesensei.json',
+      download: 'chef-eds-sweet-turkey-bowl.recipesensei.json',
+      ariaLabel: "Download Chef Ed's Sweet Turkey Bowl RecipeSensei import file",
+    },
+    recipeSenseiApp: {
+      label: 'Download RecipeSensei',
+      href: recipeSenseiDownloadUrl,
+      external: true,
+      ariaLabel: 'Download RecipeSensei on the App Store, opens in a new tab',
+    },
+    importNote:
+      'For now, the RecipeSensei import button downloads a JSON file that can become the app import format.',
+    galleryTitle: 'A few scenes from the cook.',
+    gallery: [
+      {
+        src: `${sweetTurkeyBowlImagePath}/1-oiled-sweet-potatoes.jpeg`,
+        alt: 'Sweet potato pieces tossed with oil and seasoning before roasting',
+      },
+      {
+        src: `${sweetTurkeyBowlImagePath}/2-sauteeing-onions.jpeg`,
+        alt: 'Diced onion sauteing in a pan for the bowl',
+      },
+      {
+        src: `${sweetTurkeyBowlImagePath}/seasonings-used.jpeg`,
+        alt: 'Seasonings used for the sweet turkey bowl',
+      },
+      {
+        src: `${sweetTurkeyBowlImagePath}/3-browning-pork.jpeg`,
+        alt: 'Ground pork cooking with onion and spices',
+      },
+      {
+        src: `${sweetTurkeyBowlImagePath}/4-roasted-sweet-potatoes.jpeg`,
+        alt: 'Roasted sweet potato pieces for the bowl',
+      },
+      {
+        src: `${sweetTurkeyBowlImagePath}/5-assembled-without-cheese.jpeg`,
+        alt: 'Sweet turkey bowl assembled with meat, sweet potato, avocado, and lime before cottage cheese',
+      },
+      {
+        src: `${sweetTurkeyBowlImagePath}/6-assembled-with-cheese.jpeg`,
+        alt: 'Sweet turkey bowl topped with cottage cheese before the final Tajín',
+      },
+      {
+        src: `${sweetTurkeyBowlImagePath}/7-finished-bowl.jpeg`,
+        alt: 'Finished sweet turkey bowl with sweet potato, avocado, cottage cheese, Tajín, and lime',
+      },
+    ],
+  },
   {
     title: 'The One Day a Year I Bake',
     slug: 'mothers-day-baking',
     eyebrow: 'Food stories',
-    date: 'May 2026',
+    date: 'May 10, 2026',
     summary: 'A family tradition that continues to challenge me year after year.',
     heroImage: {
       src: `${mothersDayImagePath}/mothers_day_11.jpeg`,
       alt: "Finished cheese danishes cooling after a Mother's Day bake",
     },
+    recipeTitle: 'Cheese Danish',
     body: [
       "If you've followed my cooking for a while, you will have noticed there is one area of cooking I don't feature a whole lot: baking.",
       "I'm asked every now and then if I was the one who made the desserts we brought to a party, to which the answer is almost always, \"Oh no, I don't bake; that is all Clarissa.\" I just don't enjoy baking! It's too precise. If you tweak or substitute one little thing, your cake doesn't rise. If you want to add some fruit for flavor, your filling is too runny.",
@@ -35,6 +125,8 @@ export const blogPosts: BlogPost[] = [
       label: 'Import the cheese danish notes to RecipeSensei',
       href: '/recipesensei/imports/mothers-day-cheese-danish.json',
     },
+    importNote: 'Tap the RecipeSensei import link, then open it with RecipeSensei when prompted.',
+    galleryTitle: 'A few scenes from the bake.',
     gallery: [
       {
         src: `${mothersDayImagePath}/mothers_day_1.jpeg`,

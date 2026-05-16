@@ -101,6 +101,12 @@
   margin-top: 0.65rem;
 }
 
+.submitted-by {
+  margin-top: 0.75rem;
+  color: var(--color-purple-dark);
+  font-weight: 800;
+}
+
 .recipe-links {
   display: grid;
   gap: 0.85rem;
@@ -118,6 +124,13 @@
   color: var(--color-text-muted);
   font-size: 0.95rem;
   line-height: 1.6;
+}
+
+.recipe-credit {
+  margin-top: 1rem;
+  color: var(--color-text);
+  font-weight: 800;
+  line-height: 1.5;
 }
 
 .post-gallery {
@@ -151,6 +164,39 @@
   object-fit: contain;
 }
 
+.save-recipe-cta {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 4rem;
+  border: 1px solid rgba(61, 45, 33, 0.1);
+  border-radius: 2rem;
+  background: rgba(255, 250, 245, 0.9);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-card);
+}
+
+.save-recipe-cta h2 {
+  margin: 0.35rem 0 0;
+  color: var(--color-text);
+  font-size: clamp(1.9rem, 5vw, 3.25rem);
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.save-recipe-cta p:not(.eyebrow) {
+  max-width: 38rem;
+  margin-top: 1rem;
+  color: var(--color-text-muted);
+  line-height: 1.75;
+}
+
+.save-recipe-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-self: center;
+}
+
 @media (min-width: 760px) {
   .blog-post {
     width: min(1120px, calc(100% - 4rem));
@@ -161,8 +207,21 @@
     grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.9fr);
   }
 
+  .save-recipe-cta {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    padding: 2rem;
+  }
+
   .photo-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .save-recipe-actions,
+  .save-recipe-actions .button {
+    width: 100%;
   }
 }
 
