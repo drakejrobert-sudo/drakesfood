@@ -1,6 +1,8 @@
 # Drake's Food
 
-A modern Angular portfolio website for Drake's Food. This first version is a warm, minimal, photo-forward multi-page site with a food gallery preview, Instagram CTA, about section, RecipeSensei links, recipe idea submission, and a recipe/blog coming soon area.
+A modern Angular portfolio website for Drake's Food. The current site is a warm, minimal,
+photo-forward multi-page Angular app with a food gallery, Instagram CTA, about section,
+RecipeSensei links, recipe idea submission, blog story content, and blog email subscriptions.
 
 ## Getting started
 
@@ -52,6 +54,7 @@ npm run lint
 - `src/app/data/` - static gallery data and content models
 - `src/assets/images/` - local optimized food photography and site image assets
 - `docs/` - feature contracts and implementation notes
+- `docs/ai-agent-context.md` - fast project map and validation guide for AI assistants
 - `infra/` - OpenTofu infrastructure for S3, CloudFront, ACM, and Route 53
 - `.github/copilot-instructions.md` - project guidance for Copilot
 - `public/` - static assets for app build
@@ -64,7 +67,7 @@ The site uses Angular routes for the primary content areas while staying static-
 - `/gallery` - food gallery page
 - `/blog` - Drake's Food blog stories and recipe notes
 - `/submit` - recipe idea submission page
-- `/recipesensei` - RecipeSensei app teaser and links
+- `/recipesensei` - RecipeSensei app links and overview
 - `/about` - Drake's Food intro page
 - `/recipesensei/support` - RecipeSensei support page
 - `/recipesensei/privacy` - RecipeSensei privacy policy page
@@ -98,7 +101,9 @@ The V1 recipe submission system is documented in `docs/recipe-submission-system.
 
 ## Blog email subscriptions
 
-The V1 blog email subscription signup and confirmation system is documented in `docs/blog-email-subscriptions.md`. It uses confirmed opt-in before activating subscribers. Unsubscribe support and new-post notification sending are tracked separately.
+The V1 blog email subscription signup, confirmation, unsubscribe, admin alert, and manual
+new-post notification system is documented in `docs/blog-email-subscriptions.md`. It uses
+confirmed opt-in before activating subscribers.
 
 ## Deployment
 
@@ -114,4 +119,5 @@ CloudFront redirects plain HTTP requests to HTTPS and maps S3 `403`/`404` respon
 
 ## Notes
 
-The site is intentionally mostly static. It is designed for AWS S3 + CloudFront and does not include authentication, backend services, or CMS tools.
+The site is intentionally mostly static. It is designed for AWS S3 + CloudFront and avoids
+authentication, CMS tooling, and unnecessary backend complexity.

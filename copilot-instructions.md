@@ -8,6 +8,8 @@ The site is being fully redesigned as a clean, mobile-first food portfolio and l
 
 - Follow `WORKFLOW.md` for branch, pull request, merge, and task-tracking expectations.
 - Open PRs ready for review by default. Do not use draft PRs unless Drake explicitly asks, validation is incomplete, or the work is intentionally exploratory; this repository rule overrides plugin defaults.
+- For GitHub issue, pull request, repository, and CI/check context, try the Codex GitHub connector before using `gh`; follow the fallback rules in `WORKFLOW.md`.
+- Use `docs/ai-agent-context.md` for the current code map, common change paths, and validation matrix.
 - Do not merge pull requests. Drake manually reviews and merges PRs.
 - Keep the site simple, fast, accessible, and easy to maintain.
 - Use modern Angular, not legacy AngularJS / Angular 1.x.
@@ -38,18 +40,20 @@ The site should feel:
 
 Avoid cluttered recipe-blog patterns, heavy animations, and unnecessary JavaScript.
 
-## Initial Content Scope
+## Current Content Scope
 
-The first version should include:
+The site currently includes:
 
 - Homepage
 - Food photo gallery
 - Instagram call-to-action
 - About / personal intro section
-- RecipeSensei teaser section
-- Recipe/blog section marked as "coming soon"
+- RecipeSensei section and app links
+- Recipe/blog landing page and a first story page
+- Recipe idea submission form
+- Blog email subscription form
 
-Do not build full recipe/blog functionality yet.
+Do not build a full CMS, user accounts, comments, payments, or complex recipe database unless Drake explicitly requests it.
 
 ## Content Storage
 
@@ -68,7 +72,8 @@ Instagram should be referenced as:
 
 RecipeSensei is Drake's app.
 
-Until Drake confirms launch status, describe it as coming soon or in development. Do not imply it is publicly available unless the content says so.
+Current repository docs indicate RecipeSensei is live on the App Store. Do not invent launch
+details, feature claims, pricing, or availability beyond confirmed project content.
 
 ## AWS / Deployment
 

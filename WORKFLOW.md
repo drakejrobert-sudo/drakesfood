@@ -14,6 +14,14 @@ This document defines how AI assistants should collaborate on this repository.
 - Open a non-draft pull request linked to the issue when work is ready for review unless Drake explicitly asks for a draft PR, validation is incomplete, or the work is intentionally exploratory.
 - Do not merge pull requests. Drake manually reviews and merges PRs.
 
+## GitHub Tool Preference
+
+- For GitHub issue, pull request, repository, and CI/check context, try the Codex GitHub connector first when it is available.
+- Prefer the connector for reading issues/PRs, summarizing review context, creating or updating issues, opening PRs, and inspecting CI status.
+- Use `gh` only when the connector is unavailable, missing the needed capability, or when a workflow-specific instruction explicitly requires `gh`.
+- Use local `git` commands for local working-tree operations such as checking branches/status, creating branches, staging, committing, merging, and pushing.
+- If falling back from the connector to `gh` for a GitHub-hosted operation, briefly note the reason in the work summary.
+
 ## Git Rules For AI Assistants
 
 AI assistants may, when asked to implement work:

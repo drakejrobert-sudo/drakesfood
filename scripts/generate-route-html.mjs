@@ -32,6 +32,11 @@ const pageMetadata = {
     description: 'A family tradition that continues to challenge me year after year.',
     canonicalPath: '/blog/mothers-day-baking',
   },
+  '/blog/chef-eds-sweet-turkey-bowl': {
+    title: "Chef Ed's Sweet Turkey Bowl | Drake's Food",
+    description: 'A simple, healthy, in one bowl meal; my first shot at a submitted recipe!',
+    canonicalPath: '/blog/chef-eds-sweet-turkey-bowl',
+  },
   '/submit': {
     title: "Submit a Recipe Idea | Drake's Food",
     description:
