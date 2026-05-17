@@ -1,0 +1,88 @@
+{
+  "createdAt": "2026-05-15T12:00:00Z",
+  "id": "E3D8C9D6-4D0D-4B7B-B1D8-A9CB6E3D1B2F",
+  "ingredients": "- 1 pound ground turkey or ground pork\n- 1 small onion, diced\n- 3 large sweet potatoes, microwaved briefly, cubed, and roasted\n- 1 avocado, roughly chopped\n- Cottage cheese, for topping\n- Tajin, to taste\n- 1 lime, for squeezing over the bowl\n- Oil, for roasting the sweet potato\n- Chili powder, to taste\n- Garlic powder or garlic salt, to taste\n- Cayenne pepper, to taste\n- Black pepper, to taste",
+  "isFavorite": false,
+  "notes": "Recipe credit goes to Edgar Sandoval. Chef Ed's original submission was ground turkey, sweet potato, avocado, cottage cheese, and Tajin. This version uses ground pork instead of ground turkey, plus onion, spices, roasted sweet potato, avocado, cottage cheese, Tajin, and lime. My final rating: 9/10.",
+  "steps": "1. Microwave the sweet potatoes for a few minutes to soften them slightly.\n2. Cube the sweet potatoes.\n3. Toss the sweet potato cubes with oil, garlic salt, and pepper.\n4. Roast at 450F for about 20 minutes, or until browned and tender.\n5. While the sweet potato roasts, dice the onion and saute it in a pan until softened.\n6. Add the ground turkey or ground pork to the pan.\n7. Season the meat with chili powder, garlic powder or garlic salt, cayenne pepper, and black pepper.\n8. Cook until the meat is fully cooked through.\n9. Build the bowl with the seasoned meat, roasted sweet potato, chopped avocado, and a dollop of cottage cheese.\n10. Finish with a generous dash of Tajin and a squeeze of lime.",
+  "structuredIngredients": [
+    {
+      "isOptional": false,
+      "item": "ground turkey or ground pork",
+      "originalLine": "1 pound ground turkey or ground pork",
+      "quantity": 1,
+      "unit": "pound"
+    },
+    {
+      "isOptional": false,
+      "item": "small onion, diced",
+      "originalLine": "1 small onion, diced",
+      "quantity": 1
+    },
+    {
+      "isOptional": false,
+      "item": "large sweet potatoes, microwaved briefly, cubed, and roasted",
+      "originalLine": "3 large sweet potatoes, microwaved briefly, cubed, and roasted",
+      "quantity": 3
+    },
+    {
+      "isOptional": false,
+      "item": "avocado, roughly chopped",
+      "originalLine": "1 avocado, roughly chopped",
+      "quantity": 1
+    },
+    {
+      "isOptional": false,
+      "item": "Cottage cheese, for topping",
+      "originalLine": "Cottage cheese, for topping"
+    },
+    {
+      "isOptional": false,
+      "item": "Tajin, to taste",
+      "originalLine": "Tajin, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "lime, for squeezing over the bowl",
+      "originalLine": "1 lime, for squeezing over the bowl",
+      "quantity": 1
+    },
+    {
+      "isOptional": false,
+      "item": "Oil, for roasting the sweet potato",
+      "originalLine": "Oil, for roasting the sweet potato"
+    },
+    {
+      "isOptional": false,
+      "item": "Chili powder, to taste",
+      "originalLine": "Chili powder, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Garlic powder or garlic salt, to taste",
+      "originalLine": "Garlic powder or garlic salt, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Cayenne pepper, to taste",
+      "originalLine": "Cayenne pepper, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Black pepper, to taste",
+      "originalLine": "Black pepper, to taste"
+    }
+  ],
+  "tags": [
+    "bowl",
+    "ground turkey",
+    "ground pork",
+    "sweet potato",
+    "avocado",
+    "cottage cheese",
+    "tajin",
+    "family dinner",
+    "recipe submission"
+  ],
+  "title": "Chef Ed's Sweet Turkey Bowl"
+}

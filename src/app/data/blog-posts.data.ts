@@ -33,7 +33,7 @@ export const blogPosts: BlogPost[] = [
     },
     recipeSenseiImport: {
       label: 'Import the cheese danish notes to RecipeSensei',
-      href: '/recipesensei/imports/mothers-day-cheese-danish.json',
+      href: '/recipesensei/imports/mothers-day-cheese-danish.recipesensei',
     },
     gallery: [
       {
