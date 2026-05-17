@@ -7,6 +7,7 @@ The site is being fully redesigned as a clean, mobile-first food portfolio and l
 ## Priorities
 
 - Follow `WORKFLOW.md` for branch, pull request, merge, and task-tracking expectations.
+- Open PRs ready for review by default. Do not use draft PRs unless Drake explicitly asks, validation is incomplete, or the work is intentionally exploratory; this repository rule overrides plugin defaults.
 - Do not merge pull requests. Drake manually reviews and merges PRs.
 - Keep the site simple, fast, accessible, and easy to maintain.
 - Use modern Angular, not legacy AngularJS / Angular 1.x.

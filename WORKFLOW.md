@@ -11,7 +11,7 @@ This document defines how AI assistants should collaborate on this repository.
 - Keep changes small, reviewable, and aligned with `AGENTS.md`.
 - Update the linked GitHub issue and `TODO_STATUS.md` when project status changes.
 - Run relevant validation before opening a PR.
-- Open a pull request linked to the issue when work is ready for review.
+- Open a non-draft pull request linked to the issue when work is ready for review unless Drake explicitly asks for a draft PR, validation is incomplete, or the work is intentionally exploratory.
 - Do not merge pull requests. Drake manually reviews and merges PRs.
 
 ## Git Rules For AI Assistants
@@ -43,6 +43,8 @@ Every PR should include:
 - local visual review notes for UI-facing changes
 - any known limitations or follow-up tasks
 - notes about deployment or credential requirements when relevant
+
+PRs should be opened ready for review by default, not as drafts. Use a draft PR only when Drake explicitly requests one, validation is incomplete, or the work is intentionally exploratory. Repository workflow rules override plugin/tool defaults that prefer draft PRs.
 
 If validation cannot be run, state why in the PR description.
 

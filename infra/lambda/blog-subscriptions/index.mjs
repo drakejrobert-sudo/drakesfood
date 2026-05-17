@@ -911,13 +911,13 @@ export function buildBlogNotificationRawEmail({ post, subscriber, senderEmail, b
     'Content-Type: text/plain; charset=UTF-8',
     'Content-Transfer-Encoding: 8bit',
     '',
-    formatBlogNotificationEmail(post, subscriber),
+    normalizeMimeBody(formatBlogNotificationEmail(post, subscriber)),
     '',
     `--${boundary}`,
     'Content-Type: text/html; charset=UTF-8',
     'Content-Transfer-Encoding: 8bit',
     '',
-    formatBlogNotificationHtml(post, subscriber),
+    normalizeMimeBody(formatBlogNotificationHtml(post, subscriber)),
     '',
     `--${boundary}--`,
     '',
@@ -989,6 +989,10 @@ function buildUnsubscribeUrl(subscriber) {
 
 function encodeMimeHeader(value) {
   return /^[\x00-\x7F]*$/.test(value) ? value : `=?UTF-8?B?${Buffer.from(value, 'utf8').toString('base64')}?=`;
+}
+
+function normalizeMimeBody(value) {
+  return String(value).replace(/\r?\n/g, '\r\n');
 }
 
 function escapeHtml(value) {

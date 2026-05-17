@@ -761,6 +761,7 @@ test('blog notification raw email includes unsubscribe headers and multipart con
   assert.match(rawEmail, /Content-Type: text\/html; charset=UTF-8/);
   assert.match(rawEmail, /Read it here: https:\/\/drakesfood\.com\/blog\/pizza-night/);
   assert.match(rawEmail, /<img src="https:\/\/drakesfood\.com\/assets\/blog\/pizza-night\/hero\.jpeg" alt="Crispy backyard pizza on a cutting board"/);
+  assert.doesNotMatch(rawEmail, /(?<!\r)\n/);
   assert.doesNotMatch(rawEmail, /^Reply-To:/m);
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
   delete process.env.BLOG_SUBSCRIPTIONS_API_BASE_URL;
