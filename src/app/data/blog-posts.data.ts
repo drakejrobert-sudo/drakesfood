@@ -44,8 +44,8 @@ export const blogPosts: BlogPost[] = [
     },
     recipeSenseiImport: {
       label: 'Import into RecipeSensei',
-      href: '/recipesensei/imports/chef-eds-sweet-turkey-bowl.recipesensei.json',
-      download: 'chef-eds-sweet-turkey-bowl.recipesensei.json',
+      href: '/recipesensei/imports/chef-eds-sweet-turkey-bowl.recipesensei',
+      download: 'chef-eds-sweet-turkey-bowl.recipesensei',
       ariaLabel: "Download Chef Ed's Sweet Turkey Bowl RecipeSensei import file",
     },
     recipeSenseiApp: {
@@ -55,7 +55,7 @@ export const blogPosts: BlogPost[] = [
       ariaLabel: 'Download RecipeSensei on the App Store, opens in a new tab',
     },
     importNote:
-      'For now, the RecipeSensei import button downloads a JSON file that can become the app import format.',
+      'Tap the RecipeSensei import file, then use the share arrow and choose Open in RecipeSensei. Or save it and import it from Settings.',
     galleryTitle: 'A few scenes from the cook.',
     gallery: [
       {
@@ -123,9 +123,10 @@ export const blogPosts: BlogPost[] = [
     },
     recipeSenseiImport: {
       label: 'Import the cheese danish notes to RecipeSensei',
-      href: '/recipesensei/imports/mothers-day-cheese-danish.json',
+      href: '/recipesensei/imports/mothers-day-cheese-danish.recipesensei',
     },
-    importNote: 'Tap the RecipeSensei import link, then open it with RecipeSensei when prompted.',
+    importNote:
+      'Tap the RecipeSensei import file, then use the share arrow and choose Open in RecipeSensei. Or save it and import it from Settings.',
     galleryTitle: 'A few scenes from the bake.',
     gallery: [
       {

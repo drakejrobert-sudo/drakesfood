@@ -7,6 +7,7 @@ The site is being fully redesigned as a clean, mobile-first food portfolio and l
 ## Priorities
 
 - Follow `WORKFLOW.md` for branch, pull request, merge, and task-tracking expectations.
+- For GitHub issue, pull request, repository, and CI/check context, try the Codex GitHub connector before using `gh`; follow the fallback rules in `WORKFLOW.md`.
 - Use `docs/ai-agent-context.md` for the current code map, common change paths, and validation matrix.
 - Do not merge pull requests. Drake manually reviews and merges PRs.
 - Keep the site simple, fast, accessible, and easy to maintain.
