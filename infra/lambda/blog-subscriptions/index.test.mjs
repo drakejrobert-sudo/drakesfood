@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { createHandler } from './index.mjs';
+import { buildBlogNotificationRawEmail, createHandler, formatBlogNotificationHtml } from './index.mjs';
 
 const fixedDate = new Date('2026-05-09T12:00:00.000Z');
 
@@ -572,7 +572,7 @@ test('unsubscribe GET returns confirmation page without unsubscribing', async ()
 
   assert.equal(response.statusCode, 200);
   assert.equal(response.headers['content-type'], 'text/html; charset=UTF-8');
-  assert.match(response.body, /Unsubscribe from Drake's Food emails\?/);
+  assert.match(response.body, /Unsubscribe from Drake&#39;s Food emails\?/);
   assert.match(response.body, /method="post"/);
   assert.match(response.body, /https:\/\/api\.example\.com\/blog-subscriptions\/unsubscribe\?token=unsubscribe-token/);
   assert.deepEqual(unsubscribes, []);
@@ -726,6 +726,67 @@ test('real send reserves post slug and sends to active subscribers', async () =>
       },
     },
   ]);
+});
+
+test('blog notification raw email includes unsubscribe headers and multipart content', () => {
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  process.env.BLOG_SUBSCRIPTIONS_API_BASE_URL = 'https://api.example.com';
+  const post = {
+    slug: 'pizza-night',
+    title: 'Pizza Night',
+    summary: 'A crispy backyard pizza experiment.',
+    path: '/blog/pizza-night',
+    heroImagePath: '/assets/blog/pizza-night/hero.jpeg',
+    heroImageAlt: 'Crispy backyard pizza on a cutting board',
+  };
+  const subscriber = {
+    emailNormalized: 'reader@example.com',
+    unsubscribeToken: 'unsubscribe token',
+  };
+
+  const rawEmail = buildBlogNotificationRawEmail({
+    post,
+    subscriber,
+    senderEmail: "Drake's Food <updates@drakesfood.com>",
+    boundary: 'test-boundary',
+  });
+
+  assert.match(rawEmail, /^From: Drake's Food <updates@drakesfood\.com>/m);
+  assert.match(rawEmail, /^To: reader@example\.com/m);
+  assert.match(rawEmail, /^Subject: New Drake's Food post: Pizza Night/m);
+  assert.match(rawEmail, /^List-Unsubscribe: <https:\/\/api\.example\.com\/blog-subscriptions\/unsubscribe\?token=unsubscribe%20token>/m);
+  assert.match(rawEmail, /^List-Unsubscribe-Post: List-Unsubscribe=One-Click/m);
+  assert.match(rawEmail, /^Content-Type: multipart\/alternative; boundary="test-boundary"/m);
+  assert.match(rawEmail, /Content-Type: text\/plain; charset=UTF-8/);
+  assert.match(rawEmail, /Content-Type: text\/html; charset=UTF-8/);
+  assert.match(rawEmail, /Read it here: https:\/\/drakesfood\.com\/blog\/pizza-night/);
+  assert.match(rawEmail, /<img src="https:\/\/drakesfood\.com\/assets\/blog\/pizza-night\/hero\.jpeg" alt="Crispy backyard pizza on a cutting board"/);
+  assert.doesNotMatch(rawEmail, /(?<!\r)\n/);
+  assert.doesNotMatch(rawEmail, /^Reply-To:/m);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+  delete process.env.BLOG_SUBSCRIPTIONS_API_BASE_URL;
+});
+
+test('blog notification html escapes post metadata and tolerates missing image', () => {
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  process.env.BLOG_SUBSCRIPTIONS_API_BASE_URL = 'https://api.example.com';
+  const html = formatBlogNotificationHtml(
+    {
+      title: 'Pizza & <Wings>',
+      summary: 'A crispy "test" & sauce note.',
+      path: '/blog/pizza-wings',
+    },
+    {
+      unsubscribeToken: 'token-1',
+    },
+  );
+
+  assert.match(html, /Pizza &amp; &lt;Wings&gt;/);
+  assert.match(html, /A crispy &quot;test&quot; &amp; sauce note\./);
+  assert.match(html, /https:\/\/api\.example\.com\/blog-subscriptions\/unsubscribe\?token=token-1/);
+  assert.doesNotMatch(html, /<img /);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+  delete process.env.BLOG_SUBSCRIPTIONS_API_BASE_URL;
 });
 
 test('real send uses bounded concurrent batches', async () => {

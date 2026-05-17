@@ -765,27 +765,17 @@ async function sendBlogNotificationEmail(post, subscriber) {
     throw new Error('Missing SES_SENDER_EMAIL');
   }
 
-  const { SESClient, SendEmailCommand } = await loadSesClient();
+  const { SESClient, SendRawEmailCommand } = await loadSesClient();
   const client = sesClient ?? new SESClient({});
   sesClient = client;
+  const rawEmail = buildBlogNotificationRawEmail({ post, subscriber, senderEmail });
 
   await client.send(
-    new SendEmailCommand({
+    new SendRawEmailCommand({
       Source: senderEmail,
-      Destination: {
-        ToAddresses: [subscriber.emailNormalized],
-      },
-      Message: {
-        Subject: {
-          Charset: 'UTF-8',
-          Data: `New Drake's Food post: ${post.title}`,
-        },
-        Body: {
-          Text: {
-            Charset: 'UTF-8',
-            Data: formatBlogNotificationEmail(post, subscriber),
-          },
-        },
+      Destinations: [subscriber.emailNormalized],
+      RawMessage: {
+        Data: Buffer.from(rawEmail, 'utf8'),
       },
     }),
   );
@@ -904,10 +894,40 @@ function formatConfirmationEmail(confirmationToken) {
   ].join('\n');
 }
 
-function formatBlogNotificationEmail(post, subscriber) {
+export function buildBlogNotificationRawEmail({ post, subscriber, senderEmail, boundary = 'drakesfood-blog-notification' }) {
+  const unsubscribeUrl = buildUnsubscribeUrl(subscriber);
+  const subject = `New Drake's Food post: ${post.title}`;
+
+  return [
+    `From: ${senderEmail}`,
+    `To: ${subscriber.emailNormalized}`,
+    `Subject: ${encodeMimeHeader(subject)}`,
+    'MIME-Version: 1.0',
+    `List-Unsubscribe: <${unsubscribeUrl}>`,
+    'List-Unsubscribe-Post: List-Unsubscribe=One-Click',
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    '',
+    `--${boundary}`,
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    normalizeMimeBody(formatBlogNotificationEmail(post, subscriber)),
+    '',
+    `--${boundary}`,
+    'Content-Type: text/html; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    '',
+    normalizeMimeBody(formatBlogNotificationHtml(post, subscriber)),
+    '',
+    `--${boundary}--`,
+    '',
+  ].join('\r\n');
+}
+
+export function formatBlogNotificationEmail(post, subscriber) {
   const siteUrl = getSiteUrl();
   const postUrl = `${siteUrl}${post.path}`;
-  const unsubscribeUrl = `${getApiBaseUrl()}/blog-subscriptions/unsubscribe?token=${encodeURIComponent(subscriber.unsubscribeToken)}`;
+  const unsubscribeUrl = buildUnsubscribeUrl(subscriber);
 
   return [
     `New on Drake's Food: ${post.title}`,
@@ -921,6 +941,36 @@ function formatBlogNotificationEmail(post, subscriber) {
   ].join('\n');
 }
 
+export function formatBlogNotificationHtml(post, subscriber) {
+  const siteUrl = getSiteUrl();
+  const postUrl = `${siteUrl}${post.path}`;
+  const unsubscribeUrl = buildUnsubscribeUrl(subscriber);
+  const heroImageUrl = post.heroImagePath ? `${siteUrl}${post.heroImagePath}` : '';
+  const heroImageMarkup = heroImageUrl
+    ? [
+        `<p style="margin: 0 0 24px;"><a href="${escapeAttribute(postUrl)}">`,
+        `<img src="${escapeAttribute(heroImageUrl)}" alt="${escapeAttribute(post.heroImageAlt || post.title)}" width="640" style="display: block; width: 100%; max-width: 640px; height: auto; border-radius: 14px;">`,
+        '</a></p>',
+      ].join('')
+    : '';
+
+  return [
+    '<!doctype html>',
+    '<html lang="en">',
+    '<body style="margin: 0; padding: 0; background: #fffaf5; color: #3d2d21; font-family: Arial, Helvetica, sans-serif;">',
+    '<main style="max-width: 640px; margin: 0 auto; padding: 32px 20px;">',
+    '<p style="margin: 0 0 12px; color: #6d4aa3; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;">New on Drake&apos;s Food</p>',
+    `<h1 style="margin: 0 0 16px; font-size: 32px; line-height: 1.08; color: #3d2d21;">${escapeHtml(post.title)}</h1>`,
+    heroImageMarkup,
+    `<p style="margin: 0 0 24px; font-size: 17px; line-height: 1.6; color: #5e4b3f;">${escapeHtml(post.summary)}</p>`,
+    `<p style="margin: 0 0 32px;"><a href="${escapeAttribute(postUrl)}" style="display: inline-block; border-radius: 999px; background: #6d4aa3; color: #ffffff; padding: 12px 18px; font-weight: 700; text-decoration: none;">Read the post</a></p>`,
+    `<p style="margin: 32px 0 0; color: #7a675b; font-size: 13px; line-height: 1.6;">You are receiving this because you subscribed to Drake&apos;s Food blog updates. <a href="${escapeAttribute(unsubscribeUrl)}" style="color: #5b3f91;">Unsubscribe</a>.</p>`,
+    '</main>',
+    '</body>',
+    '</html>',
+  ].filter(Boolean).join('\n');
+}
+
 function formatAdminNotificationEmail(eventType, subscriber, timestamp) {
   return [
     `Blog subscription event: ${eventType}`,
@@ -931,6 +981,31 @@ function formatAdminNotificationEmail(eventType, subscriber, timestamp) {
     '',
     'Subscriber email is intentionally omitted from this admin alert for privacy.',
   ].join('\n');
+}
+
+function buildUnsubscribeUrl(subscriber) {
+  return `${getApiBaseUrl()}/blog-subscriptions/unsubscribe?token=${encodeURIComponent(subscriber.unsubscribeToken)}`;
+}
+
+function encodeMimeHeader(value) {
+  return /^[\x00-\x7F]*$/.test(value) ? value : `=?UTF-8?B?${Buffer.from(value, 'utf8').toString('base64')}?=`;
+}
+
+function normalizeMimeBody(value) {
+  return String(value).replace(/\r?\n/g, '\r\n');
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function escapeAttribute(value) {
+  return escapeHtml(value);
 }
 
 function toDynamoDbItem(item) {
@@ -1041,19 +1116,6 @@ function buildHtmlPage({ title, body }) {
     '</body>',
     '</html>',
   ].join('\n');
-}
-
-function escapeHtml(value) {
-  return value.replace(/[&<>"]/g, (character) => ({
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-  })[character]);
-}
-
-function escapeAttribute(value) {
-  return escapeHtml(value);
 }
 
 function chunkArray(values, size) {

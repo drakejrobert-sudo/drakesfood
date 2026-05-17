@@ -346,6 +346,7 @@ For large redesign or expansion work, prefer phases:
 When working in this repository:
 
 - Follow `WORKFLOW.md` for branch, pull request, merge, and task-tracking expectations.
+- Open PRs ready for review by default. Do not use draft PRs unless Drake explicitly asks, validation is incomplete, or the work is intentionally exploratory; this repository rule overrides plugin defaults.
 - Do not merge pull requests. Drake manually reviews and merges PRs.
 - Read this file first.
 - Check existing conventions before introducing new ones.
