@@ -11,6 +11,7 @@ The website should feel personal, polished, warm, food-focused, and lightweight.
 ## AI Quick Context
 
 - Read `WORKFLOW.md` for branch, issue, PR, merge, and task-tracking rules.
+- For GitHub issue, pull request, repository, and CI/check context, try the Codex GitHub connector before using `gh`; follow the tool preference in `WORKFLOW.md`.
 - Use `docs/ai-agent-context.md` as the fast project map before making changes.
 - Treat `README.md`, `TODO_STATUS.md`, `docs/`, and `infra/README.md` as the current implementation context.
 - Treat `initial-angular-rebuild-prompt.txt` as historical background, not the current source of truth.

@@ -83,12 +83,13 @@ Only claim a check passed if it was actually run.
 - `.github/copilot-instructions.md` is the primary GitHub Copilot instruction file.
 - `copilot-instructions.md` is a root copy kept for tools that look outside `.github/`.
 - `.vscode/mcp.json` enables the Angular CLI MCP server for tools that support MCP.
+- `WORKFLOW.md` defines the GitHub tool preference: try the Codex GitHub connector first for GitHub-hosted issue, PR, repository, and CI/check context; fall back to `gh` only when needed.
 
 For Codex work in this repo, the most useful built-in capabilities are:
 
 - Browser or frontend testing/debugging tools for visual QA after UI changes.
 - OpenAI/browser search only when checking current external facts or docs.
-- GitHub tools when a task explicitly needs issue, PR, or CI context.
+- GitHub connector tools when a task needs issue, PR, repository, or CI context.
 
 ## Watchouts
 
