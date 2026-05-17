@@ -105,7 +105,9 @@ Unsubscribe mutation endpoint:
 POST /blog-subscriptions/unsubscribe?token=<unsubscribe-token>
 ```
 
-Valid unsubscribe tokens mark the subscriber as `unsubscribed` and redirect to `/blog?subscription=unsubscribed`. Repeated unsubscribe requests are treated as success. Invalid tokens redirect to `/blog?subscription=invalid`.
+Browser form POSTs from the confirmation page mark the subscriber as `unsubscribed` and redirect to `/blog?subscription=unsubscribed`. Repeated unsubscribe requests are treated as success. Invalid browser form tokens redirect to `/blog?subscription=invalid`.
+
+Mailbox provider one-click unsubscribe POSTs use the same endpoint with a form body of `List-Unsubscribe=One-Click`. Valid or already-unsubscribed one-click requests return a direct `200` success response without an HTTPS redirect. Missing or invalid one-click tokens return non-redirect error responses.
 
 ## Backend Resources
 
@@ -191,7 +193,7 @@ Notification emails are sent only to subscribers with `status: active` and an `u
 
 Blog notification emails use a multipart plain-text + lightweight HTML format. The plain-text part keeps a readable fallback, and the HTML part may include the post hero image when `blog-notification-posts.mjs` provides `heroImagePath` and `heroImageAlt`. Missing image metadata should not block a send.
 
-Notification emails also include `List-Unsubscribe` and `List-Unsubscribe-Post` headers. The visible unsubscribe link lands on the confirmation page, while mailbox provider one-click unsubscribe requests may use the POST flow directly.
+Notification emails also include `List-Unsubscribe` and `List-Unsubscribe-Post` headers. The visible unsubscribe link lands on the confirmation page, while mailbox provider one-click unsubscribe requests POST `List-Unsubscribe=One-Click` to the unsubscribe URL and receive non-redirect responses.
 
 ## Admin Alerts
 
@@ -220,6 +222,7 @@ Subscriber email addresses are private data.
 - Confirmation tokens are stored only as SHA-256 hashes.
 - Unsubscribe tokens are private bearer-token data. Store them only in DynamoDB, use them only for notification email links, and do not log them.
 - Every future notification email must include the subscriber's unsubscribe link. That link should use `GET /blog-subscriptions/unsubscribe?token=<unsubscribe-token>` so the reader lands on the confirmation page before any state change.
+- One-click unsubscribe support is limited to mailbox provider POSTs containing `List-Unsubscribe=One-Click`; these requests must not redirect.
 
 ## SES
 
