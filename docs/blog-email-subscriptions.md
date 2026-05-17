@@ -187,7 +187,11 @@ The manual workflow `.github/workflows/send-blog-notification.yml` invokes the b
 
 Run with `dry_run: true` first. Dry runs count active subscribers and do not send email or mark the post as sent. Run with `dry_run: false` only after reviewing the dry-run output.
 
-Notification emails are sent only to subscribers with `status: active` and an `unsubscribeToken`. Pending and unsubscribed readers are excluded. Each email includes a post link and an unsubscribe link that lands on the unsubscribe confirmation page.
+Notification emails are sent only to subscribers with `status: active` and an `unsubscribeToken`. Pending and unsubscribed readers are excluded. Each email includes a post link and an unsubscribe link.
+
+Blog notification emails use a multipart plain-text + lightweight HTML format. The plain-text part keeps a readable fallback, and the HTML part may include the post hero image when `blog-notification-posts.mjs` provides `heroImagePath` and `heroImageAlt`. Missing image metadata should not block a send.
+
+Notification emails also include `List-Unsubscribe` and `List-Unsubscribe-Post` headers. The visible unsubscribe link lands on the confirmation page, while mailbox provider one-click unsubscribe requests may use the POST flow directly.
 
 ## Admin Alerts
 
@@ -245,7 +249,7 @@ Recommended sender:
 Drake's Food <updates@drakesfood.com>
 ```
 
-A real mailbox for `updates@drakesfood.com` is not required for V1 sending, but forwarding is recommended later if reader replies should land somewhere useful.
+`updates@drakesfood.com` is currently a send-only address, not a real inbox. Do not add a `Reply-To` header until the address is backed by a mailbox or forwarding route where reader replies can actually be received.
 
 ### DNS Authentication
 
@@ -265,7 +269,10 @@ After DNS changes are applied and have propagated, test with accounts Drake cont
 
 - Gmail: submit signup, confirm receipt location, click the confirmation link, and confirm the subscriber becomes active.
 - Outlook/Hotmail: repeat the same flow and specifically check whether the confirmation lands in Inbox, Junk, or Other.
-- Optional: run a `Send Blog Notification` dry run after at least one test subscriber is active.
+- Run a `Send Blog Notification` dry run after at least one test subscriber is active.
+- Send a controlled notification to Gmail and Outlook/Hotmail test subscribers, then record whether each lands in Inbox, Promotions/Other, or Junk.
+- Confirm the visible unsubscribe link opens the confirmation page.
+- Confirm mailbox unsubscribe UI appears where supported and does not expose subscriber email addresses or tokens in logs.
 
 Do not paste raw subscriber email addresses, tokens, or message headers into GitHub issues or PRs. Summarize results by mailbox provider and folder instead.
 
