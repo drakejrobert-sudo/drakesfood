@@ -239,8 +239,16 @@ async function renderUnsubscribeConfirmation(event, { findSubscriberByUnsubscrib
 async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeTokenHash, unsubscribeSubscriber, sendAdminNotification }) {
   const token = getQueryStringParameter(event, 'token');
   const siteUrl = getSiteUrl();
+  const oneClick = isOneClickUnsubscribePost(event);
 
   if (!token) {
+    if (oneClick) {
+      return jsonResponse(400, {
+        success: false,
+        message: 'Missing unsubscribe token.',
+      });
+    }
+
     return redirectResponse(`${siteUrl}${CONFIRMATION_FAILURE_REDIRECT}`);
   }
 
@@ -248,10 +256,24 @@ async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeToke
   const subscriber = await findSubscriberByUnsubscribeTokenHash(unsubscribeTokenHash);
 
   if (!subscriber) {
+    if (oneClick) {
+      return jsonResponse(404, {
+        success: false,
+        message: 'Unsubscribe token was not found.',
+      });
+    }
+
     return redirectResponse(`${siteUrl}${CONFIRMATION_FAILURE_REDIRECT}`);
   }
 
   if (subscriber.status === 'unsubscribed') {
+    if (oneClick) {
+      return jsonResponse(200, {
+        success: true,
+        message: 'You are unsubscribed.',
+      });
+    }
+
     return redirectResponse(`${siteUrl}${UNSUBSCRIBE_SUCCESS_REDIRECT}`);
   }
 
@@ -265,7 +287,21 @@ async function unsubscribeFromBlog(event, { now, findSubscriberByUnsubscribeToke
       subscriberId: subscriber.subscriberId,
     });
 
+    if (oneClick) {
+      return jsonResponse(500, {
+        success: false,
+        message: 'Unsubscribe is temporarily unavailable. Please try again later.',
+      });
+    }
+
     return redirectResponse(`${siteUrl}${CONFIRMATION_FAILURE_REDIRECT}`);
+  }
+
+  if (oneClick) {
+    return jsonResponse(200, {
+      success: true,
+      message: 'You are unsubscribed.',
+    });
   }
 
   return redirectResponse(`${siteUrl}${UNSUBSCRIBE_SUCCESS_REDIRECT}`);
@@ -449,6 +485,18 @@ function parseBody(event, maxBodyBytes) {
   }
 
   return parsed;
+}
+
+function isOneClickUnsubscribePost(event) {
+  const rawBody = event.isBase64Encoded ? Buffer.from(event.body ?? '', 'base64').toString('utf8') : event.body;
+
+  if (!rawBody) {
+    return false;
+  }
+
+  const params = new URLSearchParams(rawBody);
+
+  return params.get('List-Unsubscribe') === 'One-Click';
 }
 
 function isAllowedOrigin(event) {
