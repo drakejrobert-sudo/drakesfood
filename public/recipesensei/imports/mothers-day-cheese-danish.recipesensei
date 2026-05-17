@@ -2,10 +2,10 @@
   "createdAt": "2026-05-09T13:48:36Z",
   "favoritedAt": "2026-05-09T15:08:44Z",
   "id": "048BF1BC-DE3B-4975-A079-75FD8D73AA73",
-  "ingredients": "- 1 batch homemade puff pastry\n- 8 oz cream cheese (softened)\n- 1/2 cup granulated sugar\n- 1 teaspoon lemon juice\n- 3/4 teaspoons vanilla extract\n- 1 large egg\n- 2 teaspoons water\n- 1 cup powdered sugar\n- 3-5 teaspoons milk\n- 1/2 teaspoon vanilla extract",
+  "ingredients": "- 1 batch homemade puff pastry\n- 8 oz cream cheese (softened)\n- 1/2 cup granulated sugar\n- 1 teaspoon lemon juice\n- 3/4 teaspoons vanilla extract\n- Quick blackberry jam, mixed into half of the cream cheese filling\n- 1 large egg\n- 2 teaspoons water\n- 1 cup powdered sugar\n- 3-5 teaspoons milk\n- 1/2 teaspoon vanilla extract",
   "isFavorite": true,
-  "notes": "Source URL: https://sugarspunrun.com/cheese-danish/",
-  "steps": "1. Preheat oven to 400F (205C) and line two baking sheets with parchment paper. Set aside.\n2. Prepare filling by stirring together cream cheese, sugar, lemon juice, and vanilla extract.\n3. Divide puff pastry into 2 even parts. If using homemade puff pastry, cut this width-wise; if using store-bought dough, it will already be divided into two even sheets.\n4. Roll first half of puff pastry into a 12x12 inch square, about 1/16 inch thick. Cut into 4 even-sized squares.\n5. Transfer squares onto prepared baking sheet. Dollop about two tablespoons of filling into the center of each square. Fold the corners over the center of the filling, leaving a space about 1/4 inch thick in the center and between corners.\n6. Prepare egg wash by whisking together egg and 2 teaspoons water. Brush generously over the top of the puff pastry dough.\n7. Transfer cheese danishes to 400F (205C) preheated oven and bake for 17-19 minutes or until light golden brown. Pastries will puff a lot in the oven but will settle as they cool.\n8. Repeat steps with second half of puff pastry dough.\n9. Allow cheese danishes to cool before drizzling with glaze.\n10. === Glaze ===\n11. To prepare glaze, whisk together powdered sugar, milk, and vanilla extract.\n12. Drizzle glaze generously over cooled cheese danishes. Enjoy!",
+  "notes": "Source URL: https://sugarspunrun.com/cheese-danish/\n\nA Mother's Day tea party brunch bake based on Sugar Spun Run's cheese danish recipe, with a quick blackberry jam mixed into half of the cream cheese filling.",
+  "steps": "1. Preheat oven to 400F (205C) and line two baking sheets with parchment paper. Set aside.\n2. Prepare filling by stirring together cream cheese, sugar, lemon juice, and vanilla extract.\n3. Prepare a quick blackberry jam if adding the fruit variation.\n4. Mix blackberry jam into half of the cream cheese filling.\n5. Divide puff pastry into 2 even parts. If using homemade puff pastry, cut this width-wise; if using store-bought dough, it will already be divided into two even sheets.\n6. Roll first half of puff pastry into a 12x12 inch square, about 1/16 inch thick. Cut into 4 even-sized squares.\n7. Transfer squares onto prepared baking sheet. Dollop about two tablespoons of filling into the center of each square. Fold the corners over the center of the filling, leaving a space about 1/4 inch thick in the center and between corners.\n8. Prepare egg wash by whisking together egg and 2 teaspoons water. Brush generously over the top of the puff pastry dough.\n9. Transfer cheese danishes to 400F (205C) preheated oven and bake for 17-19 minutes or until light golden brown. Pastries will puff a lot in the oven but will settle as they cool.\n10. Repeat steps with second half of puff pastry dough, using the blackberry filling for some of the danishes if desired.\n11. Allow cheese danishes to cool before drizzling with glaze.\n12. === Glaze ===\n13. To prepare glaze, whisk together powdered sugar, milk, and vanilla extract.\n14. Drizzle glaze generously over cooled cheese danishes. Enjoy!",
   "structuredIngredients": [
     {
       "isOptional": false,
@@ -40,6 +40,11 @@
       "originalLine": "3/4 teaspoons vanilla extract",
       "quantity": 0.75,
       "unit": "teaspoons"
+    },
+    {
+      "isOptional": true,
+      "item": "quick blackberry jam, mixed into half of the cream cheese filling",
+      "originalLine": "Quick blackberry jam, mixed into half of the cream cheese filling"
     },
     {
       "isOptional": false,
@@ -77,6 +82,10 @@
   "tags": [
     "breakfast",
     "dessert",
+    "brunch",
+    "baking",
+    "mother's day",
+    "blackberry jam",
     "american",
     "austrian",
     "cheese danish",
