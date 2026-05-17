@@ -21,6 +21,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://drakesfood.com/blog/chef-eds-sweet-turkey-bowl</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://drakesfood.com/submit</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

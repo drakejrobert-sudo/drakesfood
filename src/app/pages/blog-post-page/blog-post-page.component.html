@@ -28,36 +28,69 @@
 
       <aside class="recipe-card" aria-labelledby="recipe-notes-title">
         <p class="eyebrow">Recipe notes</p>
-        <h2 id="recipe-notes-title">Cheese danish notes</h2>
+        <h2 id="recipe-notes-title">{{ post.recipeTitle }} notes</h2>
+        @if (post.submittedBy) {
+          <p class="submitted-by">Submitted by {{ post.submittedBy }}</p>
+        }
         <ul>
           @for (note of post.recipeNotes; track note) {
             <li>{{ note }}</li>
           }
         </ul>
         <div class="recipe-links">
-          <a class="button button-primary" [href]="post.recipeSenseiImport.href">{{
-            post.recipeSenseiImport.label
-          }}</a>
-          <a
-            class="button button-secondary"
-            [href]="post.sourceRecipe.href"
-            target="_blank"
-            rel="noopener"
-            [attr.aria-label]="post.sourceRecipe.label + ', opens in a new tab'"
-            >{{ post.sourceRecipe.label }}</a
-          >
+          @if (post.recipeDownload) {
+            <a
+              class="button button-primary"
+              [href]="post.recipeDownload.href"
+              [attr.download]="post.recipeDownload.download ?? null"
+              [attr.aria-label]="post.recipeDownload.ariaLabel ?? post.recipeDownload.label"
+              >{{ post.recipeDownload.label }}</a
+            >
+          }
+          @if (post.recipeSenseiImport) {
+            <!-- TODO: Connect this to a RecipeSensei deep link/custom URL scheme when the app supports direct imports. -->
+            <a
+              class="button button-primary"
+              [href]="post.recipeSenseiImport.href"
+              [attr.download]="post.recipeSenseiImport.download ?? null"
+              [attr.aria-label]="post.recipeSenseiImport.ariaLabel ?? post.recipeSenseiImport.label"
+              >{{ post.recipeSenseiImport.label }}</a
+            >
+          }
+          @if (post.recipeSenseiApp) {
+            <a
+              class="button button-secondary"
+              [href]="post.recipeSenseiApp.href"
+              [attr.target]="post.recipeSenseiApp.external ? '_blank' : null"
+              [attr.rel]="post.recipeSenseiApp.external ? 'noopener' : null"
+              [attr.aria-label]="post.recipeSenseiApp.ariaLabel ?? post.recipeSenseiApp.label"
+              >{{ post.recipeSenseiApp.label }}</a
+            >
+          }
+          @if (post.sourceRecipe) {
+            <a
+              class="button button-secondary"
+              [href]="post.sourceRecipe.href"
+              [attr.target]="post.sourceRecipe.external === false ? null : '_blank'"
+              [attr.rel]="post.sourceRecipe.external === false ? null : 'noopener'"
+              [attr.aria-label]="post.sourceRecipe.ariaLabel ?? post.sourceRecipe.label + ', opens in a new tab'"
+              >{{ post.sourceRecipe.label }}</a
+            >
+          }
         </div>
-        <p class="import-note">
-          Tap the RecipeSensei import file, then use the share arrow and choose Open in
-          RecipeSensei. Or save it and import it from Settings.
-        </p>
+        @if (post.importNote) {
+          <p class="import-note">{{ post.importNote }}</p>
+        }
+        @if (post.recipeCredit) {
+          <p class="recipe-credit">{{ post.recipeCredit }}</p>
+        }
       </aside>
     </div>
 
     <section class="post-gallery" aria-labelledby="post-gallery-title">
       <div class="section-intro">
         <p class="eyebrow">Process photos</p>
-        <h2 id="post-gallery-title">A few scenes from the bake.</h2>
+        <h2 id="post-gallery-title">{{ post.galleryTitle ?? 'A few scenes from the cook.' }}</h2>
       </div>
       <div class="photo-grid">
         @for (image of post.gallery; track image.src) {
@@ -74,5 +107,48 @@
         }
       </div>
     </section>
+
+    @if (post.recipeDownload || post.recipeSenseiImport || post.recipeSenseiApp) {
+      <section class="save-recipe-cta" aria-labelledby="save-recipe-title">
+        <div>
+          <p class="eyebrow">RecipeSensei</p>
+          <h2 id="save-recipe-title">Want to save this recipe?</h2>
+          <p>
+            Download the recipe, import it into RecipeSensei, or grab the app so you can keep
+            your favorite recipes in one place.
+          </p>
+        </div>
+        <div class="save-recipe-actions">
+          @if (post.recipeDownload) {
+            <a
+              class="button button-primary"
+              [href]="post.recipeDownload.href"
+              [attr.download]="post.recipeDownload.download ?? null"
+              [attr.aria-label]="post.recipeDownload.ariaLabel ?? post.recipeDownload.label"
+              >{{ post.recipeDownload.label }}</a
+            >
+          }
+          @if (post.recipeSenseiImport) {
+            <a
+              class="button button-primary"
+              [href]="post.recipeSenseiImport.href"
+              [attr.download]="post.recipeSenseiImport.download ?? null"
+              [attr.aria-label]="post.recipeSenseiImport.ariaLabel ?? post.recipeSenseiImport.label"
+              >{{ post.recipeSenseiImport.label }}</a
+            >
+          }
+          @if (post.recipeSenseiApp) {
+            <a
+              class="button button-secondary"
+              [href]="post.recipeSenseiApp.href"
+              [attr.target]="post.recipeSenseiApp.external ? '_blank' : null"
+              [attr.rel]="post.recipeSenseiApp.external ? 'noopener' : null"
+              [attr.aria-label]="post.recipeSenseiApp.ariaLabel ?? post.recipeSenseiApp.label"
+              >{{ post.recipeSenseiApp.label }}</a
+            >
+          }
+        </div>
+      </section>
+    }
   </article>
 }
