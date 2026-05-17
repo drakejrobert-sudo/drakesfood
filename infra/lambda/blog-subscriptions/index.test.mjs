@@ -34,7 +34,7 @@ function createConfirmEvent(token) {
   };
 }
 
-function createUnsubscribeEvent(token, method = 'GET') {
+function createUnsubscribeEvent(token, method = 'GET', body) {
   return {
     requestContext: {
       http: {
@@ -45,6 +45,7 @@ function createUnsubscribeEvent(token, method = 'GET') {
     queryStringParameters: {
       token,
     },
+    body,
   };
 }
 
@@ -456,6 +457,33 @@ test('valid unsubscribe token marks subscriber unsubscribed and redirects to suc
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
 
+test('valid one-click unsubscribe token marks subscriber unsubscribed without redirecting', async () => {
+  const unsubscribes = [];
+  const emailHash = hash('fan@example.com');
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    now: () => fixedDate,
+    findSubscriberByUnsubscribeTokenHash: async (unsubscribeTokenHash) => ({
+      subscriberId: 'subscriber-123',
+      emailHash,
+      unsubscribeTokenHash,
+      status: 'active',
+    }),
+    unsubscribeSubscriber: async (unsubscribedEmailHash, unsubscribedAt) => unsubscribes.push({ emailHash: unsubscribedEmailHash, unsubscribedAt }),
+  });
+
+  const response = await handler(createUnsubscribeEvent('unsubscribe-token', 'POST', 'List-Unsubscribe=One-Click'));
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.headers.location, undefined);
+  assert.deepEqual(parseResponse(response), {
+    success: true,
+    message: 'You are unsubscribed.',
+  });
+  assert.deepEqual(unsubscribes, [{ emailHash, unsubscribedAt: '2026-05-09T12:00:00.000Z' }]);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
 test('valid unsubscribe sends admin notification when configured', async () => {
   const adminNotifications = [];
   const emailHash = hash('fan@example.com');
@@ -542,6 +570,33 @@ test('already unsubscribed token redirects to success without another update', a
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
 
+test('already unsubscribed one-click token succeeds without another update', async () => {
+  const unsubscribes = [];
+  const adminNotifications = [];
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    findSubscriberByUnsubscribeTokenHash: async () => ({
+      subscriberId: 'subscriber-123',
+      emailHash: hash('fan@example.com'),
+      status: 'unsubscribed',
+    }),
+    unsubscribeSubscriber: async (emailHash) => unsubscribes.push(emailHash),
+    sendAdminNotification: async (eventType) => adminNotifications.push(eventType),
+  });
+
+  const response = await handler(createUnsubscribeEvent('unsubscribe-token', 'POST', 'List-Unsubscribe=One-Click'));
+
+  assert.equal(response.statusCode, 200);
+  assert.equal(response.headers.location, undefined);
+  assert.deepEqual(parseResponse(response), {
+    success: true,
+    message: 'You are unsubscribed.',
+  });
+  assert.deepEqual(unsubscribes, []);
+  assert.deepEqual(adminNotifications, []);
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
 test('invalid unsubscribe token redirects to failure', async () => {
   process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
   const handler = createHandler({
@@ -552,6 +607,38 @@ test('invalid unsubscribe token redirects to failure', async () => {
 
   assert.equal(response.statusCode, 302);
   assert.equal(response.headers.location, 'https://drakesfood.com/blog?subscription=invalid');
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
+test('invalid one-click unsubscribe token returns non-redirect failure', async () => {
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler({
+    findSubscriberByUnsubscribeTokenHash: async () => undefined,
+  });
+
+  const response = await handler(createUnsubscribeEvent('bad-token', 'POST', 'List-Unsubscribe=One-Click'));
+
+  assert.equal(response.statusCode, 404);
+  assert.equal(response.headers.location, undefined);
+  assert.deepEqual(parseResponse(response), {
+    success: false,
+    message: 'Unsubscribe token was not found.',
+  });
+  delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
+});
+
+test('missing one-click unsubscribe token returns non-redirect failure', async () => {
+  process.env.BLOG_SUBSCRIPTIONS_SITE_URL = 'https://drakesfood.com';
+  const handler = createHandler();
+
+  const response = await handler(createUnsubscribeEvent(undefined, 'POST', 'List-Unsubscribe=One-Click'));
+
+  assert.equal(response.statusCode, 400);
+  assert.equal(response.headers.location, undefined);
+  assert.deepEqual(parseResponse(response), {
+    success: false,
+    message: 'Missing unsubscribe token.',
+  });
   delete process.env.BLOG_SUBSCRIPTIONS_SITE_URL;
 });
 
