@@ -110,7 +110,7 @@ export class GamePageComponent implements AfterViewInit {
       this.pressedKeys.add(event.key.toLowerCase());
     }
 
-    if (event.key === 'Enter' || event.key === ' ') {
+    if ((event.key === 'Enter' || event.key === ' ') && !this.isInteractiveTarget(event.target)) {
       event.preventDefault();
       this.startRound();
     }
@@ -453,6 +453,18 @@ export class GamePageComponent implements AfterViewInit {
 
   private isControlKey(key: string): boolean {
     return ['ArrowLeft', 'ArrowRight', 'a', 'A', 'd', 'D'].includes(key);
+  }
+
+  private isInteractiveTarget(target: EventTarget | null): boolean {
+    if (!(target instanceof Element)) {
+      return false;
+    }
+
+    return Boolean(
+      target.closest(
+        'a, button, input, select, textarea, summary, [contenteditable="true"], [role="button"], [role="link"], [role="menuitem"], [role="tab"]',
+      ),
+    );
   }
 
   private clamp(value: number, min: number, max: number): number {
