@@ -21,6 +21,12 @@ const pageMetadata = {
       "Browse Drake's Food photos, including smoked meats, backyard pizza, family meals, and home-cooking experiments.",
     canonicalPath: '/gallery',
   },
+  '/game': {
+    title: "Frying Pan Food Catch Game | Drake's Food",
+    description:
+      "Play a tiny Drake's Food browser game: move the frying pan, catch the good food, and dodge the rotten stuff.",
+    canonicalPath: '/game',
+  },
   '/blog': {
     title: "Drake's Food Blog | Drake's Food",
     description:

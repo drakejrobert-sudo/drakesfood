@@ -1,0 +1,150 @@
+.game-page {
+  padding: 2rem 0 4rem;
+}
+
+.game-hero {
+  display: grid;
+  gap: 1.5rem;
+  align-items: end;
+  margin-bottom: 1.5rem;
+}
+
+.game-copy {
+  display: grid;
+  gap: 1rem;
+  max-width: 760px;
+}
+
+.game-copy h1 {
+  margin: 0;
+  max-width: 760px;
+  font-size: clamp(2rem, 10vw, 5.4rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  overflow-wrap: anywhere;
+}
+
+.game-copy p:not(.eyebrow) {
+  max-width: 690px;
+  color: var(--color-text-muted);
+  font-size: clamp(1rem, 2vw, 1.18rem);
+  line-height: 1.8;
+}
+
+.game-scoreboard {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  border: 1px solid rgba(109, 74, 163, 0.14);
+  border-radius: 1rem;
+  background: var(--color-surface);
+  padding: 0.75rem;
+  box-shadow: var(--shadow-card);
+}
+
+.game-scoreboard div {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+  border-radius: 0.7rem;
+  background: rgba(109, 74, 163, 0.08);
+  padding: 0.65rem 0.45rem;
+  text-align: center;
+}
+
+.game-scoreboard span {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.game-scoreboard strong {
+  color: var(--color-purple-dark);
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  line-height: 1;
+}
+
+.game-stage {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid rgba(109, 74, 163, 0.16);
+  border-radius: 1.6rem;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 245, 0.92), rgba(238, 231, 251, 0.72)),
+    var(--color-surface);
+  box-shadow: var(--shadow-photo);
+  touch-action: none;
+}
+
+.game-stage.is-playing {
+  cursor: none;
+}
+
+.game-canvas {
+  display: block;
+  width: 100%;
+  height: clamp(22rem, 45vh, 32rem);
+}
+
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: rgba(255, 250, 245, 0.74);
+  text-align: center;
+}
+
+.game-overlay h2 {
+  max-width: min(560px, 100%);
+  margin: 0 auto;
+  color: var(--color-text);
+  font-size: clamp(1.45rem, 8vw, 3.1rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+
+.game-status {
+  color: var(--color-purple-dark);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.game-overlay .button {
+  justify-self: center;
+}
+
+.game-instructions {
+  display: grid;
+  gap: 0.6rem;
+  max-width: 840px;
+  margin: 1rem auto 0;
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  text-align: center;
+}
+
+.game-instructions p:first-child {
+  color: var(--color-purple-dark);
+  font-weight: 800;
+}
+
+@media (min-width: 760px) {
+  .game-page {
+    padding-top: 3.5rem;
+  }
+
+  .game-hero {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+}
