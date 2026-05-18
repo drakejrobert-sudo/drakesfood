@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { AboutPageComponent } from './pages/about-page/about-page.component';
 import { BlogPostPageComponent } from './pages/blog-post-page/blog-post-page.component';
 import { GalleryPageComponent } from './pages/gallery-page/gallery-page.component';
+import { GamePageComponent } from './pages/game-page/game-page.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { RecipeSenseiPageComponent } from './pages/recipesensei-page/recipesensei-page.component';
 import { RecipeSenseiPrivacyPageComponent } from './pages/recipesensei-privacy-page/recipesensei-privacy-page.component';
@@ -12,6 +13,7 @@ import { SubmitPageComponent } from './pages/submit-page/submit-page.component';
 export const routes: Routes = [
   { path: '', component: HomePageComponent },
   { path: 'gallery', component: GalleryPageComponent },
+  { path: 'game', component: GamePageComponent },
   { path: 'blog', component: RecipesPageComponent },
   { path: 'blog/:slug', component: BlogPostPageComponent },
   { path: 'recipes', redirectTo: 'blog', pathMatch: 'full' },
