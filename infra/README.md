@@ -8,6 +8,7 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - Private bucket access restricted to CloudFront
 - ACM certificate for `drakesfood.com` and `www.drakesfood.com`
 - CloudFront distribution with HTTP-to-HTTPS redirects
+- CloudFront response headers policy for browser security headers
 - Route 53 alias records for apex and `www`
 - IAM user policy for GitHub Actions deployment
 - API Gateway HTTP API for recipe submissions
@@ -203,4 +204,4 @@ After DNS propagation, these URLs should work:
 
 The canonical URL is `https://drakesfood.com/`. The `www` hostname intentionally serves the same site through the same CloudFront distribution for compatibility; canonical metadata and sitemap URLs should continue to use the apex domain.
 
-Plain HTTP requests should redirect to HTTPS. Direct refreshes for Angular routes should return the app with a `200` response because CloudFront maps S3 `403` and `404` responses to `/index.html`.
+Plain HTTP requests should redirect to HTTPS. CloudFront should include the configured security response headers on viewer responses, including HSTS, CSP, content type sniffing protection, referrer policy, and frame protection. Direct refreshes for Angular routes should return the app with a `200` response because CloudFront maps S3 `403` and `404` responses to `/index.html`.
