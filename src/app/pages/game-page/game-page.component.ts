@@ -146,7 +146,7 @@ export class GamePageComponent implements AfterViewInit {
   }
 
   protected handlePointerMove(event: PointerEvent): void {
-    if (!this.canvas) {
+    if (!this.canvas || this.snapshot.status !== 'playing') {
       return;
     }
 

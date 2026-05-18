@@ -76,11 +76,11 @@
     linear-gradient(135deg, rgba(255, 250, 245, 0.92), rgba(238, 231, 251, 0.72)),
     var(--color-surface);
   box-shadow: var(--shadow-photo);
-  touch-action: none;
 }
 
 .game-stage.is-playing {
   cursor: none;
+  touch-action: none;
 }
 
 .game-canvas {
