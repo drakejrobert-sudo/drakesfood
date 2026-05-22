@@ -42,6 +42,16 @@ function read(rel) {
   return fs.readFileSync(path.join(ROOT, rel), "utf8");
 }
 
+function readSourceJson(rel, fallback) {
+  const file = path.join(sourceDir, rel);
+  if (!fs.existsSync(file)) return fallback;
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch {
+    return fallback;
+  }
+}
+
 function listSourceSkillNames() {
   const dir = path.join(sourceDir, "skills");
   if (!fs.existsSync(dir)) return [];
@@ -50,6 +60,11 @@ function listSourceSkillNames() {
     .filter((d) => d.isDirectory())
     .map((d) => d.name)
     .sort();
+}
+
+const configuredLegacyAliases = readSourceJson("legacy-aliases.json", []);
+for (const rel of configuredLegacyAliases) {
+  if (!required.includes(rel)) required.push(rel);
 }
 
 for (const rel of required) {
@@ -65,7 +80,7 @@ if (fs.existsSync(extraDir)) {
   }
 }
 
-for (const rel of [...generated, ...legacyAliases.filter(exists)]) {
+for (const rel of [...generated, ...legacyAliases.filter(exists), ...configuredLegacyAliases]) {
   if (exists(rel) && !read(rel).includes(MARKER)) failures.push(`missing marker in ${rel}`);
 }
 
