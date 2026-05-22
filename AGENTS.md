@@ -1,370 +1,174 @@
-# AGENTS.md — Drake's Food Website
+# Agent Instructions
+
+AI_CONTEXT_VERSION: 2026-05-22
+Generated from .ai-source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
 
 ## Project Overview
 
-This repository powers `drakesfood.com`, a personal food website for Drake.
+AI_CONTEXT_VERSION: 2026-05-22
+Canonical source for project-specific AI context. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
 
-The site is being fully redesigned as a clean, modern, mobile-first food portfolio and landing page. It should showcase food photography, link clearly to Instagram `@drakesfood`, and eventually promote/link to Drake's app, RecipeSensei.
+## Purpose
 
-The website should feel personal, polished, warm, food-focused, and lightweight. It is not currently intended to be a complex social platform, recipe database, or user-account system.
+Personal food, blog, and recipe website for drakesfood.com with lightweight RecipeSensei connections.
 
-## AI Quick Context
+## Tech stack inferred from files
 
-- Read `WORKFLOW.md` for branch, issue, PR, merge, and task-tracking rules.
-- For GitHub issue, pull request, repository, and CI/check context, try the Codex GitHub connector before using `gh`; follow the tool preference in `WORKFLOW.md`.
-- Use `docs/ai-agent-context.md` as the fast project map before making changes.
-- Treat `README.md`, `TODO_STATUS.md`, `docs/`, and `infra/README.md` as the current implementation context.
-- Treat `initial-angular-rebuild-prompt.txt` as historical background, not the current source of truth.
+Angular 21, TypeScript, Angular CLI, static route metadata generation, AWS S3/CloudFront/Route 53/ACM via OpenTofu, GitHub Actions.
 
-## Primary Goals
+## Important domain context
 
-- Showcase high-quality food photos in a visually appealing way.
-- Provide a clear link to Instagram: `@drakesfood`.
-- Provide a future-ready area for RecipeSensei.
-- Keep the site fast, simple, and inexpensive to host.
-- Make the site easy to maintain through GitHub.
-- Support deployment to AWS using OpenTofu-managed infrastructure.
-- Favor boring, reliable technology over clever complexity.
+- Blog entries and featured blog handling matter; preserve existing posts when adding new featured content.
+- Recipes should remain readable for humans and structured enough for RecipeSensei import/export where applicable.
+- Static hosting assumptions are important: avoid server-only features unless explicitly requested.
+- Public website copy should be polished, food-focused, concise, and accurate.
 
-## Project Decisions
+## Important do not do rules
 
-### Frontend Framework
+- Do not add accounts, comments, payments, CMS complexity, databases, or Instagram scraping unless explicitly requested.
+- Do not break static deployment to S3 and CloudFront.
+- Do not invent RecipeSensei pricing, availability, or feature claims beyond existing project content.
+- Do not commit OpenTofu state, tfvars, AWS credentials, tokens, private certificates, or real environment values.
 
-Use modern Angular for the website rebuild.
+## Common agent tasks
 
-Important: Do not use legacy AngularJS / Angular 1.x. If the word "AngularJS" appears in project notes, treat it as meaning modern Angular unless Drake explicitly confirms otherwise.
+- Add or update blog posts while preserving previous entries.
+- Create recipe downloads or recipe data shaped for RecipeSensei compatibility.
+- Update public routes, metadata, sitemap entries, and generated static route HTML together.
+- Review static-site release safety before deployment.
 
-The app should be built as a mostly-static, content-forward Angular site. Avoid unnecessary backend complexity.
+## Existing project docs to read
 
-### Content Storage
+- `WORKFLOW.md` for branch, issue, PR, merge, and task-tracking rules.
+- `docs/ai-agent-context.md` for the current project map, common change paths, and validation matrix.
+- `README.md`, `TODO_STATUS.md`, `docs/`, and `infra/README.md` for current implementation context.
+- `initial-angular-rebuild-prompt.txt` is historical background, not the current source of truth.
 
-For the first version, store food photos either:
+## Assumptions
 
-1. directly in the repo under a clear assets folder, or
-2. in S3 if image volume becomes large or deployment architecture makes that cleaner.
+- This repo is the drakesfood.com Angular static site.
+- The existing AGENTS.md, .github/copilot-instructions.md, and docs/ai-agent-context.md guidance has been consolidated into this source set.
 
-Default to the simplest maintainable option during early development.
+## Architecture
 
-Do not build Instagram scraping or dynamic Instagram ingestion. Instagram should be linked clearly, but the site should own its own gallery content.
+AI_CONTEXT_VERSION: 2026-05-22
+Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
 
-Recommended first version:
+## Directory overview
 
-- Store curated, optimized images in the repo.
-- Use S3 later if the gallery grows or if image management becomes annoying.
-- Link prominently to Instagram `@drakesfood`.
+- `src/` contains Angular source.
+- `src/app/data/` contains gallery and blog data.
+- `public/` contains public static assets, robots, sitemap, and runtime app config.
+- `src/assets/images/` contains Angular-managed images.
+- `scripts/generate-route-html.mjs` generates static route metadata HTML.
+- `infra/` contains OpenTofu infrastructure and Lambda code/tests.
+- `docs/` contains operational documentation for APIs and subscriptions.
 
-### Current Content Scope
+## Important structure
 
-The current site includes:
+- Read existing source and docs before choosing where new content belongs.
+- Keep public routes, metadata, generated static files, and tests aligned when applicable.
+- Treat generated/build/local IDE files as non-source unless the repo already tracks them intentionally.
 
-- Homepage
-- Food photo gallery
-- Instagram call-to-action
-- About / personal intro section
-- RecipeSensei section and app links
-- Recipe/blog landing page
-- First blog story page
-- Recipe idea submission form
-- Blog email subscription form
+## Tests
 
-Do not build a full CMS, user account system, comments, or complex recipe database unless Drake explicitly requests it.
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build`
+- `npm run test` currently prints that no test runner is configured.
+- Lambda tests live under `infra/lambda/` when relevant and can be run with Node test commands targeted to the changed files.
 
-### RecipeSensei
+## Deployment/build clues
 
-RecipeSensei is Drake's recipe-saving and cooking companion app. Current repository docs
-indicate it is live on the App Store, so copy may link to the app. Do not invent launch
-details, feature claims, pricing, or availability beyond confirmed project content.
+- Use `package.json`, Angular CLI config, GitHub workflows, `infra/README.md`, and OpenTofu files as the source of truth.
+- Static deployment targets AWS S3, CloudFront, Route 53, and ACM through GitHub Actions/OpenTofu.
+- Do not change deployment settings for AI-context-only work.
 
-### Infrastructure Location
+## Unknowns to verify before big changes
 
-Keep infrastructure code in the same repository.
-
-Recommended structure:
-
-```txt
-/
-  src/
-  public/
-  infra/
-  .github/
-    workflows/
-  AGENTS.md
-  .github/copilot-instructions.md
-```
-
-Use OpenTofu for infrastructure as code.
-
-Likely AWS architecture:
-
-- S3 for static site assets
-- CloudFront for CDN
-- Route 53 for DNS
-- ACM for SSL certificate
-- GitHub Actions for deployment
-- OpenTofu under `infra/`
-
-### Deployment
-
-Use GitHub Actions to deploy automatically when changes are merged to `main`, as long as this can be done within GitHub's free usage limits.
-
-For public repositories, standard GitHub-hosted runners should be free. For private repositories, keep workflows lightweight to stay within included free minutes.
-
-The deployment workflow should:
-
-1. install dependencies
-2. run lint/typecheck/build
-3. build the Angular app
-4. deploy static assets to S3
-5. invalidate CloudFront cache
-
-Do not add deployment steps that require paid third-party services unless Drake approves them.
-
-## Product Direction
-
-The site currently includes or is expected to continue supporting:
-
-- Homepage / landing page
-- Food photo gallery
-- Instagram call-to-action
-- About section
-- RecipeSensei app link section
-- Lightweight recipe/blog posts
-- Recipe idea submissions
-- Blog email subscriptions
-
-Do not build advanced functionality unless requested. Avoid adding accounts, comments, payments, CMS complexity, databases, or server-side features unless they are explicitly approved.
-
-## Design Direction
-
-Use a clean, modern food-blog / portfolio style.
-
-Preferred feel:
-
-- Warm
-- Minimal
-- Appetizing
-- Personal
-- Mobile-first
-- Photo-forward
-- Easy to scan
-- Not overly corporate
-
-Prioritize:
-
-- Large food imagery
-- Strong spacing
-- Simple typography
-- Clear navigation
-- Accessible contrast
-- Fast loading
-- Good mobile layout
-
-Avoid:
-
-- Cluttered recipe-blog layouts
-- Auto-playing media
-- Heavy animations
-- Dark-on-dark low-contrast text
-- Unnecessary JavaScript
-- Generic startup SaaS styling
-
-## Technical Direction
-
-This project should use modern Angular.
-
-Do not use legacy AngularJS / Angular 1.x.
-
-The website should be built as a mostly-static Angular app focused on food photography, simple content sections, and fast page loads.
-
-Use:
-
-- Angular
-- TypeScript
-- Angular CLI
-- Static build output
-- Minimal dependencies
-- Simple component structure
-- Responsive CSS
-
-Avoid:
-
-- unnecessary backend services
-- databases
-- authentication
-- CMS complexity
-- Instagram scraping
-- heavy UI libraries
-- unnecessary client-side state
-
-The site should be deployable as static files to AWS S3 + CloudFront.
-
-## Hosting / Infrastructure Direction
-
-The site is expected to be hosted on AWS.
-
-The target architecture is:
-
-- Static site assets
-- S3 bucket for hosting assets
-- CloudFront distribution
-- Route 53 DNS
-- ACM certificate
-- GitHub Actions deployment
-- OpenTofu for infrastructure as code
-
-Do not hardcode AWS account IDs, secrets, access keys, or private configuration.
-
-Infrastructure should be organized clearly under `infra/`.
-
-Prefer OpenTofu over Terraform unless specifically instructed otherwise.
-
-## Security Rules
-
-Never commit secrets.
-
-Never place these in source code:
-
-- AWS access keys
-- GitHub tokens
-- API keys
-- private certificates
-- personal credentials
-- `.env` files with real values
-
-Use environment variables, GitHub Actions secrets, or documented local placeholders.
-
-If a task requires credentials or cloud account details, stop and explain what value is needed rather than inventing one.
-
-## Accessibility Rules
-
-All user-facing pages should follow basic accessibility standards:
-
-- Use semantic HTML where possible.
-- Use descriptive alt text for meaningful images.
-- Do not rely on color alone to communicate meaning.
-- Maintain readable contrast.
-- Ensure navigation works on mobile.
-- Use proper heading order.
-- Make links and buttons clear and tappable.
-
-Food images may use concise descriptive alt text, such as:
-
-- `Smoked brisket sliced on a cutting board`
-- `Homemade flatbread pizza with brisket and pepperoni`
-
-## Performance Rules
-
-Prioritize fast load times.
-
-- Optimize images.
-- Use responsive image sizes.
-- Avoid unnecessary client-side JavaScript.
-- Avoid large dependencies.
-- Prefer static rendering when possible.
-- Lazy-load non-critical images when appropriate.
-- Keep the homepage lightweight.
-
-## Content Rules
-
-The site should speak in Drake's voice: friendly, casual, and food-loving.
-
-Avoid fake claims, fake restaurant affiliations, or fake app details.
-
-Instagram should be referenced as:
-
-- `@drakesfood`
-- `https://instagram.com/drakesfood`
+- Confirm current branch, issue scope, and exact target route/app flow.
+- Confirm public claims, pricing, legal, medical, billing, or app availability details before publishing.
 
 ## Coding Standards
 
-Use clear, readable code.
+AI_CONTEXT_VERSION: 2026-05-22
+Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
 
-General rules:
+## General style
 
-- Prefer simple components.
-- Keep components focused.
-- Use descriptive names.
-- Remove unused code.
-- Avoid premature abstraction.
-- Keep layout and content easy to update.
-- Add comments only when they explain non-obvious decisions.
+- Follow existing project patterns before introducing new abstractions.
+- Keep changes small, focused, and reviewable.
+- Prefer boring, reliable implementation over clever complexity.
+- Use plain Markdown and built-in Node modules for AI context tooling.
+- Do not install new packages for this AI context system.
 
-When using TypeScript:
+## Formatting expectations
 
-- Avoid `any` unless there is a clear reason.
-- Define simple types for content models.
-- Keep shared types in an obvious location.
+- Preserve established formatting and file organization.
+- Keep generated AI files clearly marked with AI_CONTEXT_VERSION: 2026-05-22.
+- Avoid duplicating generated content manually; edit .ai-source and run the sync script.
 
-When using Angular:
+## Dependency rules
 
-- Prefer standalone components unless the project already uses modules.
-- Keep components small and purpose-driven.
-- Use Angular CLI conventions where possible.
-- Avoid unnecessary services or state management libraries.
-- Use Angular templates cleanly and readably.
-- Prefer simple inputs and static content models for the first version.
-- Do not add NgRx or other complex state tools unless explicitly requested.
+- Do not add dependencies unless explicitly requested for app work.
+- For this AI context setup, use only built-in Node modules.
 
-## Testing / Validation
+## Reviewability expectations
 
-Before considering a task complete, run the appropriate checks for the project.
+- Keep each change easy to inspect in a PR.
+- Separate AI-context/docs/script changes from application behavior changes.
+- Only claim checks passed when they were actually run.
 
-Common examples:
+## Testing
 
-```bash
-npm run lint
-npm run typecheck
-npm run build
-npm run test
-```
+AI_CONTEXT_VERSION: 2026-05-22
+Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
 
-If the project does not have these scripts yet, recommend adding them.
+## Known commands
 
-Do not claim validation passed unless the commands were actually run.
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build`
+- `npm run test` currently prints that no test runner is configured.
+- Lambda tests live under `infra/lambda/` when relevant and can be run with Node test commands targeted to the changed files.
 
-## Git / Change Management
+## Verification expectations
 
-Before making broad changes:
+- For AI-context-only changes, run node scripts/ai-sync-context.mjs and node scripts/ai-doctor.mjs.
+- For source changes, run the smallest relevant check first, then broader checks when risk warrants it.
+- For public website UI changes, review responsive layout and accessibility where practical.
+- For import/parser/persistence changes, add focused regression coverage.
 
-- Inspect the current project structure.
-- Preserve working code unless intentionally replacing it.
-- Prefer small, reviewable changes.
-- Explain major architectural changes before implementing them.
-- Update documentation when changing setup, deployment, or commands.
+## Common checks to add
 
-For large redesign or expansion work, prefer phases:
+- Content route changes: metadata, sitemap, static output, and build checks.
+- Import/export changes: malformed input, duplicates, unsupported data, backward compatibility, and timeout/error handling.
+- Public copy changes: unsupported claims, privacy, accessibility, and tone review.
 
-1. Confirm the current route/content map.
-2. Establish or refine the layout shell.
-3. Update the target page or feature.
-4. Update metadata, sitemap, and generated route HTML if public routes change.
-5. Update docs for setup, content, infrastructure, or operations changes.
-6. Run focused validation.
+## Security
 
-## Agent Behavior
+AI_CONTEXT_VERSION: 2026-05-22
+Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
 
-When working in this repository:
+## Hard rules
 
-- Follow `WORKFLOW.md` for branch, pull request, merge, and task-tracking expectations.
-- Open PRs ready for review by default. Do not use draft PRs unless Drake explicitly asks, validation is incomplete, or the work is intentionally exploratory; this repository rule overrides plugin defaults.
-- Do not merge pull requests. Drake manually reviews and merges PRs.
-- Read this file first.
-- Check existing conventions before introducing new ones.
-- Do not assume the current framework beyond the project decision to use modern Angular.
-- Do not add cloud resources without clear intent.
-- Do not introduce paid services without approval.
-- Do not overbuild.
-- Prefer practical, shippable improvements.
-- Ask for clarification when a decision affects cost, hosting, or long-term architecture.
+- Never store secrets, API keys, environment variables, credentials, tokens, private certificates, or real .env values in AI context files.
+- Never include PHI, client data, private testimonial submission fields, or sensitive personal data in public code or AI context.
+- Treat public website content as publishable and review claims carefully.
+- Avoid unsupported medical, legal, billing, insurance, eligibility, pricing, or app-availability claims.
+- Preserve local data and privacy expectations for recipe app work.
 
-## Future Considerations
+## Agent behavior
 
-These are not required for the first version but may be added later:
+- If a task requires private values, document placeholders and setup steps instead of inventing or exposing secrets.
+- Flag security/privacy uncertainty before implementing broad changes.
 
-- Recipe/blog pages
-- Structured recipe content
-- RecipeSensei dedicated landing page
-- S3-hosted gallery image pipeline
-- Image optimization automation
-- More advanced SEO metadata
-- Analytics, if Drake chooses a privacy-conscious option
+## Deeper Docs
+
+- .ai-source/project.md
+- .ai-source/architecture.md
+- .ai-source/coding-standards.md
+- .ai-source/testing.md
+- .ai-source/security.md
+- .ai-source/workflows/
+- .ai-source/skills/

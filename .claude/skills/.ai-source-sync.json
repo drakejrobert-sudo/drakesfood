@@ -1,0 +1,11 @@
+{
+  "marker": "AI_CONTEXT_VERSION: 2026-05-22",
+  "skills": [
+    "add-featured-blog-entry",
+    "create-recipe-downloads",
+    "implement-issue",
+    "pr-review",
+    "static-site-release-check",
+    "test-repair-loop"
+  ]
+}
