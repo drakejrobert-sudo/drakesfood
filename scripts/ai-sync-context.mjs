@@ -8,7 +8,7 @@ const MIRROR_MANIFEST = ".ai-source-sync.json";
 const ROOT = process.cwd();
 const sourceDir = path.join(ROOT, ".ai-source");
 
-const legacyAliases = [
+const knownLegacyAliases = [
   {
     rel: "copilot-instructions.md",
     title: "Root Copilot Instructions",
@@ -25,6 +25,16 @@ const legacyAliases = [
 
 function read(rel) {
   return fs.readFileSync(path.join(sourceDir, rel), "utf8").trim();
+}
+
+function readJson(rel, fallback) {
+  const file = path.join(sourceDir, rel);
+  if (!fs.existsSync(file)) return fallback;
+  try {
+    return JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch {
+    return fallback;
+  }
 }
 
 function write(rel, body) {
@@ -123,8 +133,10 @@ function syncExtraInstructions() {
 }
 
 function syncLegacyAliases() {
-  for (const alias of legacyAliases) {
-    if (!fs.existsSync(path.join(ROOT, alias.rel))) continue;
+  const configuredAliases = new Set(readJson("legacy-aliases.json", []));
+  for (const alias of knownLegacyAliases) {
+    const shouldGenerate = configuredAliases.has(alias.rel) || fs.existsSync(path.join(ROOT, alias.rel));
+    if (!shouldGenerate) continue;
     write(
       alias.rel,
       `# ${alias.title}\n\n${MARKER}\nGenerated from .ai-source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.\n\n${alias.body}\n\nPrimary generated file: \`${alias.target}\`.\nCanonical source directory: \`.ai-source/\`.\n`
