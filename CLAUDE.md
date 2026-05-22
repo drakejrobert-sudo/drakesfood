@@ -1,67 +1,11 @@
-# GitHub Copilot Instructions
+# Claude Code Instructions
 
 AI_CONTEXT_VERSION: 2026-05-22
 Generated from .ai-source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
 
-Use AGENTS.md and .ai-source as the canonical project guidance. Follow existing code patterns, keep changes small and reviewable, and run only the relevant checks for the change.
+Use .ai-source as the canonical source of truth. Start with AGENTS.md for a compact generated view, then inspect .ai-source files for deeper project-specific context.
 
-## Repo-Wide Expectations
-
-AI_CONTEXT_VERSION: 2026-05-22
-Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
-
-## General style
-
-- Follow existing project patterns before introducing new abstractions.
-- Keep changes small, focused, and reviewable.
-- Prefer boring, reliable implementation over clever complexity.
-- Use plain Markdown and built-in Node modules for AI context tooling.
-- Do not install new packages for this AI context system.
-
-## Formatting expectations
-
-- Preserve established formatting and file organization.
-- Keep generated AI files clearly marked with AI_CONTEXT_VERSION: 2026-05-22.
-- Avoid duplicating generated content manually; edit .ai-source and run the sync script.
-
-## Dependency rules
-
-- Do not add dependencies unless explicitly requested for app work.
-- For this AI context setup, use only built-in Node modules.
-
-## Reviewability expectations
-
-- Keep each change easy to inspect in a PR.
-- Separate AI-context/docs/script changes from application behavior changes.
-- Only claim checks passed when they were actually run.
-
-## Testing and Build
-
-AI_CONTEXT_VERSION: 2026-05-22
-Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
-
-## Known commands
-
-- `npm run lint`
-- `npm run typecheck`
-- `npm run build`
-- `npm run test` currently prints that no test runner is configured.
-- Lambda tests live under `infra/lambda/` when relevant and can be run with Node test commands targeted to the changed files.
-
-## Verification expectations
-
-- For AI-context-only changes, run node scripts/ai-sync-context.mjs and node scripts/ai-doctor.mjs.
-- For source changes, run the smallest relevant check first, then broader checks when risk warrants it.
-- For public website UI changes, review responsive layout and accessibility where practical.
-- For import/parser/persistence changes, add focused regression coverage.
-
-## Common checks to add
-
-- Content route changes: metadata, sitemap, static output, and build checks.
-- Import/export changes: malformed input, duplicates, unsupported data, backward compatibility, and timeout/error handling.
-- Public copy changes: unsupported claims, privacy, accessibility, and tone review.
-
-## Project-Specific Behavior
+## High-Priority Behavior
 
 AI_CONTEXT_VERSION: 2026-05-22
 Canonical source for project-specific AI context. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
@@ -107,7 +51,7 @@ Angular 21, TypeScript, Angular CLI, static route metadata generation, AWS S3/Cl
 - This repo is the drakesfood.com Angular static site.
 - The existing AGENTS.md, .github/copilot-instructions.md, and docs/ai-agent-context.md guidance has been consolidated into this source set.
 
-## Security and Privacy
+## Cautions
 
 AI_CONTEXT_VERSION: 2026-05-22
 Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
@@ -124,3 +68,29 @@ Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-cont
 
 - If a task requires private values, document placeholders and setup steps instead of inventing or exposing secrets.
 - Flag security/privacy uncertainty before implementing broad changes.
+
+## Verification
+
+AI_CONTEXT_VERSION: 2026-05-22
+Canonical source. Prefer editing .ai-source files, then run scripts/ai-sync-context.mjs.
+
+## Known commands
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run build`
+- `npm run test` currently prints that no test runner is configured.
+- Lambda tests live under `infra/lambda/` when relevant and can be run with Node test commands targeted to the changed files.
+
+## Verification expectations
+
+- For AI-context-only changes, run node scripts/ai-sync-context.mjs and node scripts/ai-doctor.mjs.
+- For source changes, run the smallest relevant check first, then broader checks when risk warrants it.
+- For public website UI changes, review responsive layout and accessibility where practical.
+- For import/parser/persistence changes, add focused regression coverage.
+
+## Common checks to add
+
+- Content route changes: metadata, sitemap, static output, and build checks.
+- Import/export changes: malformed input, duplicates, unsupported data, backward compatibility, and timeout/error handling.
+- Public copy changes: unsupported claims, privacy, accessibility, and tone review.
