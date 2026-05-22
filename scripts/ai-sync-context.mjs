@@ -3,6 +3,8 @@ import path from "node:path";
 
 const VERSION = "2026-05-22";
 const MARKER = `AI_CONTEXT_VERSION: ${VERSION}`;
+const GENERATED_COMMENT = `<!-- ${MARKER}; generated from .ai-source. -->`;
+const MIRROR_MANIFEST = ".ai-source-sync.json";
 const ROOT = process.cwd();
 const sourceDir = path.join(ROOT, ".ai-source");
 
@@ -31,6 +33,10 @@ function write(rel, body) {
   fs.writeFileSync(file, body.endsWith("\n") ? body : `${body}\n`);
 }
 
+function removePath(rel) {
+  fs.rmSync(path.join(ROOT, rel), { recursive: true, force: true });
+}
+
 function stripTitle(md) {
   return md.replace(/^# .*\n+/, "").trim();
 }
@@ -45,11 +51,48 @@ function listDirs(rel) {
     .sort();
 }
 
-function copySkills(targetRoot) {
-  for (const name of listDirs("skills")) {
-    const body = fs.readFileSync(path.join(sourceDir, "skills", name, "SKILL.md"), "utf8");
-    write(path.join(targetRoot, name, "SKILL.md"), body);
+function listTargetDirs(rel) {
+  const dir = path.join(ROOT, rel);
+  if (!fs.existsSync(dir)) return [];
+  return fs
+    .readdirSync(dir, { withFileTypes: true })
+    .filter((d) => d.isDirectory())
+    .map((d) => d.name)
+    .sort();
+}
+
+function readMirrorManifest(targetRoot) {
+  const file = path.join(ROOT, targetRoot, MIRROR_MANIFEST);
+  if (!fs.existsSync(file)) return [];
+  try {
+    const manifest = JSON.parse(fs.readFileSync(file, "utf8"));
+    return Array.isArray(manifest.skills) ? manifest.skills : [];
+  } catch {
+    return [];
   }
+}
+
+function withGeneratedComment(body) {
+  if (body.includes(GENERATED_COMMENT)) return body;
+  const frontmatterMatch = body.match(/^---\n[\s\S]*?\n---\n/);
+  if (!frontmatterMatch) return `${GENERATED_COMMENT}\n${body}`;
+  return `${frontmatterMatch[0]}\n${GENERATED_COMMENT}\n${body.slice(frontmatterMatch[0].length)}`;
+}
+
+function copySkills(targetRoot) {
+  const sourceSkills = listDirs("skills");
+  const desired = new Set(sourceSkills);
+  const previouslyMirrored = new Set(readMirrorManifest(targetRoot));
+  for (const name of listTargetDirs(targetRoot)) {
+    const skillFile = path.join(ROOT, targetRoot, name, "SKILL.md");
+    const isGenerated = previouslyMirrored.has(name) || (fs.existsSync(skillFile) && fs.readFileSync(skillFile, "utf8").includes(GENERATED_COMMENT));
+    if (!desired.has(name) && isGenerated) removePath(path.join(targetRoot, name));
+  }
+  for (const name of sourceSkills) {
+    const body = fs.readFileSync(path.join(sourceDir, "skills", name, "SKILL.md"), "utf8");
+    write(path.join(targetRoot, name, "SKILL.md"), withGeneratedComment(body));
+  }
+  write(path.join(targetRoot, MIRROR_MANIFEST), `${JSON.stringify({ marker: MARKER, skills: sourceSkills }, null, 2)}\n`);
 }
 
 function workflowPrompt(name, title) {
@@ -60,11 +103,22 @@ function workflowPrompt(name, title) {
 
 function syncExtraInstructions() {
   const extraDir = path.join(sourceDir, "github-instructions");
-  if (!fs.existsSync(extraDir)) return;
-  for (const file of fs.readdirSync(extraDir).sort()) {
-    if (file.endsWith(".instructions.md")) {
-      write(path.join(".github/instructions", file), fs.readFileSync(path.join(extraDir, file), "utf8"));
+  const targetDir = path.join(ROOT, ".github/instructions");
+  const desired = new Set(["project.instructions.md", "testing.instructions.md"]);
+  if (fs.existsSync(extraDir)) {
+    for (const file of fs.readdirSync(extraDir).sort()) {
+      if (file.endsWith(".instructions.md")) {
+        desired.add(file);
+        write(path.join(".github/instructions", file), fs.readFileSync(path.join(extraDir, file), "utf8"));
+      }
     }
+  }
+  if (!fs.existsSync(targetDir)) return;
+  for (const file of fs.readdirSync(targetDir).sort()) {
+    if (!file.endsWith(".instructions.md") || desired.has(file)) continue;
+    const rel = path.join(".github/instructions", file);
+    const body = fs.readFileSync(path.join(ROOT, rel), "utf8");
+    if (body.includes(MARKER)) removePath(rel);
   }
 }
 

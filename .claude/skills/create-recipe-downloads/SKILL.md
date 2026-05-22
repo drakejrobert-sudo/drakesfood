@@ -3,6 +3,8 @@ name: create-recipe-downloads
 description: Use when creating downloadable recipe content or RecipeSensei-compatible recipe data.
 ---
 
+<!-- AI_CONTEXT_VERSION: 2026-05-22; generated from .ai-source. -->
+
 # Create Recipe Downloads
 
 Use this skill when creating downloadable recipe content or RecipeSensei-compatible recipe data.

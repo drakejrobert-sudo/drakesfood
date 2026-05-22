@@ -3,6 +3,8 @@ name: implement-issue
 description: Use when implementing a tracked issue or concrete requested change.
 ---
 
+<!-- AI_CONTEXT_VERSION: 2026-05-22; generated from .ai-source. -->
+
 # Implement Issue
 
 Use this skill when implementing a tracked issue or concrete requested change.

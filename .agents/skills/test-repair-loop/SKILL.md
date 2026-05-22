@@ -3,6 +3,8 @@ name: test-repair-loop
 description: Use when tests, builds, or checks fail and need a focused repair cycle.
 ---
 
+<!-- AI_CONTEXT_VERSION: 2026-05-22; generated from .ai-source. -->
+
 # Test Repair Loop
 
 Use this skill when tests, builds, or checks fail and need a focused repair cycle.

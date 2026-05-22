@@ -3,6 +3,8 @@ name: pr-review
 description: Use when reviewing a PR or local diff for project-specific correctness and safety.
 ---
 
+<!-- AI_CONTEXT_VERSION: 2026-05-22; generated from .ai-source. -->
+
 # Pr Review
 
 Use this skill when reviewing a PR or local diff for project-specific correctness and safety.

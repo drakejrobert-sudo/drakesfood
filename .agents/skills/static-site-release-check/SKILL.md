@@ -3,6 +3,8 @@ name: static-site-release-check
 description: Use before changes that affect deployability, routes, SEO metadata, or public static assets.
 ---
 
+<!-- AI_CONTEXT_VERSION: 2026-05-22; generated from .ai-source. -->
+
 # Static Site Release Check
 
 Use this skill when Use before changes that affect deployability, routes, SEO metadata, or public static assets.

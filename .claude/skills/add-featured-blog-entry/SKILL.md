@@ -3,6 +3,8 @@ name: add-featured-blog-entry
 description: Use when adding a new featured blog entry without losing or overwriting earlier posts.
 ---
 
+<!-- AI_CONTEXT_VERSION: 2026-05-22; generated from .ai-source. -->
+
 # Add Featured Blog Entry
 
 Use this skill when adding a new featured blog entry without losing or overwriting earlier posts.
