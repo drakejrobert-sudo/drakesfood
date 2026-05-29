@@ -22,6 +22,8 @@ jobs:
         run: npm run lint
       - name: Type check
         run: npm run typecheck
+      - name: Check blog notification metadata
+        run: npm run check:blog-notifications
       - name: Build
         run: npm run build
       - name: Serve production build for audit
