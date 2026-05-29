@@ -7,8 +7,13 @@ const notificationPostsPath = 'infra/lambda/blog-subscriptions/blog-notification
 
 const blogPosts = extractBlogPosts(await readFile(blogPostsPath, 'utf8'));
 const { blogNotificationPosts } = await import(pathToFileURL(`${process.cwd()}/${notificationPostsPath}`));
-const notificationPostsBySlug = new Map(blogNotificationPosts.map((post) => [post.slug, post]));
 const errors = [];
+
+for (const duplicateSlug of findDuplicateSlugs(blogNotificationPosts)) {
+  errors.push(`Duplicate notification metadata slug "${duplicateSlug}" found.`);
+}
+
+const notificationPostsBySlug = new Map(blogNotificationPosts.map((post) => [post.slug, post]));
 
 for (const blogPost of blogPosts) {
   const notificationPost = notificationPostsBySlug.get(blogPost.slug);
@@ -72,6 +77,22 @@ function findBlogPostsDeclaration(node) {
   }
 
   return ts.forEachChild(node, findBlogPostsDeclaration);
+}
+
+function findDuplicateSlugs(notificationPosts) {
+  const seenSlugs = new Set();
+  const duplicateSlugs = new Set();
+
+  for (const post of notificationPosts) {
+    if (seenSlugs.has(post.slug)) {
+      duplicateSlugs.add(post.slug);
+      continue;
+    }
+
+    seenSlugs.add(post.slug);
+  }
+
+  return duplicateSlugs;
 }
 
 function getRequiredStringProperty(objectLiteral, propertyName) {
