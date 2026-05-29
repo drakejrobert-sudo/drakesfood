@@ -2,9 +2,83 @@ import { BlogPost } from './blog-post.model';
 
 const mothersDayImagePath = '/assets/blog/mothers-day-baking';
 const sweetTurkeyBowlImagePath = '/assets/blog/chef-eds-sweet-turkey-bowl';
+const mexicanStreetCornImagePath = '/assets/blog/drews-mexican-street-corn';
 const recipeSenseiDownloadUrl = 'https://apps.apple.com/us/app/recipesensei/id6759845210';
 
 export const blogPosts: BlogPost[] = [
+  {
+    title: "Drew's Mexican Street Corn",
+    slug: 'drews-mexican-street-corn',
+    eyebrow: 'Family recipes',
+    date: 'May 29, 2026',
+    summary: 'A smoky, creamy, slightly charred spin on Mexican street corn for taco night.',
+    heroImage: {
+      src: `${mexicanStreetCornImagePath}/5-taquitos-on-corn-with-tajin.JPG`,
+      alt: 'Homemade taquitos served over creamy Mexican street corn and topped with Tajín',
+    },
+    recipeTitle: 'Mexican Street Corn',
+    submittedBy: 'Drew',
+    recipeCredit: 'Recipe inspiration credit goes to Drew.',
+    body: [
+      "Drew made this in bulk for our Mother's Day celebration at our mom's house. It was a delicious, creamy topping for the taco bar we had, and then he tasked me with \"enhancing\" and \"fancying up\" the recipe, which I gladly attempted.",
+      'Now, what I know about Mexican street corn is mostly from movies and the massive amount of Food Network content I have seen. What I always think of is corn on the cob roasted over fire, coated in some creamy sauce, usually sprinkled with a red spice like chili powder or paprika, and potentially some cheese.',
+      'With all of that in mind, I wanted to maintain the essence of the recipe as more of a creamy corn dish than the traditional corn-on-the-cob situation, while still pulling in some of those same street corn notes of flavor.',
+      'I started by brushing the corn with mayo to get that flavor incorporated, then threw the ears on my smoker grill along with some kielbasa I most definitely charred due to a flare-up. I cooked the corn around 15 to 20 minutes at roughly 350°F while rotating it, with a few flare-ups helping add some extra char.',
+      'I sliced the corn off the cob and started with a couple knobs of melted butter in a pot. I tossed in all six ears of kernels and seasoned them with pepper, garlic powder, chili powder, paprika, and cayenne.',
+      'Once everything smelled fragrant, I added some mayonnaise and a bit of sour cream until I got the texture I wanted. I also did a squirt of hot sauce for good measure. I basically cooked the mixture, stirring occasionally, until it was hot and creamy, then served it as a bed for my homemade taquitos and topped the whole lot with a bit of Tajín.',
+      'Now, do I expect you to go buy fresh corn, bust out the grill, char it, try to figure out what completely random amounts of seasonings and ingredients I used, and throw together my version of Mexican street corn for your next family taco party? Yeah, I think I do.',
+      'The smoky, slightly charred flavor played so nicely with the spices, and the Tajín topping gave a little zingy freshness to cut through some of that decadent fat from the mayo and sour cream. The extra effort added more layers of flavor, where the sum of its parts had their own individual jobs and came together in a bite that just felt right.',
+      "Don't get me wrong, the original recipe Drew shared had good taste and was most definitely Mexican street corn, in the way that a Taco Bell taco is a taco. I'll knock down some Taco Bell. It is delicious. But would I say there were many layers of flavor there? Not unless we are talking about that Crunchwrap Supreme; that thing is a stroke of genius.",
+    ],
+    recipeNotes: [
+      "Drew's original version was a creamy Mexican street corn-style topping for a Mother's Day taco bar.",
+      'I brushed the corn with mayo before grilling, then charred it on the smoker grill at about 350°F for 15 to 20 minutes.',
+      'The finished version uses butter, mayo, sour cream, warm spices, hot sauce, and optional Tajín.',
+    ],
+    recipeDownload: {
+      label: 'Download Recipe',
+      href: '/recipes/drews-mexican-street-corn-recipe.pdf',
+      download: 'drews-mexican-street-corn-recipe.pdf',
+      ariaLabel: "Download Drew's Mexican Street Corn recipe",
+    },
+    recipeSenseiImport: {
+      label: 'Import into RecipeSensei',
+      href: '/recipesensei/imports/drews-mexican-street-corn.recipesensei',
+      download: 'drews-mexican-street-corn.recipesensei',
+      ariaLabel: "Download Drew's Mexican Street Corn RecipeSensei import file",
+    },
+    recipeSenseiApp: {
+      label: 'Download RecipeSensei',
+      href: recipeSenseiDownloadUrl,
+      external: true,
+      ariaLabel: 'Download RecipeSensei on the App Store, opens in a new tab',
+    },
+    importNote:
+      'Tap the RecipeSensei import file, then use the share arrow and choose Open in RecipeSensei. Or save it and import it from Settings.',
+    galleryTitle: 'A few scenes from the corn upgrade.',
+    gallery: [
+      {
+        src: `${mexicanStreetCornImagePath}/1-charred-corn-and-kielbasa.JPG`,
+        alt: 'Charred corn on the grill next to kielbasa after a smoky cook',
+      },
+      {
+        src: `${mexicanStreetCornImagePath}/2-ingredients-picture.JPG`,
+        alt: 'Ingredients gathered for creamy Mexican street corn, including corn, mayo, sour cream, spices, and hot sauce',
+      },
+      {
+        src: `${mexicanStreetCornImagePath}/3-street-corn-in-pot.JPG`,
+        alt: 'Creamy Mexican street corn cooking in a pot with spices',
+      },
+      {
+        src: `${mexicanStreetCornImagePath}/4-taquitos-on-corn.jpeg`,
+        alt: 'Homemade taquitos served on a bed of creamy Mexican street corn',
+      },
+      {
+        src: `${mexicanStreetCornImagePath}/5-taquitos-on-corn-with-tajin.JPG`,
+        alt: 'Finished taquitos over creamy Mexican street corn with a final sprinkle of Tajín',
+      },
+    ],
+  },
   {
     title: "Chef Ed's Sweet Turkey Bowl",
     slug: 'chef-eds-sweet-turkey-bowl',

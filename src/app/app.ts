@@ -52,6 +52,11 @@ const PAGE_METADATA: Record<string, PageMetadata> = {
     description: 'A simple, healthy, in one bowl meal; my first shot at a submitted recipe!',
     canonicalPath: '/blog/chef-eds-sweet-turkey-bowl',
   },
+  '/blog/drews-mexican-street-corn': {
+    title: "Drew's Mexican Street Corn | Drake's Food",
+    description: 'A smoky, creamy, slightly charred spin on Mexican street corn for taco night.',
+    canonicalPath: '/blog/drews-mexican-street-corn',
+  },
   '/submit': {
     title: "Submit a Recipe Idea | Drake's Food",
     description:

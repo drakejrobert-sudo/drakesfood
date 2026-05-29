@@ -1,0 +1,77 @@
+{
+  "createdAt": "2026-05-29T12:00:00Z",
+  "id": "9B5C1D63-71BB-4D7E-8F1F-C6E4B8F3D24A",
+  "ingredients": "- 6 ears fresh corn\n- Mayonnaise, for brushing the corn and making the sauce\n- 2 knobs butter\n- Sour cream, to taste\n- Chili powder, to taste\n- Paprika, to taste\n- Cayenne pepper, to taste\n- Garlic powder, to taste\n- Black pepper, to taste\n- Hot sauce, to taste\n- Tajin, for topping, optional",
+  "isFavorite": false,
+  "notes": "Recipe inspiration credit goes to Drew. Drew made a creamy Mexican street corn-style topping in bulk for a family taco bar. This version keeps that creamy corn-dish format while adding grilled corn, smoky char, warm spices, hot sauce, and optional Tajin. Amounts are intentionally flexible; adjust mayo, sour cream, spices, and hot sauce to taste.",
+  "steps": "1. Brush the corn with a light coating of mayonnaise.\n2. Grill or smoke the corn at about 350F for 15 to 20 minutes, rotating occasionally, until cooked and lightly charred.\n3. Slice the kernels off the cobs.\n4. Melt the butter in a pot over medium heat.\n5. Add the corn kernels to the pot.\n6. Season with black pepper, garlic powder, chili powder, paprika, and cayenne.\n7. Cook until the corn is fragrant and warmed through.\n8. Stir in mayonnaise and sour cream until the corn is creamy and reaches your preferred texture.\n9. Add a squirt of hot sauce and cook, stirring occasionally, until hot.\n10. Serve as a side, taco bar topping, or bed for taquitos.\n11. Finish with Tajin if desired.",
+  "structuredIngredients": [
+    {
+      "isOptional": false,
+      "item": "ears fresh corn",
+      "originalLine": "6 ears fresh corn",
+      "quantity": 6
+    },
+    {
+      "isOptional": false,
+      "item": "Mayonnaise, for brushing the corn and making the sauce",
+      "originalLine": "Mayonnaise, for brushing the corn and making the sauce"
+    },
+    {
+      "isOptional": false,
+      "item": "knobs butter",
+      "originalLine": "2 knobs butter",
+      "quantity": 2
+    },
+    {
+      "isOptional": false,
+      "item": "Sour cream, to taste",
+      "originalLine": "Sour cream, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Chili powder, to taste",
+      "originalLine": "Chili powder, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Paprika, to taste",
+      "originalLine": "Paprika, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Cayenne pepper, to taste",
+      "originalLine": "Cayenne pepper, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Garlic powder, to taste",
+      "originalLine": "Garlic powder, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Black pepper, to taste",
+      "originalLine": "Black pepper, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Hot sauce, to taste",
+      "originalLine": "Hot sauce, to taste"
+    },
+    {
+      "isOptional": true,
+      "item": "Tajin, for topping",
+      "originalLine": "Tajin, for topping, optional"
+    }
+  ],
+  "tags": [
+    "corn",
+    "mexican street corn",
+    "taco bar",
+    "grilled corn",
+    "side dish",
+    "family recipes",
+    "recipe submission"
+  ],
+  "title": "Drew's Mexican Street Corn"
+}
