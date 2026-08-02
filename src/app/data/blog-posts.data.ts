@@ -3,9 +3,92 @@ import { BlogPost } from './blog-post.model';
 const mothersDayImagePath = '/assets/blog/mothers-day-baking';
 const sweetTurkeyBowlImagePath = '/assets/blog/chef-eds-sweet-turkey-bowl';
 const mexicanStreetCornImagePath = '/assets/blog/drews-mexican-street-corn';
+const mediterraneanChickenPastaImagePath = '/assets/blog/mediterranean-chicken-pasta';
 const recipeSenseiDownloadUrl = 'https://apps.apple.com/us/app/recipesensei/id6759845210';
 
 export const blogPosts: BlogPost[] = [
+  {
+    title: 'Mediterranean Chicken Pasta',
+    slug: 'mediterranean-chicken-pasta',
+    eyebrow: 'Recipe submissions',
+    date: 'August 2, 2026',
+    summary:
+      'Savory penne tossed with a bright tomato-spinach sauce, grilled Italian chicken, feta, and fresh parsley.',
+    heroImage: {
+      src: `${mediterraneanChickenPastaImagePath}/hero-finished-pasta.jpeg`,
+      alt: 'Mediterranean chicken pasta with sliced chicken, tomato sauce, feta, and parsley in a wide bowl',
+    },
+    recipeTitle: 'Mediterranean Chicken Pasta',
+    body: [
+      "Finally, another non-dessert submission! Don't get me wrong, I appreciate any submission, and the desserts have really been challenging my less-used cooking skills, but I have been itching to get back to something savory. This is also the first submitter who asked to remain anonymous. Ooooo, mysterious...",
+      "The recipe is a Mediterranean pasta with chicken. The chicken was technically optional, but of course I took that option. I'm a big meat guy. This is one of those dishes I have seen in many a picture, always looking gorgeous, tasty, and extremely photogenic. I did not have much confidence mine would match those standards, but I am more of a flavor-over-photo kind of home cook.",
+      "I started with olive oil in the pan and began sauteing a diced onion. That was not in the original recipe, but for some reason, if I am making a red sauce, I always start with diced onion in olive oil. Once it had softened, I added the minced garlic and sauteed everything until fragrant. Then I dumped in a whole 28-ounce can of San Marzano-style tomatoes and crushed them in the pan. I stirred in the basil and oregano, turned the heat to low, and let the sauce simmer for a good 15 to 20 minutes.",
+      'Meanwhile, I had a little prep to do for the smoker grill. I seasoned two chicken breasts with garlic salt, black pepper, and Italian seasoning, then threw them on the grill. I cooked them to a nice medium-rare temperature... kidding. I am a stickler about properly cooking chicken, especially with a pregnant wife in the house. I used a thermometer to make sure the thickest part reached 165°F, then gave the chicken about five minutes to rest so the juices could settle back in.',
+      'Sometime during all of that, I dropped the penne into boiling, salted water. Once the sauce had simmered for about 15 minutes, I nestled the rested chicken breasts into it, spooned some sauce over the top, and let them warm through briefly. Then I pulled the chicken back out, tossed in the spinach, and cranked the heat up to medium for 30 to 60 seconds. I added a splash of pasta water to help the sauce come together and thin out a bit, stirred in the penne until it was coated, and killed the heat.',
+      'That final push, when everything is coming together, is one of the most stressful and most satisfying feelings in the world, assuming everything goes well. You have four, five, six things going, all with their own timelines and perfect moments to pull, and lining them up efficiently is an art learned the hard way. Then, after all that, you still have to try to pull together a pretty plate.',
+      'I reached for my handy wide salad-and-pasta bowl and piled in the penne and sauce. On top went the sliced Italian chicken, plenty of crumbled feta, and parsley for that last bit of color. What a meal!',
+    ],
+    recipeNotes: [
+      'This cooked version uses a 28-ounce can of San Marzano-style tomatoes, a diced onion, and grilled chicken as part of the main dish.',
+      'Let the sauce simmer for 15 to 20 minutes, wilt the spinach for only 30 to 60 seconds, and use a splash of pasta water to bring everything together.',
+      'Cook the chicken to 165°F, rest it for about five minutes, then briefly finish the whole breasts in the tomato sauce before slicing them over the pasta and adding feta and parsley.',
+    ],
+    recipeDownload: {
+      label: 'Download Recipe',
+      href: '/recipes/mediterranean-chicken-pasta-recipe.pdf',
+      download: 'mediterranean-chicken-pasta-recipe.pdf',
+      ariaLabel: 'Download the Mediterranean Chicken Pasta recipe',
+    },
+    recipeSenseiImport: {
+      label: 'Import into RecipeSensei',
+      href: '/recipesensei/imports/mediterranean-chicken-pasta.recipesensei',
+      download: 'mediterranean-chicken-pasta.recipesensei',
+      ariaLabel: 'Download the Mediterranean Chicken Pasta RecipeSensei import file',
+    },
+    recipeSenseiApp: {
+      label: 'Download RecipeSensei',
+      href: recipeSenseiDownloadUrl,
+      external: true,
+      ariaLabel: 'Download RecipeSensei on the App Store, opens in a new tab',
+    },
+    importNote:
+      'Tap the RecipeSensei import file, then use the share arrow and choose Open in RecipeSensei. Or save it and import it from Settings.',
+    galleryTitle: 'From the skillet to the finished bowl.',
+    gallery: [
+      {
+        src: `${mediterraneanChickenPastaImagePath}/1-sauteeing-onions.jpeg`,
+        alt: 'Diced onion sauteing in olive oil in a large cast-iron skillet',
+      },
+      {
+        src: `${mediterraneanChickenPastaImagePath}/2-seasoned-chicken.jpeg`,
+        alt: 'Two cooked chicken breasts coated with garlic salt, pepper, and Italian seasoning',
+      },
+      {
+        src: `${mediterraneanChickenPastaImagePath}/3-chicken-in-tomato-sauce.jpeg`,
+        alt: 'Seasoned chicken breasts set into bright tomato sauce in a cast-iron skillet',
+      },
+      {
+        src: `${mediterraneanChickenPastaImagePath}/4-simmered-chicken-and-sauce.jpeg`,
+        alt: 'Thick tomato and onion sauce simmered around seasoned chicken breasts',
+      },
+      {
+        src: `${mediterraneanChickenPastaImagePath}/5-plated-pasta-with-chicken.jpeg`,
+        alt: 'Whole chicken breasts and tomato sauce plated over penne with parsley',
+      },
+      {
+        src: `${mediterraneanChickenPastaImagePath}/6-pasta-bowl-with-parsley.jpeg`,
+        alt: 'Mediterranean chicken and tomato sauce arranged over penne in a wide bowl',
+      },
+      {
+        src: `${mediterraneanChickenPastaImagePath}/7-sliced-chicken-with-feta.jpeg`,
+        alt: 'Sliced chicken over penne and tomato sauce with crumbled feta and parsley',
+      },
+      {
+        src: `${mediterraneanChickenPastaImagePath}/hero-finished-pasta.jpeg`,
+        alt: 'Finished Mediterranean chicken pasta topped with feta and fresh parsley',
+      },
+    ],
+  },
   {
     title: "Drew's Mexican Street Corn",
     slug: 'drews-mexican-street-corn',

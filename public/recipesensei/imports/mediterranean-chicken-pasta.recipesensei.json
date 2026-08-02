@@ -1,0 +1,114 @@
+{
+  "createdAt": "2026-08-02T12:00:00Z",
+  "id": "A8E14560-07D2-4CC4-9477-BC542B86376B",
+  "ingredients": "- 16 ounces penne pasta\n- 6 tablespoons olive oil\n- 1 medium onion, diced\n- 4 teaspoons minced garlic\n- 1 28-ounce can San Marzano-style crushed tomatoes\n- 2 teaspoons chopped fresh basil\n- 1 teaspoon dried oregano\n- 2 cups fresh spinach, coarsely chopped\n- 2 boneless, skinless chicken breasts\n- Garlic salt, to taste\n- Black pepper, to taste\n- Italian seasoning, to taste\n- 8 ounces feta cheese, crumbled\n- Fresh parsley, chopped, for garnish\n- Salt, for the pasta water and sauce",
+  "isFavorite": false,
+  "notes": "A savory Mediterranean-inspired penne with tomato-spinach sauce, grilled Italian chicken, feta, and parsley. Do not overcook the spinach; wilt it for only 30 to 60 seconds. Cook the chicken to 165F in the thickest part, rest it for about 5 minutes, then briefly finish the whole breasts in the tomato sauce before slicing.",
+  "steps": "1. Season the chicken breasts with garlic salt, black pepper, and Italian seasoning.\n2. Grill the chicken until the thickest part reaches 165F on a food thermometer.\n3. Rest the chicken breasts whole for about 5 minutes.\n4. Bring a large pot of salted water to a boil. Cook the penne until al dente, reserving some pasta water before draining.\n5. While the pasta cooks, heat the olive oil in a large skillet over medium heat.\n6. Add the diced onion and saute until softened.\n7. Add the minced garlic and saute briefly, just until fragrant.\n8. Add the crushed tomatoes, basil, and oregano. Season with salt and black pepper, then simmer on low for 15 to 20 minutes, stirring occasionally.\n9. Nestle the rested chicken breasts into the tomato sauce, spoon sauce over the top, and let them warm through briefly. Remove the chicken and slice it into bite-size pieces.\n10. Raise the heat to medium. Add the spinach and cook for 30 to 60 seconds, just until wilted.\n11. Stir in a splash of reserved pasta water to loosen the sauce.\n12. Add the drained penne and toss until evenly coated, then remove the skillet from the heat.\n13. Divide the pasta among wide bowls. Top with the sliced chicken, crumbled feta, and fresh parsley.",
+  "structuredIngredients": [
+    {
+      "isOptional": false,
+      "item": "penne pasta",
+      "originalLine": "16 ounces penne pasta",
+      "quantity": 16,
+      "unit": "ounces"
+    },
+    {
+      "isOptional": false,
+      "item": "olive oil",
+      "originalLine": "6 tablespoons olive oil",
+      "quantity": 6,
+      "unit": "tablespoons"
+    },
+    {
+      "isOptional": false,
+      "item": "medium onion, diced",
+      "originalLine": "1 medium onion, diced",
+      "quantity": 1
+    },
+    {
+      "isOptional": false,
+      "item": "minced garlic",
+      "originalLine": "4 teaspoons minced garlic",
+      "quantity": 4,
+      "unit": "teaspoons"
+    },
+    {
+      "isOptional": false,
+      "item": "can San Marzano-style crushed tomatoes",
+      "originalLine": "1 28-ounce can San Marzano-style crushed tomatoes",
+      "quantity": 1
+    },
+    {
+      "isOptional": false,
+      "item": "chopped fresh basil",
+      "originalLine": "2 teaspoons chopped fresh basil",
+      "quantity": 2,
+      "unit": "teaspoons"
+    },
+    {
+      "isOptional": false,
+      "item": "dried oregano",
+      "originalLine": "1 teaspoon dried oregano",
+      "quantity": 1,
+      "unit": "teaspoon"
+    },
+    {
+      "isOptional": false,
+      "item": "fresh spinach, coarsely chopped",
+      "originalLine": "2 cups fresh spinach, coarsely chopped",
+      "quantity": 2,
+      "unit": "cups"
+    },
+    {
+      "isOptional": false,
+      "item": "boneless, skinless chicken breasts",
+      "originalLine": "2 boneless, skinless chicken breasts",
+      "quantity": 2
+    },
+    {
+      "isOptional": false,
+      "item": "Garlic salt, to taste",
+      "originalLine": "Garlic salt, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Black pepper, to taste",
+      "originalLine": "Black pepper, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "Italian seasoning, to taste",
+      "originalLine": "Italian seasoning, to taste"
+    },
+    {
+      "isOptional": false,
+      "item": "feta cheese, crumbled",
+      "originalLine": "8 ounces feta cheese, crumbled",
+      "quantity": 8,
+      "unit": "ounces"
+    },
+    {
+      "isOptional": false,
+      "item": "Fresh parsley, chopped, for garnish",
+      "originalLine": "Fresh parsley, chopped, for garnish"
+    },
+    {
+      "isOptional": false,
+      "item": "Salt, for the pasta water and sauce",
+      "originalLine": "Salt, for the pasta water and sauce"
+    }
+  ],
+  "tags": [
+    "pasta",
+    "penne",
+    "chicken",
+    "tomato sauce",
+    "spinach",
+    "feta",
+    "Mediterranean-inspired",
+    "family dinner",
+    "recipe submission"
+  ],
+  "title": "Mediterranean Chicken Pasta"
+}

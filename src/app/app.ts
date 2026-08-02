@@ -42,6 +42,12 @@ const PAGE_METADATA: Record<string, PageMetadata> = {
       "Read Drake's Food stories, kitchen notes, food experiments, family favorites, and recipe links.",
     canonicalPath: '/blog',
   },
+  '/blog/mediterranean-chicken-pasta': {
+    title: "Mediterranean Chicken Pasta | Drake's Food",
+    description:
+      'Savory penne tossed with a bright tomato-spinach sauce, grilled Italian chicken, feta, and fresh parsley.',
+    canonicalPath: '/blog/mediterranean-chicken-pasta',
+  },
   '/blog/mothers-day-baking': {
     title: "The One Day a Year I Bake | Drake's Food",
     description: 'A family tradition that continues to challenge me year after year.',
