@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { BlogSubscriptionComponent } from '../blog-subscription/blog-subscription.component';
 import { blogPosts, currentBlogPost } from '../../data/blog-posts.data';
@@ -11,6 +11,8 @@ import { blogPosts, currentBlogPost } from '../../data/blog-posts.data';
   styleUrls: ['./recipe-blog.component.css'],
 })
 export class RecipeBlogComponent {
+  readonly prioritizeFeaturedImage = input(false);
+
   protected readonly currentPost = currentBlogPost;
   protected readonly previousPosts = blogPosts.slice(1);
 }

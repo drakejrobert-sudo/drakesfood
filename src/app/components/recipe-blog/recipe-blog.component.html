@@ -14,8 +14,8 @@
         [alt]="currentPost.heroImage.alt"
         width="1536"
         height="2048"
-        loading="eager"
-        fetchpriority="high"
+        [attr.loading]="prioritizeFeaturedImage() ? 'eager' : 'lazy'"
+        [attr.fetchpriority]="prioritizeFeaturedImage() ? 'high' : null"
         decoding="async"
       />
     </a>
