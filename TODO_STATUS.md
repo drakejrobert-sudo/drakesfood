@@ -52,6 +52,7 @@
 - [x] Add dedicated RecipeSensei teaser page — #59
 - [x] Add first recipe/story blog detail page
 - [x] Add Drew's Mexican Street Corn featured blog post — #116
+- [x] Add Mediterranean Chicken Pasta featured blog post — #119
 - [x] Document blog email notification operations — #85
 - [x] Notify Drake when readers subscribe or unsubscribe — #88
 - [x] Complete accessibility and mobile polish pass for multi-page site — #65
@@ -141,6 +142,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - Blog email unsubscribe support is being added before new-post notification sending so every future notification can include a working unsubscribe link.
 - Blog post notification sending is being added as a manual GitHub Actions workflow with dry-run support, duplicate-send tracking, and unsubscribe links in every email.
 - Blog now includes Drew's Mexican Street Corn as the featured story, with process photos, a downloadable recipe PDF, and a RecipeSensei import file.
+- Blog now includes Mediterranean Chicken Pasta as the featured story, with an anonymous-submission narrative, optimized process photos, a downloadable recipe PDF, and RecipeSensei import files.
 - Blog email operations documentation is being expanded into a setup, testing, sending, privacy, cost, and recovery runbook.
 - Optional blog subscription admin alerts are being added so Drake can be notified after confirmed subscriptions and unsubscribes without exposing subscriber emails in alert bodies.
 - SES deliverability verification is in progress for #94. Production access, domain verification, and DKIM are confirmed in `us-east-2`; SPF is being added through OpenTofu and the existing DKIM/DMARC records are being brought under infrastructure management.
@@ -148,4 +150,4 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 
 ## Last Updated
 
-May 29, 2026
+August 2, 2026

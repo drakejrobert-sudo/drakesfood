@@ -1,5 +1,15 @@
 export const blogNotificationPosts = [
   {
+    slug: 'mediterranean-chicken-pasta',
+    title: 'Mediterranean Chicken Pasta',
+    summary:
+      'Savory penne tossed with a bright tomato-spinach sauce, grilled Italian chicken, feta, and fresh parsley.',
+    path: '/blog/mediterranean-chicken-pasta',
+    heroImagePath: '/assets/blog/mediterranean-chicken-pasta/hero-finished-pasta.jpeg',
+    heroImageAlt:
+      'Mediterranean chicken pasta with sliced chicken, tomato sauce, feta, and parsley in a wide bowl',
+  },
+  {
     slug: 'drews-mexican-street-corn',
     title: "Drew's Mexican Street Corn",
     summary: 'A smoky, creamy, slightly charred spin on Mexican street corn for taco night.',
