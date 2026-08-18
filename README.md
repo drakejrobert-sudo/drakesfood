@@ -8,7 +8,7 @@ RecipeSensei links, recipe idea submission, blog story content, and blog email s
 
 Requirements:
 
-- Node.js 22.13.0 or newer within Node 22 LTS
+- Node.js 22.19.0 or newer within Node 22 LTS
 - npm
 
 Use the pinned local Node version:
