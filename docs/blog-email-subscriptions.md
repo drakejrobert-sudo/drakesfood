@@ -340,7 +340,7 @@ Related deployment requirements:
 - `AWS_BLOG_NOTIFICATION_ROLE_ARN` repository variable from the OpenTofu `github_actions_blog_notification_role_arn` output
 - `CLOUDFRONT_DISTRIBUTION_ID` repository variable for cache invalidation
 
-Both workflows request short-lived GitHub OIDC tokens. Static-site deployment assumes the deploy role, while manual notification sends assume a separate role that can invoke only the blog subscription Lambda. The legacy AWS access-key secrets remain only as a temporary rollback path during the staged migration and are not referenced by either OIDC workflow.
+Both workflows request short-lived GitHub OIDC tokens. Static-site deployment assumes the deploy role, while manual notification sends assume a separate role that can invoke only the blog subscription Lambda. Long-lived AWS access-key secrets are not required.
 
 If `BLOG_SUBSCRIPTIONS_API_BASE_URL` is missing or blank, production will deploy successfully but the public signup form will use its not-connected-yet fallback.
 

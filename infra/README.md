@@ -11,7 +11,6 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - CloudFront response headers policy for browser security headers
 - Route 53 alias records for apex and `www`
 - GitHub Actions OIDC provider and separate least-privilege roles for site deployment and blog notification sends
-- Legacy GitHub Actions IAM user retained temporarily for rollback during the OIDC cutover
 - API Gateway HTTP API for recipe submissions
 - Lambda function, execution role, and CloudWatch logs for recipe submissions
 - DynamoDB table for recipe submission storage
@@ -125,20 +124,6 @@ AWS_PROFILE=drakesfood tofu import aws_s3_bucket_public_access_block.site drakes
 AWS_PROFILE=drakesfood tofu import aws_s3_bucket_policy.site drakesfood.com
 ```
 
-The GitHub Actions deploy IAM user already exists. Import it before applying so OpenTofu manages the user and deploy policy without recreating the user. It remains in place only as a rollback path until the OIDC workflows are verified in production:
-
-```bash
-AWS_PROFILE=drakesfood tofu import aws_iam_user.github_actions_deploy github-actions-drakesfood-deploy
-```
-
-OpenTofu manages the IAM user and its deploy policy only. Do not manage deploy access keys with OpenTofu because secret access key material would be stored in state. Keep the existing access key ID and secret access key in GitHub repository secrets until the staged OIDC verification is complete, then remove both secrets and retire the user through the cleanup PR.
-
-The credentials used for import and apply need permission to read IAM users and create or update IAM user policies. If an inline policy with the same generated name already exists, import it with:
-
-```bash
-AWS_PROFILE=drakesfood tofu import aws_iam_user_policy.github_actions_deploy github-actions-drakesfood-deploy:github-actions-drakesfood-deploy-policy
-```
-
 Then preview and apply:
 
 ```bash
@@ -221,19 +206,17 @@ The OpenTofu-managed policies grant these permissions:
 - Deploy role: `cloudfront:CreateInvalidation` on the site CloudFront distribution.
 - Blog notification role: `lambda:InvokeFunction` on the blog subscription Lambda.
 
-The legacy IAM user temporarily keeps the union of those permissions so the static-credential workflow can be restored if the first OIDC run fails. Do not delete its keys or the `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` repository secrets until both OIDC workflows have been verified.
+The workflows authenticate only through these OIDC roles. The legacy `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` repository secrets and the `github-actions-drakesfood-deploy` IAM user have been retired.
 
-## Staged OIDC Cutover
+## OIDC Verification
+
+After changing either role or workflow:
 
 1. Refresh the `drakesfood` AWS SSO profile and confirm the active AWS account.
-2. Import the account-wide GitHub OIDC provider if it already exists.
-3. Review and apply a plan that creates only the provider when needed, both roles, and their inline policies while retaining the legacy IAM user.
-4. Set `AWS_DEPLOY_ROLE_ARN` and `AWS_BLOG_NOTIFICATION_ROLE_ARN` from the OpenTofu outputs.
-5. Merge the first OIDC PR and confirm the `Deploy Static Site` workflow assumes the deploy role, syncs S3, and invalidates CloudFront.
-6. Dispatch `Send Blog Notification` from `main` with post slug `mediterranean-chicken-pasta` and `dry_run: true`; confirm it assumes the notification role and reports success without sending email.
-7. If either workflow fails, keep the legacy secrets and user intact and revert only the workflow authentication change while correcting the OIDC configuration.
-8. After both workflows succeed, remove the two legacy repository secrets and only the access keys belonging to `github-actions-drakesfood-deploy`.
-9. In a cleanup PR, remove the legacy IAM user, its policy, its variable, and the rollback documentation. Review and apply the expected IAM-only deletion before closing issue #97.
+2. Review the OpenTofu plan and apply only the intended role or policy changes.
+3. Confirm `Deploy Static Site` from `main` assumes the deploy role, syncs S3, and invalidates CloudFront.
+4. Dispatch `Send Blog Notification` from `main` with a published post slug and `dry_run: true`; confirm it assumes the notification role and reports success without sending email.
+5. Confirm neither workflow references long-lived AWS access-key secrets.
 
 ## Expected Result
 
