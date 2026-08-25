@@ -60,6 +60,7 @@
 ## 🔄 In Progress
 
 - [ ] Verify SES email deliverability DNS setup — #94
+- [ ] Migrate GitHub Actions AWS authentication to OIDC — #97
 
 ## 📋 Remaining Tasks
 
@@ -150,4 +151,4 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 
 ## Last Updated
 
-August 2, 2026
+August 24, 2026

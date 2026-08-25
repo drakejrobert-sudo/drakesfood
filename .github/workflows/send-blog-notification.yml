@@ -18,6 +18,7 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 concurrency:
   group: send-blog-notification-${{ inputs.post_slug }}
@@ -31,11 +32,17 @@ jobs:
   send:
     runs-on: ubuntu-latest
     steps:
+      - name: Require the main branch
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "Blog notifications must be dispatched from the main branch." >&2
+          exit 1
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ vars.AWS_BLOG_NOTIFICATION_ROLE_ARN }}
+          role-session-name: drakesfood-blog-notification-${{ github.run_id }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Send notification

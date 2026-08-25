@@ -8,6 +8,16 @@ output "cloudfront_distribution_id" {
   value       = aws_cloudfront_distribution.site.id
 }
 
+output "github_actions_deploy_role_arn" {
+  description = "IAM role ARN used by the static-site deploy workflow through GitHub Actions OIDC."
+  value       = aws_iam_role.github_actions_deploy.arn
+}
+
+output "github_actions_blog_notification_role_arn" {
+  description = "IAM role ARN used by the blog notification workflow through GitHub Actions OIDC."
+  value       = aws_iam_role.github_actions_blog_notification.arn
+}
+
 output "cloudfront_domain_name" {
   description = "Generated CloudFront distribution hostname."
   value       = aws_cloudfront_distribution.site.domain_name
