@@ -336,9 +336,11 @@ Required GitHub repository variable:
 
 Related deployment requirements:
 
-- `AWS_ACCESS_KEY_ID` repository secret
-- `AWS_SECRET_ACCESS_KEY` repository secret
+- `AWS_DEPLOY_ROLE_ARN` repository variable from the OpenTofu `github_actions_deploy_role_arn` output
+- `AWS_BLOG_NOTIFICATION_ROLE_ARN` repository variable from the OpenTofu `github_actions_blog_notification_role_arn` output
 - `CLOUDFRONT_DISTRIBUTION_ID` repository variable for cache invalidation
+
+Both workflows request short-lived GitHub OIDC tokens. Static-site deployment assumes the deploy role, while manual notification sends assume a separate role that can invoke only the blog subscription Lambda. The legacy AWS access-key secrets remain only as a temporary rollback path during the staged migration and are not referenced by either OIDC workflow.
 
 If `BLOG_SUBSCRIPTIONS_API_BASE_URL` is missing or blank, production will deploy successfully but the public signup form will use its not-connected-yet fallback.
 
@@ -351,7 +353,7 @@ Inputs:
 - `post_slug`: blog post slug from `blog-notification-posts.mjs`.
 - `dry_run`: use `true` first, then `false` for the real send.
 
-The workflow uses the repository AWS credentials and invokes the blog subscription Lambda directly. The GitHub Actions IAM user needs `lambda:InvokeFunction` permission for that Lambda, which OpenTofu grants.
+The workflow must be dispatched from `main`, assumes the repository's OIDC blog notification role, and invokes the blog subscription Lambda directly. OpenTofu grants that role only `lambda:InvokeFunction` permission for the target Lambda.
 
 ### Safe Send Procedure
 
