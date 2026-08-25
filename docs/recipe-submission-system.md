@@ -206,7 +206,7 @@ Related deployment requirements:
 - `AWS_DEPLOY_ROLE_ARN` repository variable from the OpenTofu `github_actions_deploy_role_arn` output
 - `CLOUDFRONT_DISTRIBUTION_ID` repository variable for cache invalidation
 
-The deploy workflow requests a short-lived GitHub OIDC token and assumes the branch-scoped deploy role. The legacy AWS access-key secrets remain only as a temporary rollback path during the staged migration and are not referenced by the OIDC workflow.
+The deploy workflow requests a short-lived GitHub OIDC token and assumes the branch-scoped deploy role. Long-lived AWS access-key secrets are not required.
 
 If `RECIPE_SUBMISSIONS_API_BASE_URL` is missing or blank, production will deploy successfully but the public form will use its not-connected-yet fallback.
 

@@ -1,11 +1,3 @@
-resource "aws_iam_user" "github_actions_deploy" {
-  name = var.github_actions_deploy_user_name
-
-  lifecycle {
-    ignore_changes = [tags]
-  }
-}
-
 resource "aws_iam_openid_connect_provider" "github_actions" {
   url = "https://token.actions.githubusercontent.com"
 
@@ -109,19 +101,6 @@ data "aws_iam_policy_document" "github_actions_blog_notification" {
       aws_lambda_function.blog_subscriptions.arn,
     ]
   }
-}
-
-data "aws_iam_policy_document" "github_actions_legacy_deploy" {
-  source_policy_documents = [
-    data.aws_iam_policy_document.github_actions_static_site_deploy.json,
-    data.aws_iam_policy_document.github_actions_blog_notification.json,
-  ]
-}
-
-resource "aws_iam_user_policy" "github_actions_deploy" {
-  name   = "${var.github_actions_deploy_user_name}-policy"
-  user   = aws_iam_user.github_actions_deploy.name
-  policy = data.aws_iam_policy_document.github_actions_legacy_deploy.json
 }
 
 resource "aws_iam_role_policy" "github_actions_deploy" {

@@ -22,12 +22,6 @@ variable "s3_bucket_name" {
   default     = "drakesfood.com"
 }
 
-variable "github_actions_deploy_user_name" {
-  description = "IAM user used by GitHub Actions to deploy the static site. Access keys are managed outside OpenTofu."
-  type        = string
-  default     = "github-actions-drakesfood-deploy"
-}
-
 variable "recipe_submissions_api_name" {
   description = "API Gateway HTTP API name for recipe submissions."
   type        = string
