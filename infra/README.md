@@ -10,6 +10,7 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - CloudFront distribution with HTTP-to-HTTPS redirects
 - CloudFront response headers policy for browser security headers
 - Route 53 alias records for apex and `www`
+- An isolated HTTPS redirect from `play.drakesfood.com` to Galaxy Grown Games
 - GitHub Actions OIDC provider and separate least-privilege roles for site deployment and blog notification sends
 - API Gateway HTTP API for recipe submissions
 - Lambda function, execution role, and CloudWatch logs for recipe submissions
@@ -22,6 +23,18 @@ OpenTofu manages the AWS resources needed to serve `drakesfood.com` over HTTPS.
 - Route 53 DNS authentication records for SES email deliverability: DKIM, SPF, and DMARC
 
 CloudFront requires ACM certificates to be in `us-east-1`, so this config uses a secondary AWS provider for the certificate while keeping the existing S3 bucket in `us-east-2`.
+
+## Galaxy Grown Games Shortlink
+
+`https://play.drakesfood.com` is managed independently from the Drake's Food website distribution. Its dedicated CloudFront distribution uses a viewer-request function to return a `302 Found` redirect to the configured `game_shortlink_target_url`. The response uses `Cache-Control: no-store` so the destination can change later without leaving players with a permanently cached redirect.
+
+The function appends the requested path and query parameters to the configured target. The target is an OpenTofu variable rather than request input, so the shortlink cannot be used as an open redirect. Test the function locally from the `infra` directory with:
+
+```bash
+node --test functions/game-shortlink.test.mjs
+```
+
+The shortlink has its own ACM certificate, CloudFront distribution, and Route 53 A/AAAA aliases. Changes do not modify the certificate, aliases, cache behavior, or S3 origin used by `drakesfood.com` and `www.drakesfood.com`.
 
 ## Recipe Submissions
 
@@ -178,6 +191,7 @@ AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_api_endpoint
 AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_lambda_function_name
 AWS_PROFILE=drakesfood tofu output -raw github_actions_deploy_role_arn
 AWS_PROFILE=drakesfood tofu output -raw github_actions_blog_notification_role_arn
+AWS_PROFILE=drakesfood tofu output -raw game_shortlink_url
 ```
 
 Add that value as a GitHub repository variable named `CLOUDFRONT_DISTRIBUTION_ID`.
@@ -224,6 +238,7 @@ After DNS propagation, these URLs should work:
 
 - `https://drakesfood.com`
 - `https://www.drakesfood.com`
+- `https://play.drakesfood.com` redirects to Galaxy Grown Games
 
 The canonical URL is `https://drakesfood.com/`. The `www` hostname intentionally serves the same site through the same CloudFront distribution for compatibility; canonical metadata and sitemap URLs should continue to use the apex domain.
 

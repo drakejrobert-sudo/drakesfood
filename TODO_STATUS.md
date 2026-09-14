@@ -61,6 +61,7 @@
 
 - [ ] Verify SES email deliverability DNS setup — #94
 - [ ] Migrate GitHub Actions AWS authentication to OIDC — #97
+- [ ] Add the Galaxy Grown Games player shortlink — `galaxy-grown-games` #27
 
 ## 📋 Remaining Tasks
 
@@ -104,6 +105,7 @@ Active work is now tracked in GitHub Issues. Pull the next task from the highest
 - GitHub repository has AWS deployment credentials configured
 - HTTPS now serves through CloudFront for `https://drakesfood.com` and `https://www.drakesfood.com`
 - HTTP now redirects to HTTPS through CloudFront
+- `play.drakesfood.com` is being added as an isolated CloudFront redirect to the Galaxy Grown Games site.
 - CloudFront distribution ID is `ETNCPE8F2TB5D`
 - OpenTofu local state currently manages the imported S3 bucket plus CloudFront, ACM, Route 53, bucket policy, and bucket public access block
 - Latest deployment succeeded, including S3 sync and CloudFront invalidation for distribution `ETNCPE8F2TB5D`

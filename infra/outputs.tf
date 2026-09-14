@@ -28,6 +28,11 @@ output "certificate_arn" {
   value       = aws_acm_certificate.site.arn
 }
 
+output "game_shortlink_url" {
+  description = "Player-friendly URL for the Galaxy Grown Games site."
+  value       = "https://${var.game_shortlink_domain_name}"
+}
+
 output "recipe_submissions_api_endpoint" {
   description = "Base endpoint URL for the recipe submission HTTP API."
   value       = aws_apigatewayv2_api.recipe_submissions.api_endpoint
