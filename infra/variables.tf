@@ -16,6 +16,27 @@ variable "www_domain_name" {
   default     = "www.drakesfood.com"
 }
 
+variable "game_shortlink_domain_name" {
+  description = "Player-friendly hostname that redirects to the Galaxy Grown Games site."
+  type        = string
+  default     = "play.drakesfood.com"
+}
+
+variable "game_shortlink_target_url" {
+  description = "HTTPS destination for the Galaxy Grown Games shortlink, without a trailing slash."
+  type        = string
+  default     = "https://drakejrobert-sudo.github.io/galaxy-grown-games"
+
+  validation {
+    condition = (
+      startswith(var.game_shortlink_target_url, "https://") &&
+      !endswith(var.game_shortlink_target_url, "/") &&
+      length(regexall("[?#]", var.game_shortlink_target_url)) == 0
+    )
+    error_message = "game_shortlink_target_url must use HTTPS and must not end with a slash or contain a query string or fragment."
+  }
+}
+
 variable "s3_bucket_name" {
   description = "S3 bucket that stores the built static site assets."
   type        = string
