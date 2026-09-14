@@ -30,9 +30,10 @@ variable "game_shortlink_target_url" {
   validation {
     condition = (
       startswith(var.game_shortlink_target_url, "https://") &&
-      !endswith(var.game_shortlink_target_url, "/")
+      !endswith(var.game_shortlink_target_url, "/") &&
+      length(regexall("[?#]", var.game_shortlink_target_url)) == 0
     )
-    error_message = "game_shortlink_target_url must use HTTPS and must not end with a slash."
+    error_message = "game_shortlink_target_url must use HTTPS and must not end with a slash or contain a query string or fragment."
   }
 }
 

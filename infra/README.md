@@ -36,6 +36,12 @@ node --test functions/game-shortlink.test.mjs
 
 The shortlink has its own ACM certificate, CloudFront distribution, and Route 53 A/AAAA aliases. Changes do not modify the certificate, aliases, cache behavior, or S3 origin used by `drakesfood.com` and `www.drakesfood.com`.
 
+After apply, confirm the configured player URL with:
+
+```bash
+AWS_PROFILE=drakesfood tofu output -raw game_shortlink_url
+```
+
 ## Recipe Submissions
 
 The recipe submission backend is defined as low-cost serverless infrastructure:
@@ -191,10 +197,9 @@ AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_api_endpoint
 AWS_PROFILE=drakesfood tofu output -raw blog_subscriptions_lambda_function_name
 AWS_PROFILE=drakesfood tofu output -raw github_actions_deploy_role_arn
 AWS_PROFILE=drakesfood tofu output -raw github_actions_blog_notification_role_arn
-AWS_PROFILE=drakesfood tofu output -raw game_shortlink_url
 ```
 
-Add that value as a GitHub repository variable named `CLOUDFRONT_DISTRIBUTION_ID`.
+Add the `cloudfront_distribution_id` output value as a GitHub repository variable named `CLOUDFRONT_DISTRIBUTION_ID`.
 
 ## GitHub Actions Requirements
 
