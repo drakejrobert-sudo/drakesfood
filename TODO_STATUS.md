@@ -46,6 +46,7 @@
 - [x] Multi-page Angular site structure added — #54
 - [x] Add recipe submission security and spam hardening — #30
 - [x] Verify canonical domain, HTTPS, and Angular route refresh behavior — #53
+- [x] Show the first gallery photo sooner on phones — #133
 - [x] Build a full gallery page with reusable food cards — #56
 - [x] Add image optimization and responsive image guidelines — #57
 - [x] Redesign homepage hero and primary calls-to-action — #55
