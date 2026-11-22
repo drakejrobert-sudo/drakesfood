@@ -109,6 +109,10 @@ export class App {
   private readonly router = inject(Router);
   private readonly title = inject(Title);
 
+  protected get skipLinkHref(): string {
+    return this.document.location.href.split('#')[0] + '#main-content';
+  }
+
   constructor() {
     this.applyPageMetadata(this.router.url);
 

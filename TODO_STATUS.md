@@ -26,6 +26,7 @@
 - [x] OpenTofu-managed GitHub Actions deploy IAM policy applied
 - [x] First S3 deployment from GitHub Actions verified
 - [x] Upgrade GitHub Actions workflows to Node 24-native action versions
+- [x] Keep keyboard skip navigation on the current page — #132
 - [x] Conduct performance and accessibility review — #17
 - [x] Image file optimization/compression
 - [x] SEO metadata and structured data
