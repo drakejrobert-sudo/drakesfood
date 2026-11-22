@@ -1,150 +1,209 @@
 .game-page {
-  padding: 2rem 0 4rem;
+  --ink: #303f39;
+  --cream: #fff3d7;
+  --red: #a33537;
+  width: min(920px, calc(100% - 2rem));
+  margin: 1rem auto 3rem;
 }
-
-.game-hero {
-  display: grid;
-  gap: 1.5rem;
-  align-items: end;
-  margin-bottom: 1.5rem;
+.marquee {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  margin: 0 0 0.7rem;
 }
-
-.game-copy {
-  display: grid;
-  gap: 1rem;
-  max-width: 760px;
+.marquee::before,
+.marquee::after {
+  content: '';
+  flex: 1;
+  height: 10px;
+  border-block: 3px solid #ad5850;
 }
-
-.game-copy h1 {
-  margin: 0;
-  max-width: 760px;
-  font-size: clamp(2rem, 10vw, 5.4rem);
-  line-height: 0.95;
-  letter-spacing: -0.04em;
-  overflow-wrap: anywhere;
-}
-
-.game-copy p:not(.eyebrow) {
-  max-width: 690px;
-  color: var(--color-text-muted);
-  font-size: clamp(1rem, 2vw, 1.18rem);
-  line-height: 1.8;
-}
-
-.game-scoreboard {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
-  border: 1px solid rgba(109, 74, 163, 0.14);
-  border-radius: 1rem;
-  background: var(--color-surface);
-  padding: 0.75rem;
-  box-shadow: var(--shadow-card);
-}
-
-.game-scoreboard div {
-  display: grid;
-  gap: 0.2rem;
-  min-width: 0;
-  border-radius: 0.7rem;
-  background: rgba(109, 74, 163, 0.08);
-  padding: 0.65rem 0.45rem;
-  text-align: center;
-}
-
-.game-scoreboard span {
-  color: var(--color-text-muted);
-  font-size: 0.75rem;
-  font-weight: 800;
-  text-transform: uppercase;
-}
-
-.game-scoreboard strong {
-  color: var(--color-purple-dark);
-  font-size: clamp(1.35rem, 4vw, 2rem);
+h1,
+h2 {
+  font-family: Georgia, serif;
+  font-style: italic;
   line-height: 1;
+  margin: 0;
 }
-
-.game-stage {
-  position: relative;
+h1 {
+  color: var(--red);
+  font-size: clamp(1.9rem, 5vw, 3.5rem);
+  letter-spacing: -0.045em;
+}
+.cabinet {
+  border: 4px solid var(--ink);
+  border-radius: 12px;
   overflow: hidden;
-  width: 100%;
-  max-width: 100%;
-  border: 1px solid rgba(109, 74, 163, 0.16);
-  border-radius: 1.6rem;
-  background:
-    linear-gradient(135deg, rgba(255, 250, 245, 0.92), rgba(238, 231, 251, 0.72)),
-    var(--color-surface);
-  box-shadow: var(--shadow-photo);
+  background: var(--ink);
+  box-shadow: 0 5px 0 #b4a48d;
+  scroll-margin: 0.5rem;
 }
-
-.game-stage.is-playing {
+.scoreboard {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  color: var(--cream);
+  padding: 0.5rem 0;
+  border-bottom: 3px solid #58776c;
+  background: #294b42;
+}
+.scoreboard div {
+  flex: 1;
+  display: flex;
+  gap: 0.65rem;
+  justify-content: center;
+  align-items: baseline;
+}
+.scoreboard div + div {
+  border-left: 1px solid #69877a;
+}
+.scoreboard span,
+.legend b,
+.best {
+  font:
+    bold 0.76rem/1.3 ui-monospace,
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.scoreboard strong {
+  font:
+    bold 1.5rem/1.2 ui-monospace,
+    monospace;
+  font-variant-numeric: tabular-nums;
+}
+.scoreboard i {
+  color: #ffc19b;
+  font: normal 0.85em/1 sans-serif;
+}
+.stage {
+  position: relative;
+}
+.stage.playing {
   cursor: none;
   touch-action: none;
 }
-
-.game-canvas {
-  display: block;
+.board {
   width: 100%;
-  height: clamp(22rem, 45vh, 32rem);
+  display: block;
+  height: clamp(20rem, 56svh, 31rem);
+  outline-offset: -4px;
 }
-
-.game-overlay {
+.board:focus-visible {
+  outline: 2px solid #245b50;
+}
+.overlay {
   position: absolute;
   inset: 0;
   display: grid;
-  place-content: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  background: rgba(255, 250, 245, 0.74);
+  place-items: center;
+  padding: 0.6rem;
+}
+[hidden] {
+  display: none !important;
+}
+.ticket {
+  background: var(--cream);
+  color: var(--ink);
   text-align: center;
+  padding: 1.25rem 1.6rem;
+  border: 2px solid var(--ink);
+  border-top: 6px solid var(--red);
+  border-radius: 3px;
+  box-shadow: 4px 5px 0 #6b6459;
+  max-width: 100%;
 }
-
-.game-overlay h2 {
-  max-width: min(560px, 100%);
-  margin: 0 auto;
-  color: var(--color-text);
-  font-size: clamp(1.45rem, 8vw, 3.1rem);
-  line-height: 1;
-  letter-spacing: -0.02em;
-  overflow-wrap: anywhere;
+h2 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--red);
+  margin-bottom: 0.45rem;
 }
-
-.game-status {
-  color: var(--color-purple-dark);
-  font-size: 0.8rem;
-  font-weight: 900;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
+.ticket p {
+  font-size: 0.95rem;
 }
-
-.game-overlay .button {
-  justify-self: center;
+.legend {
+  display: flex;
+  justify-content: center;
+  margin: 0.75rem auto;
+  gap: 1.6rem;
 }
-
-.game-instructions {
+.legend div {
   display: grid;
-  gap: 0.6rem;
-  max-width: 840px;
-  margin: 1rem auto 0;
-  color: var(--color-text-muted);
-  line-height: 1.7;
-  text-align: center;
+  justify-items: center;
+  gap: 0.2rem;
 }
-
-.game-instructions p:first-child {
-  color: var(--color-purple-dark);
-  font-weight: 800;
+.legend canvas {
+  width: 40px;
+  height: 40px;
+  image-rendering: pixelated;
 }
-
-@media (min-width: 760px) {
-  .game-page {
-    padding-top: 3.5rem;
+.ticket .controls {
+  font-size: 0.85rem;
+}
+.touch {
+  display: none;
+}
+@media (any-pointer: coarse) {
+  .touch {
+    display: block;
   }
-
-  .game-hero {
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 2rem;
-    margin-bottom: 2rem;
+}
+@media (pointer: coarse) {
+  .keys {
+    display: none;
+  }
+}
+.ticket .best {
+  font-size: 0.8rem;
+  margin-top: 0.75rem;
+  color: #375e4f;
+}
+.total strong {
+  display: block;
+  font:
+    800 2.6rem/1.25 ui-monospace,
+    monospace;
+}
+.ticket button {
+  min-height: 44px;
+  min-width: 10rem;
+  padding: 0.55rem 1.2rem;
+  margin-top: 0.85rem;
+  background: var(--red);
+  color: #fff7e3;
+  border: 2px solid #692c30;
+  border-radius: 5px;
+  box-shadow: 0 3px 0 #692c30;
+  font-weight: 750;
+  font-family: inherit;
+  font-size: 1rem;
+}
+.ticket button span {
+  font-size: 0.68rem;
+  padding-left: 0.8rem;
+}
+.ticket button:hover {
+  background: #882930;
+}
+.ticket button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #692c30;
+}
+@media (max-width: 480px) {
+  .game-page {
+    width: calc(100% - 1rem);
+    margin-top: 0.5rem;
+  }
+  .marquee {
+    gap: 0.65rem;
+  }
+  .scoreboard div {
+    gap: 0.35rem;
+  }
+  .scoreboard strong {
+    font-size: 1.2rem;
+  }
+  .ticket {
+    padding: 0.85rem 0.8rem;
   }
 }
