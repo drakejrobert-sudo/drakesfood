@@ -4,13 +4,21 @@
   padding: 2rem 0 4rem;
 }
 
+.recipe-jump {
+  margin-top: 1rem;
+}
+
+.recipe-jump,
 .back-link {
   display: inline-flex;
-  margin-bottom: 1.5rem;
   color: var(--color-purple-dark);
   font-weight: 800;
   text-decoration-thickness: 0.12em;
   text-underline-offset: 0.2em;
+}
+
+.back-link {
+  margin-bottom: 1.5rem;
 }
 
 .post-header {
