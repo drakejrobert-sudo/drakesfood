@@ -1,55 +1,74 @@
-<section class="game-page" aria-labelledby="game-page-title">
-  <div class="game-hero">
-    <div class="game-copy">
-      <p class="eyebrow">Tiny kitchen rush</p>
-      <h1 id="game-page-title">Catch dinner before it hits the floor.</h1>
-      <p>
-        Move the frying pan, catch the good food, and keep the rotten stuff out of dinner.
-        It is a quick 60-second round built for keyboard, touch, and one more try.
-      </p>
-    </div>
-
-    <div class="game-scoreboard" aria-live="polite">
+<section class="game-page" aria-labelledby="game-title">
+  <header class="marquee"><h1 id="game-title">Tiny Kitchen Rush</h1></header>
+  <div class="cabinet">
+    <div class="scoreboard" aria-label="Round statistics">
       <div>
-        <span>Score</span>
-        <strong>{{ snapshot.score }}</strong>
+        <span>Score</span><strong>{{ snapshot.score }}</strong>
       </div>
       <div>
-        <span>Time</span>
-        <strong>{{ snapshot.remainingTime }}s</strong>
+        <span>Time</span><strong>{{ snapshot.remainingTime }}s</strong>
       </div>
       <div>
-        <span>Lives</span>
-        <strong>{{ snapshot.lives }}</strong>
+        <span>Lives</span><strong>{{ snapshot.lives }}<i aria-hidden="true"> ♥</i></strong>
       </div>
     </div>
-  </div>
-
-  <div class="game-stage" [class.is-playing]="snapshot.status === 'playing'">
-    <canvas
-      #gameCanvas
-      class="game-canvas"
-      width="960"
-      height="620"
-      role="img"
-      aria-label="A pixel-style game where a frying pan catches falling food"
-      (pointerdown)="handlePointerMove($event)"
-      (pointermove)="handlePointerMove($event)"
-    ></canvas>
-
-    @if (snapshot.status !== 'playing') {
-      <div class="game-overlay">
-        <p class="game-status">{{ snapshot.status === 'ready' ? 'Ready?' : 'Game over' }}</p>
-        <h2>{{ snapshot.message }}</h2>
-        <button type="button" class="button button-primary" (click)="startRound()">
-          {{ snapshot.status === 'ready' ? 'Start rush' : 'Play again' }}
-        </button>
+    <div class="stage" [class.playing]="snapshot.status === 'playing'">
+      <canvas
+        #gameCanvas
+        class="board"
+        width="960"
+        height="480"
+        role="img"
+        tabindex="-1"
+        aria-label="Kitchen playfield. Move the skillet with the arrow keys or A and D."
+        (keydown)="handleKeyDown($event)"
+        (keyup)="handleKeyUp($event)"
+        (blur)="clearKeys()"
+        (pointerdown)="handlePointerDown($event)"
+        (pointermove)="handlePointerMove($event)"
+      ></canvas>
+      <div class="overlay" [hidden]="snapshot.status === 'playing'">
+        <div class="ticket">
+          <div [hidden]="snapshot.status !== 'ready'">
+            <h2>Order up!</h2>
+            <p>Catch dinner. Dodge the spoiled bites.</p>
+            <div class="legend">
+              <div>
+                <canvas #legendGood width="16" height="16" aria-hidden="true"></canvas><b>Catch</b>
+              </div>
+              <div>
+                <canvas #legendBad width="16" height="16" aria-hidden="true"></canvas><b>Avoid</b>
+              </div>
+            </div>
+            <p class="controls">
+              <span class="keys">Move with ← →, A/D, or your mouse.</span
+              ><span class="touch">Drag anywhere on the board to move.</span>
+            </p>
+          </div>
+          @if (snapshot.status === 'gameOver') {
+            <h2 id="round-end">{{ snapshot.endReason }}</h2>
+            <p id="final-score" class="total">
+              Final score <strong>{{ snapshot.score }}</strong>
+            </p>
+          }
+          @if (best !== null) {
+            <p id="record" class="best">
+              {{ newRecord ? 'New personal best' : 'Personal best' }} · {{ best }}
+            </p>
+          }
+          <button
+            #roundButton
+            type="button"
+            [attr.aria-describedby]="
+              snapshot.status === 'gameOver' ? 'round-end final-score record' : null
+            "
+            (click)="startRound()"
+          >
+            {{ snapshot.status === 'gameOver' ? 'Play again' : 'Start rush' }}
+            <span aria-hidden="true">▶</span>
+          </button>
+        </div>
       </div>
-    }
-  </div>
-
-  <div class="game-instructions" aria-label="Game controls">
-    <p>{{ snapshot.message }}</p>
-    <p>Keyboard: Arrow keys or A/D. Mobile: drag across the pan. Enter or Space starts a round.</p>
+    </div>
   </div>
 </section>

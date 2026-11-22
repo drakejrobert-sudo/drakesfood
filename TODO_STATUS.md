@@ -2,6 +2,8 @@
 
 ## ✅ Completed
 
+- [x] Refresh Tiny Kitchen Rush with pixel diner art, phone controls, and browser-local personal bests — #138
+
 - [x] Modern Angular project setup
 - [x] Standalone components created
 - [x] Hero section built with CTA
