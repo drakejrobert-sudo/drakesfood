@@ -59,6 +59,8 @@
 
 ## 🔄 In Progress
 
+- Issue #127 adds advisory npm, OpenTofu, and GitHub Actions scans. Manual and scheduled runs on main, baseline review, and merge enforcement are pending. AWS follow-ups are tracked in #129 (serverless recovery and observability), #130 (CloudFront), and #131 (static-site bucket). See [Security scanning](docs/security-scanning.md).
+
 - [ ] Verify SES email deliverability DNS setup — #94
 - [ ] Migrate GitHub Actions AWS authentication to OIDC — #97
 - [ ] Add the Galaxy Grown Games player shortlink — `galaxy-grown-games` #27
