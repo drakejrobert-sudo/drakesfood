@@ -50,6 +50,7 @@
 - [x] Add image optimization and responsive image guidelines — #57
 - [x] Redesign homepage hero and primary calls-to-action — #55
 - [x] Add dedicated RecipeSensei teaser page — #59
+- [x] Link blog summaries directly to recipe notes — #134
 - [x] Add first recipe/story blog detail page
 - [x] Add Drew's Mexican Street Corn featured blog post — #116
 - [x] Add Mediterranean Chicken Pasta featured blog post — #119

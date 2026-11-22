@@ -119,7 +119,7 @@ export class App {
       )
       .subscribe((event) => {
         this.applyPageMetadata(event.urlAfterRedirects);
-        this.focusMainContent();
+        this.focusPageContent(this.router.parseUrl(event.urlAfterRedirects).fragment);
       });
   }
 
@@ -175,12 +175,13 @@ export class App {
     canonicalLink.href = canonicalUrl;
   }
 
-  private focusMainContent(): void {
+  private focusPageContent(fragment: string | null): void {
     const mainContent = this.document.getElementById('main-content');
     const window = this.document.defaultView;
 
     window?.requestAnimationFrame(() => {
-      mainContent?.focus({ preventScroll: true });
+      const destination = fragment ? this.document.getElementById(fragment) : null;
+      (destination ?? mainContent)?.focus({ preventScroll: true });
     });
   }
 }

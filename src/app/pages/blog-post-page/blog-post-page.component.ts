@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -12,10 +13,15 @@ import { blogPosts } from '../../data/blog-posts.data';
   styleUrls: ['./blog-post-page.component.css'],
 })
 export class BlogPostPageComponent {
+  private readonly document = inject(DOCUMENT);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   protected readonly post = signal<BlogPost | undefined>(undefined);
+
+  protected get recipeNotesHref(): string {
+    return this.document.location.href.split('#')[0] + '#recipe-notes-title';
+  }
 
   constructor() {
     this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((paramMap) => {

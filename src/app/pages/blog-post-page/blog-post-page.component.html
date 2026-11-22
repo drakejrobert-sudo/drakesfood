@@ -8,6 +8,7 @@
         <h1 id="blog-post-title">{{ post.title }}</h1>
         <p class="post-summary">{{ post.summary }}</p>
         <p class="post-date">{{ post.date }}</p>
+        <a class="recipe-jump" [href]="recipeNotesHref">Jump to recipe notes</a>
       </div>
       <img
         [src]="post.heroImage.src"
@@ -28,7 +29,7 @@
 
       <aside class="recipe-card" aria-labelledby="recipe-notes-title">
         <p class="eyebrow">Recipe notes</p>
-        <h2 id="recipe-notes-title">{{ post.recipeTitle }} notes</h2>
+        <h2 id="recipe-notes-title" tabindex="-1">{{ post.recipeTitle }} notes</h2>
         @if (post.submittedBy) {
           <p class="submitted-by">Submitted by {{ post.submittedBy }}</p>
         }
