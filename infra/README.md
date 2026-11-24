@@ -210,11 +210,14 @@ The workflows need these GitHub repository variables:
 - `CLOUDFRONT_DISTRIBUTION_ID`
 - `RECIPE_SUBMISSIONS_API_BASE_URL`
 - `BLOG_SUBSCRIPTIONS_API_BASE_URL`
+- `KITCHEN_LEADERBOARD_API_BASE_URL`
 - `BLOG_SUBSCRIPTIONS_LAMBDA_FUNCTION_NAME` optional, defaults to `drakesfood-blog-subscriptions` for the manual notification workflow
 
 Set `RECIPE_SUBMISSIONS_API_BASE_URL` to the `recipe_submissions_api_endpoint` OpenTofu output after the recipe submission infrastructure is applied. The deploy workflow writes this value into `app-config.json` at deploy time. Until it is configured, the public form keeps its not-connected-yet fallback.
 
 Set `BLOG_SUBSCRIPTIONS_API_BASE_URL` to the `blog_subscriptions_api_endpoint` OpenTofu output after the blog subscription infrastructure is applied. Until it is configured, the public signup form keeps its not-connected-yet fallback.
+
+After an approved apply, set `KITCHEN_LEADERBOARD_API_BASE_URL` to the `kitchen_leaderboard_api_endpoint` output and deploy the site. An empty value hides the shared board and keeps survival mode available. After activation, post a finished run from one browser and confirm the board from a second profile. To hide the board again, clear the repository variable and deploy the site.
 
 The deploy role can sync files to the S3 bucket and create CloudFront invalidations. Until `CLOUDFRONT_DISTRIBUTION_ID` is configured, the deploy workflow will still sync to S3 but will skip CloudFront invalidation.
 

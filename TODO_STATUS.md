@@ -2,6 +2,8 @@
 
 ## ✅ Completed
 
+- [x] Add Tiny Kitchen Rush survival mode and a runtime-configured Top 3 leaderboard — #140
+
 - [x] Refresh Tiny Kitchen Rush with pixel diner art, phone controls, and browser-local personal bests — #138
 
 - [x] Modern Angular project setup

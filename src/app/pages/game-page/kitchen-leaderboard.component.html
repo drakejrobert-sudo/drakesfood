@@ -1,0 +1,42 @@
+@if (endpoint()) {
+  <div class="leaderboard" role="region" aria-labelledby="kitchen-leaderboard-title">
+    <h2 id="kitchen-leaderboard-title">Top 3</h2>
+    @if (entries(); as scores) {
+      @if (scores.length) {
+        <ol>
+          @for (entry of scores; track $index) {
+            <li>
+              <span>{{ entry.alias }}</span
+              ><strong>{{ entry.score }}</strong>
+            </li>
+          }
+        </ol>
+      } @else {
+        <p>No scores yet.</p>
+      }
+    } @else {
+      <p>{{ loading() ? 'Loading scores…' : 'Leaderboard unavailable.' }}</p>
+    }
+    @if (result(); as completed) {
+      @if (canPost()) {
+        @let submission = notice();
+        @if (submission?.result !== completed || !submission?.done) {
+          <form (submit)="post($event, alias.value)">
+            <label for="kitchen-alias">Public arcade alias</label>
+            <div class="post">
+              <input #alias id="kitchen-alias" name="alias" type="text" maxlength="16" required />
+              <button type="submit" [disabled]="loading() || posting()">
+                {{ posting() ? 'Posting…' : 'Post score' }}
+              </button>
+            </div>
+          </form>
+        }
+        <p #submissionStatus role="status" tabindex="-1">
+          {{ submission?.result === completed ? submission?.message : '' }}
+        </p>
+      } @else {
+        <p>Enable browser storage to post a score.</p>
+      }
+    }
+  </div>
+}
