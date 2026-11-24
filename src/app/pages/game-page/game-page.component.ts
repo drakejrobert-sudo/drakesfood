@@ -11,6 +11,7 @@ import {
   inject,
 } from '@angular/core';
 
+import { KitchenLeaderboardComponent } from './kitchen-leaderboard.component';
 import { Food, makeSprites, paintKitchen, paintPan } from './diner-art';
 
 type GameStatus = 'ready' | 'playing' | 'gameOver';
@@ -30,11 +31,11 @@ interface GameSnapshot {
   status: GameStatus;
   score: number;
   lives: number;
-  remainingTime: number;
+  elapsedSeconds: number;
   endReason: string;
 }
 
-const ROUND_SECONDS = 60;
+const DIFFICULTY_RAMP_SECONDS = 180;
 const STARTING_LIVES = 3;
 const GOOD_FOOD_POINTS = 10;
 const ITEM_SPAWN_INTERVAL_MS = 760;
@@ -44,7 +45,7 @@ const PAN_Y_OFFSET = 54;
 const GOOD_FOODS: Food[] = ['pizza', 'taco', 'burger', 'strawberry', 'egg'];
 const ROTTEN_FOODS: Food[] = ['moldy', 'burnt'];
 
-const BEST_KEY = 'drakesfood.tiny-kitchen-rush.best';
+const BEST_KEY = 'drakesfood.tiny-kitchen-rush.survival.best';
 
 @Injectable({ providedIn: 'root' })
 class KitchenBest {
@@ -75,6 +76,7 @@ class KitchenBest {
 @Component({
   selector: 'app-game-page',
   standalone: true,
+  imports: [KitchenLeaderboardComponent],
   templateUrl: './game-page.component.html',
   styleUrls: ['./game-page.component.css'],
 })
@@ -102,19 +104,18 @@ export class GamePageComponent implements AfterViewInit {
     status: 'ready',
     score: 0,
     lives: STARTING_LIVES,
-    remainingTime: ROUND_SECONDS,
+    elapsedSeconds: 0,
     endReason: '',
   };
 
   private animationFrameId = 0;
   private canvas?: HTMLCanvasElement;
   private context?: CanvasRenderingContext2D;
-  private gameStartedAt = 0;
+  private activeMs = 0;
   private itemSequence = 0;
   private items: FallingItem[] = [];
   private lastFrameAt = 0;
-  private lastHudUpdateAt = 0;
-  private lastSpawnAt = 0;
+  private nextSpawnAt = 0;
   private panX = 0;
   private readonly pressedKeys = new Set<string>();
   private resizeObserver?: ResizeObserver;
@@ -165,6 +166,12 @@ export class GamePageComponent implements AfterViewInit {
     this.pressedKeys.clear();
   }
 
+  @HostListener('document:visibilitychange')
+  protected handleVisibilityChange(): void {
+    this.clearKeys();
+    this.lastFrameAt = performance.now();
+  }
+
   protected handlePointerDown(event: PointerEvent): void {
     if (!this.canvas || this.snapshot.status !== 'playing') return;
     this.canvas.setPointerCapture(event.pointerId);
@@ -182,7 +189,7 @@ export class GamePageComponent implements AfterViewInit {
       status: 'playing',
       score: 0,
       lives: STARTING_LIVES,
-      remainingTime: ROUND_SECONDS,
+      elapsedSeconds: 0,
       endReason: '',
     };
     this.changeDetectorRef.detectChanges();
@@ -191,9 +198,8 @@ export class GamePageComponent implements AfterViewInit {
 
     this.ngZone.runOutsideAngular(() => {
       this.lastFrameAt = performance.now();
-      this.gameStartedAt = this.lastFrameAt;
-      this.lastHudUpdateAt = this.lastFrameAt;
-      this.lastSpawnAt = this.lastFrameAt - ITEM_SPAWN_INTERVAL_MS;
+      this.activeMs = 0;
+      this.nextSpawnAt = 0;
       this.animationFrameId = requestAnimationFrame(this.tick);
     });
   }
@@ -209,11 +215,14 @@ export class GamePageComponent implements AfterViewInit {
   }
 
   private readonly tick = (now: number): void => {
-    const elapsed = Math.min((now - this.lastFrameAt) / 1000, 0.04);
+    const frameMs = Math.max(0, now - this.lastFrameAt);
     this.lastFrameAt = now;
 
-    this.update(elapsed, now);
-    this.draw();
+    if (!document.hidden) {
+      this.activeMs += frameMs;
+      this.update(Math.min(frameMs / 1000, 0.04), now);
+      this.draw();
+    }
 
     if (this.snapshot.status === 'playing') {
       this.animationFrameId = requestAnimationFrame(this.tick);
@@ -237,11 +246,13 @@ export class GamePageComponent implements AfterViewInit {
       bounds.width - PAN_WIDTH / 2,
     );
 
-    if (now - this.lastSpawnAt >= ITEM_SPAWN_INTERVAL_MS) {
-      this.spawnItem(bounds.width);
-      this.lastSpawnAt = now;
+    const progress = Math.min(this.activeMs / (DIFFICULTY_RAMP_SECONDS * 1000), 1);
+    if (this.activeMs >= this.nextSpawnAt) {
+      this.spawnItem(bounds.width, progress);
+      this.nextSpawnAt = this.activeMs + ITEM_SPAWN_INTERVAL_MS - 340 * progress;
     }
 
+    const previousFeedback = this.feedback;
     const panTop = bounds.height - PAN_Y_OFFSET - PAN_HEIGHT / 2;
     const panLeft = this.panX - PAN_WIDTH / 2;
     const panRight = this.panX + PAN_WIDTH / 2;
@@ -275,24 +286,18 @@ export class GamePageComponent implements AfterViewInit {
       (item) => !item.caught && item.y - item.size / 2 <= bounds.height + 24,
     );
 
-    const remainingTime = Math.max(
-      0,
-      ROUND_SECONDS - Math.floor((now - this.gameStartedAt) / 1000),
-    );
+    const elapsed = Math.floor(this.activeMs / 1000);
+    const hudChanged =
+      elapsed !== this.snapshot.elapsedSeconds || this.feedback !== previousFeedback;
+    this.snapshot.elapsedSeconds = elapsed;
 
-    if (remainingTime !== this.snapshot.remainingTime || now - this.lastHudUpdateAt > 250) {
-      this.snapshot.remainingTime = remainingTime;
-      this.lastHudUpdateAt = now;
-      this.ngZone.run(() => this.changeDetectorRef.markForCheck());
-    }
-
-    if (this.snapshot.lives <= 0) {
+    if (this.snapshot.lives === 0) {
       this.endRound('Out of lives');
       return;
     }
 
-    if (remainingTime <= 0) {
-      this.endRound('Time’s up');
+    if (hudChanged) {
+      this.ngZone.run(() => this.changeDetectorRef.markForCheck());
     }
   }
 
@@ -300,7 +305,6 @@ export class GamePageComponent implements AfterViewInit {
     this.snapshot = {
       ...this.snapshot,
       status: 'gameOver',
-      remainingTime: Math.max(0, this.snapshot.remainingTime),
       endReason,
     };
     this.stopLoop();
@@ -325,8 +329,8 @@ export class GamePageComponent implements AfterViewInit {
     this.pressedKeys.clear();
   }
 
-  private spawnItem(width: number): void {
-    const isRotten = Math.random() < 0.22;
+  private spawnItem(width: number, progress: number): void {
+    const isRotten = Math.random() < 0.22 + 0.08 * progress;
     const foods = isRotten ? ROTTEN_FOODS : GOOD_FOODS;
     const size = isRotten ? 32 : 34 + Math.random() * 8;
 
@@ -334,7 +338,7 @@ export class GamePageComponent implements AfterViewInit {
       x: 32 + Math.random() * Math.max(width - 64, 1),
       y: -size,
       size,
-      speed: 132 + Math.random() * 88 + Math.min(this.snapshot.score * 0.8, 90),
+      speed: 132 + Math.random() * 88 + 90 * progress,
       kind: isRotten ? 'rotten' : 'good',
       food: foods[this.itemSequence % foods.length],
       caught: false,

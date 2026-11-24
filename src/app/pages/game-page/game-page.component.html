@@ -6,7 +6,7 @@
         <span>Score</span><strong>{{ snapshot.score }}</strong>
       </div>
       <div>
-        <span>Time</span><strong>{{ snapshot.remainingTime }}s</strong>
+        <span>Elapsed</span><strong>{{ snapshot.elapsedSeconds }}s</strong>
       </div>
       <div>
         <span>Lives</span><strong>{{ snapshot.lives }}<i aria-hidden="true"> ♥</i></strong>
@@ -31,7 +31,7 @@
         <div class="ticket">
           <div [hidden]="snapshot.status !== 'ready'">
             <h2>Order up!</h2>
-            <p>Catch dinner. Dodge the spoiled bites.</p>
+            <p>Catch dinner. The rush speeds up until you lose all three lives.</p>
             <div class="legend">
               <div>
                 <canvas #legendGood width="16" height="16" aria-hidden="true"></canvas><b>Catch</b>
@@ -48,7 +48,8 @@
           @if (snapshot.status === 'gameOver') {
             <h2 id="round-end">{{ snapshot.endReason }}</h2>
             <p id="final-score" class="total">
-              Final score <strong>{{ snapshot.score }}</strong>
+              Final score <strong>{{ snapshot.score }}</strong> Survived
+              {{ snapshot.elapsedSeconds }}s
             </p>
           }
           @if (best !== null) {
@@ -71,4 +72,8 @@
       </div>
     </div>
   </div>
+  <app-kitchen-leaderboard
+    [hidden]="snapshot.status === 'playing'"
+    [result]="snapshot.status === 'gameOver' ? snapshot : null"
+  />
 </section>

@@ -1,0 +1,87 @@
+:host {
+  display: block;
+}
+
+:host([hidden]) {
+  display: none;
+}
+
+.leaderboard {
+  max-width: 26rem;
+  margin: 1.25rem auto 0;
+  padding: 1rem;
+  background: var(--cream);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-top: 5px solid var(--red);
+  border-radius: 4px;
+}
+
+h2 {
+  margin: 0 0 0.55rem;
+  color: var(--red);
+  font:
+    italic bold 1.65rem Georgia,
+    serif;
+}
+
+ol {
+  margin: 0;
+  padding-inline-start: 1.5rem;
+  font-family: ui-monospace, monospace;
+}
+
+li {
+  padding: 0.45rem 0.2rem;
+  border-bottom: 1px solid #b4a48d;
+}
+
+li strong {
+  float: inline-end;
+}
+
+form {
+  margin-top: 0.85rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.post {
+  display: flex;
+  gap: 0.55rem;
+}
+
+input,
+button {
+  min-height: 44px;
+  font: inherit;
+}
+
+input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--ink);
+  border-radius: 4px;
+  padding: 0.45rem;
+}
+
+button {
+  padding-inline: 0.75rem;
+  background: var(--red);
+  color: var(--cream);
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+
+[role='status']:not(:empty) {
+  margin-top: 0.5rem;
+}
