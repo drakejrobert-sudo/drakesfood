@@ -25,7 +25,7 @@ variable "game_shortlink_domain_name" {
 variable "game_shortlink_target_url" {
   description = "HTTPS destination for the Galaxy Grown Games shortlink, without a trailing slash."
   type        = string
-  default     = "https://drakejrobert-sudo.github.io/galaxy-grown-games"
+  default     = "https://galaxy-grown-games-test.suppletarragon7.chatgpt.site"
 
   validation {
     condition = (
