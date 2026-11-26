@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 import vm from 'node:vm';
 
-const targetUrl = 'https://drakejrobert-sudo.github.io/galaxy-grown-games';
+const targetUrl = 'https://galaxy-grown-games-test.suppletarragon7.chatgpt.site';
 const sourceUrl = new URL('./game-shortlink.js', import.meta.url);
 const source = (await readFile(sourceUrl, 'utf8')).replace(
   '__GAME_SHORTLINK_TARGET_URL__',
